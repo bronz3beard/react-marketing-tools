@@ -45,6 +45,7 @@ COMING SOON: [React Marketing Tools Demo](https://)
 
     const analyticsConfig = { 
         appName: 'my-awesome-app', // required
+        appSessionCookieName: 'APP_SESSION',
         eventActionPrefix: { // this will extend the default values of eventActionPrefix 
             ACTION: 'ACTION',
             OTHER_EVENT_NAME_TYPE: 'OTHER_EVENT_NAME_TYPE'
@@ -60,6 +61,17 @@ COMING SOON: [React Marketing Tools Demo](https://)
         withServerLocationInfo: false, // (optional) has default value
     }
 
+    /**
+        * @type {Object} buildConfig -> options: all attributes of the options object must have a value, other than withDeviceInfo.
+        * @property {string} appName: the name of your app this value must be passed in.
+        * @property {string} appSessionCookieName This is used to get the cookie from storage based on a key you use, the value from the cookie will be used in "client_id:"
+        * @property {Object} eventActionPrefix: is a { key: 'value' } object that allows you to extend "analyticsEventActionPrefixList" object with custom eventActionPrefix. To see the build in list call the function showMeBuildInEventActionPrefixList().
+        * @property {Array} globalEventActionList: is a { key: 'value' } object that allows you to extend "analyticsGlobalEventActionList" object with custom eventActionNames. To see the build in list call the function showMeBuildInGlobalEventActionList().
+        * @property {Array} includeUserKeys: is an array of strings that represent keys from your user data that you want to whitelist, user data you wan to hash.
+        * @property {Object} TOKENS: is a { key: 'value' } object that includes the following keys, IP_INFO_TOKEN, GA4_PUBLIC_API_SECRET, GA4_PUBLIC_MEASUREMENT_ID, depending on if you need these features enabled.
+        * @property {Boolean} withDeviceInfo: if you want device information added to "globalVars" set this to true false by default.
+        * @property {Boolean} withServerLocationInfo: if you want server information added to "journeyProps" set this to true false by default.
+    */
     buildConfig(analyticsConfig)
 
     ReactDOM.createRoot(document.getElementById('root')).render(
@@ -80,6 +92,7 @@ COMING SOON: [React Marketing Tools Demo](https://)
     function App() {
         const [count, setCount] = useState(0)
         const {
+            appSessionCookieName,
             analyticsPlatform,
             eventActionPrefixList,
             analyticsGlobalEventActionList
@@ -96,6 +109,9 @@ COMING SOON: [React Marketing Tools Demo](https://)
         } = useMarketingApi(ContextApi)
 
         useEffect(function appLoadPageLandingWelcome() {
+            // create session cookie, useful for unauthenticated user tracking and other things
+            document.cookie = `${appSessionCookieName}=${uuid()};max-age=${70};SameSite=Strict;Secure`
+
             const eventNameInfo = {
                 actionPrefix: eventActionPrefixList.JOURNEY,
                 description: 'Welcome Landing',

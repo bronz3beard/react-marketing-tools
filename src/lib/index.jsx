@@ -20,6 +20,8 @@ export const ContextApi = createContext({})
 
 const ProviderState = ContextState.Provider
 ProviderState.propTypes = {
+  appName: string,
+  appSessionCookieName: string,
   analyticsPlatform: shape({
     GOOGLE: string,
     FACEBOOK: string,
@@ -51,6 +53,8 @@ export const ReactMarketingProvider = ({ children }) => {
   const stateValue = useMemo(
     () => ({
       analyticsPlatform,
+      appName: config.appName,
+      appSessionCookieName: config.appSessionCookieName,
       eventActionPrefixList: config.eventActionPrefixList,
       analyticsGlobalEventActionList: config.analyticsGlobalEventActionList,
     }),
