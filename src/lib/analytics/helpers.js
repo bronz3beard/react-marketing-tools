@@ -3,6 +3,7 @@ import {
   objectHasAttributes,
   replaceWhiteSpace,
 } from '../utilities/commonFunctions'
+import { buildServerLocationData } from '../ipInfo'
 import DeviceDetector from 'device-detector-js'
 import { config } from '../buildConfig'
 import { assertIsTrue } from '../utilities/assertValueCheckers'
@@ -114,12 +115,17 @@ export const buildAnalyticsEventName = eventNameInfo => {
 export const buildEventDataObject = async (data, globalAppEvent) => {
   const timeElapsed = Date.now()
   const today = new Date(timeElapsed)
+  const { withServerLocationInfo } = config
+
+  const serverLocationData = await buildServerLocationData(
+    withServerLocationInfo,
+  )
 
   // this is data that is always sent in the payload
   let actionDataObject = {
     // TODO:: add default variable from user into this object maybe?
     HIT_TIMESTAMP: today.toISOString(),
-    ...(!data.serverLocationData ? [] : data.serverLocationData),
+    ...(!serverLocationData ? [] : serverLocationData),
   }
 
   return await _appendValuesToJourneyData(

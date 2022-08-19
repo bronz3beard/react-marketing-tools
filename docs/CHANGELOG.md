@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
-## [0.0.0] - 19-08-2022
+## [0.0.1] - 13-08-2022
 __Added__
 - README
 - CHANGELOG
@@ -21,3 +21,11 @@ __Added__
 ## [0.0.1] - 19-08-2022
 __Changed__
 - README
+
+## [0.0.4] - 20-08-2022
+__Fixed__ 
+- serverLocationData bug duplicate entries in payload
+__Changed__
+- README
+__Added__
+- appSessionCookieName and appName to useMarketingState Context 

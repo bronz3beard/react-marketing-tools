@@ -10,19 +10,19 @@ export const buildServerLocationData = async withServerLocationInfo => {
   )
 
   if (withServerLocationInfo && TOKENS?.IP_INFO_TOKEN) {
-    const ipInfo = await getIpInfo(TOKENS.IP_INFO_TOKEN).then(
+    const ipInfo = await getIpInfo(TOKENS?.IP_INFO_TOKEN).then(
       response => response,
     )
 
     const serverLocationData = {
-      city: ipInfo.city,
-      country: ipInfo.country,
-      hostname: ipInfo.hostname,
-      ip: ipInfo.ip,
-      loc: ipInfo.loc,
-      postal: ipInfo.postal,
-      region: ipInfo.region,
-      timezone: ipInfo.timezone,
+      CITY: ipInfo.city,
+      COUNTRY: ipInfo.country,
+      HOSTNAME: ipInfo.hostname,
+      IP: ipInfo.ip,
+      LOC: ipInfo.loc,
+      POSTAL: ipInfo.postal,
+      REGION: ipInfo.region,
+      TIMEZONE: ipInfo.timezone,
     }
 
     return serverLocationData

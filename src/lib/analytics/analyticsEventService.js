@@ -5,7 +5,6 @@ import {
 } from './helpers'
 import ga4GoogleAnalyticsEventTracking from './ga4GoogleAnalyticsEventTracking'
 import handleDataLayerPush from './handleDataLayerPush'
-import { buildServerLocationData } from '../ipInfo'
 import { analyticsPlatform, config } from '../buildConfig'
 import {
   objectHasAttributes,
@@ -36,12 +35,7 @@ const trackAnalyticsEvent = async options => {
     dataLayerCheck = false,
     consoleLogData = null,
   } = options
-
-  const { includeUserKeys, withServerLocationInfo } = config
-
-  const serverLocationData = await buildServerLocationData(
-    withServerLocationInfo,
-  )
+  const { includeUserKeys } = config
 
   assertIsTrue(
     objectHasAttributes(analyticsPlatform, analyticsType),
@@ -68,9 +62,6 @@ const trackAnalyticsEvent = async options => {
       globalAppEvent: eventNameInfo.globalAppEvent,
       data: {
         ...data,
-        ...(!serverLocationData
-          ? []
-          : { serverLocationData: serverLocationData }),
       },
       userDetails: buildNewUserData(data, includeUserKeys),
       consoleLogData,
