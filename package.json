@@ -1,0 +1,79 @@
+{
+  "name": "react-marketing-tools",
+  "version": "0.0.0",
+  "description": "",
+  "license": "MIT",
+  "author": "bronz3beard <exempli.gratia.webdesign@gmail.com> (https://www.eg-web-design.com/)",
+  "homepage": "",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "javascript",
+    "react",
+    "marketing",
+    "tools",
+    "marketing tools",
+    "analytics",
+    "google",
+    "facebook",
+    "GA4",
+    "pixel",
+    "dataLayer"
+  ],
+  "main": "./dist/react-marketing-tools.umd.js",
+  "module": "./dist/react-marketing-tools.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/react-marketing-tools.es.js",
+      "require": "./dist/react-marketing-tools.umd.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "node": true,
+      "es2020": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:react/recommended"
+    ],
+    "parserOptions": {
+      "sourceType": "module"
+    }
+  },
+  "dependencies": {
+    "device-detector-js": "^3.0.3",
+    "prop-types": "^15.8.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.15",
+    "@types/react-dom": "^18.0.6",
+    "@vitejs/plugin-react": "^2.0.0",
+    "eslint": "^8.21.0",
+    "eslint-plugin-react": "^7.30.1",
+    "prettier": "^2.7.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "vite": "^3.0.0"
+  }
+}
