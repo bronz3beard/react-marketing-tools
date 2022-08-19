@@ -8,7 +8,11 @@ React Marketing Tools are a set of tools to make it easier to implement and mana
 # PR's
 - Have a look at the [PR template doc](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs) for best approach to getting your pr merged.
 
-# Usage with Provider
+# Usage and setup examples.
+
+
+### Setup configuration
+- Setting up config without provider is also an option, in this case you will only need to import _buildConfig_
 ```js
     import React from 'react'
     import ReactDOM from 'react-dom/client'
@@ -16,36 +20,40 @@ React Marketing Tools are a set of tools to make it easier to implement and mana
     import App from './App'
 
     /*
-        const TOKENS = { // all TOKENS are optional
-            IP_INFO_TOKEN: 'SOME_TOKEN', // if withDeviceInfo is true you must supply this token.
+        TOKENS are optional
+        const TOKENS = {
+
+            // if withDeviceInfo is true you must supply this token.
+            IP_INFO_TOKEN: 'SOME_TOKEN',
+
             // if analyticsType = analyticsPlatform.GOOGLE the below tokens must be supplied.
             GA4_PUBLIC_API_SECRET: 'SOME_TOKEN',
             PUBLIC_MEASUREMENT_ID: 'SOME_TOKEN',
         }
     */
 
-    // These are the keys for the values you want to include in your user data
-    // these must be included for any user data to be collected by analytics
+    // These are the keys for the values you want to include from your user data
+    // these must be included for any user data to be collected by analytics event if user data is hardcoded when passed in.
     const includeUserKeys = [
         'firstName',
         'lastName',
     ]
 
     const analyticsConfig = { 
-        appName: 'my-awesome-app',
-        eventActionPrefix: {
+        appName: 'my-awesome-app', // required
+        eventActionPrefix: { // this will extend the default values of eventActionPrefix 
             ACTION: 'ACTION',
             OTHER_EVENT_NAME_TYPE: 'OTHER_EVENT_NAME_TYPE'
-        }, // this will extend the default values of eventActionPrefix 
-        globalEventActionList: {
+        },
+        globalEventActionList: { // this will extend the default values of globalEventActionList 
             SIGN_IN: 'SIGN_IN',
             SIGN_UP: 'SIGN_UP',
             IMPORTANT_BUTTON_CLICKED: 'IMPORTANT_BUTTON_CLICKED'
-        }, // this will extend the default values of globalEventActionList 
-        // TOKENS, 
+        },
+        // TOKENS // (optional), 
         includeUserKeys, 
-        withDeviceInfo: true, // has default value
-        withServerLocationInfo: false, // has default value
+        withDeviceInfo: true, // (optional) has default value
+        withServerLocationInfo: false, // (optional) has default value
     }
 
     buildConfig(analyticsConfig)
@@ -53,15 +61,16 @@ React Marketing Tools are a set of tools to make it easier to implement and mana
     ReactDOM.createRoot(document.getElementById('root')).render(
         <React.StrictMode>
             <ReactMarketingProvider>
-            <App />
+                <App />
             </ReactMarketingProvider>
         </React.StrictMode>
     )
 
 ```
 
+## Usage with Provider
 ```js
-    import { useState, useEffect, useCallback } from 'react'
+    import { useState, useEffect } from 'react'
     import { ContextApi, ContextState, useMarketingApi, useMarketingState } from 'react-marketing-tools'
 
     function App() {
@@ -121,46 +130,59 @@ React Marketing Tools are a set of tools to make it easier to implement and mana
                 }
             })
         }
+        ...
 
         return (
-            <div>
-                <div>
-                    <button onClick={handleButtonClick}>
-                        count is {count}
-                    </button>
-                </div>
-            </div>
+            ...
         )
     }
 
-    export default App
-
 ```
 
-Usage without Provider
-
+## Usage without Provider
 ```js
+    import { useState, useEffect, useCallback } from 'react'
     import { trackAnalyticsEvent, analyticsPlatform } from "react-marketing-tools";
 
     const WelcomePage = () => {
         useEffect(function appLoadPageLandingWelcome() {
+            const eventNameInfo = {
+                actionPrefix: eventActionPrefixList.JOURNEY,
+                description: 'Welcome Landing',
+                globalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED,
+            }
+
             trackAnalyticsEvent({
-                data,
+                data: {},
                 eventNameInfo,
                 analyticsType: analyticsPlatform.DATALAYER_PUSH,
                 dataLayerCheck: true,
             })
-        }, [])
+        })
 
+        const handleButtonClick = () => {
+            setCount((count) => count + 1)
 
-        const onClick = () => {
+            const eventNameInfo = {
+                eventName: 'count button click',
+                actionPrefix: eventActionPrefixList.INTERACTION,
+                globalAppEvent: analyticsGlobalEventActionList.AUTHENTICATED,
+                previousGlobalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED
+            }
+
             trackAnalyticsEvent({
-                data,
+                data: {
+                    count,
+                    firstName: 'bob',
+                    lastName: 'yeah nah',
+                    email: 'yeahnah@gmail.com',
+                },
                 eventNameInfo,
                 analyticsType: analyticsPlatform.DATALAYER_PUSH,
-                userDataToHashKeyArray: ['firstName', 'lastName', 'email'],
+                consoleLogData: {
+                    showJourneyPropsPayload: true
+                }
             })
-
         }
         ...
 

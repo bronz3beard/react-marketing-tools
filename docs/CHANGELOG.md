@@ -11,9 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
-## [0.0.1] - 13-08-2022
+## [0.0.0] - 19-08-2022
 __Added__
 - README
 - CHANGELOG
 - pull_request_template
 - codebase untested
+
+## [0.0.1] - 19-08-2022
+__Changed__
+- README
