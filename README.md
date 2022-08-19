@@ -1,15 +1,18 @@
 
-# React Marketing Tools &nbsp; [![npm version](https://badge.fury.io/js/.svg)](https://badge.fury.io/js/)
+# React Marketing Tools &nbsp; [![npm version](https://badge.fury.io/js/react-marketing-tools.svg)](https://badge.fury.io/js/react-marketing-tools)
 
-[React Marketing Tools Demo](https://)
+COMING SOON: [React Marketing Tools Demo](https://)
+- For now you can clone and run locally. There is a very basic demo app, thanks to [Vite.](https://vitejs.dev/)
 
-React Marketing Tools are a set of tools to make it easier to implement and manage analytics in your App like dataLayer/Google Tag Manager, GA4 & facebook pixel.
+React Marketing Tools are a set of tools to make it easier for you to implement analytics and track user journeys, interactions throughout your App. using dataLayer/Google Tag Manager, GA4 fetch directly or coming soon facebook pixel.
 
 # PR's
 - Have a look at the [PR template doc](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs) for best approach to getting your pr merged.
 
-# Usage and setup examples.
+# CHANGELOG
+- You can view it [here](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/CHANGELOG.md)
 
+# Usage and setup examples.
 
 ### Setup configuration
 - Setting up config without provider is also an option, in this case you will only need to import _buildConfig_
