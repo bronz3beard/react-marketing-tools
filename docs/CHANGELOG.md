@@ -24,7 +24,7 @@ __Changed__
 
 ## [0.0.4] - 20-08-2022
 __Fixed__ 
-- serverLocationData bug
+- serverLocationData bug duplicate entries in payload
 __Changed__
 - README
 __Added__
