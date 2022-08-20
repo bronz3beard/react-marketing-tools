@@ -35,9 +35,9 @@ const handleDataLayerPush = async options => {
       ...(!device
         ? []
         : {
-            deviceCategory: device.device?.type, // "desktop"
-            deviceOS: `${device.os?.name}_${device.os?.version}`, // "Mac"
-            deviceBrowser: device.client?.name, // "Firefox"
+            device_category: device.device?.type, // "desktop"
+            device_os: `${device.os?.name}_${device.os?.version}`, // "Mac"
+            device_browser: device.client?.name, // "Firefox"
           }),
     },
     userProps: {
