@@ -15,14 +15,14 @@ export const buildServerLocationData = async withServerLocationInfo => {
     )
 
     const serverLocationData = {
-      CITY: ipInfo.city,
-      COUNTRY: ipInfo.country,
-      HOSTNAME: ipInfo.hostname,
-      IP: ipInfo.ip,
-      LOC: ipInfo.loc,
-      POSTAL: ipInfo.postal,
-      REGION: ipInfo.region,
-      TIMEZONE: ipInfo.timezone,
+      SERVER_CITY: ipInfo.city,
+      SERVER_COUNTRY: ipInfo.country,
+      SERVER_HOSTNAME: ipInfo.hostname,
+      SERVER_IP: ipInfo.ip,
+      SERVER_LOCATION: ipInfo.loc,
+      SERVER_POSTAL: ipInfo.postal,
+      SERVER_REGION: ipInfo.region,
+      SERVER_TIMEZONE: ipInfo.timezone,
     }
 
     return serverLocationData
