@@ -1,6 +1,10 @@
 import { config } from '../buildConfig'
 import { getCookieValueByName } from '../utilities/cookies'
-import { buildEventDataObject, deviceDetectorInfo } from './helpers'
+import {
+  buildEventDataObject,
+  defaultDataLayerEventCheck,
+  deviceDetectorInfo,
+} from './helpers'
 
 /**
  *
