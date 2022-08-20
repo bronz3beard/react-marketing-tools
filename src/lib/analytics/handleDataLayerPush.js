@@ -12,7 +12,7 @@ const handleDataLayerPush = async options => {
     data,
     eventName,
     globalAppEvent,
-    layerCheck,
+    dataLayerCheck,
     userDetails,
   } = options
   const { appName, appSessionCookieName, withDeviceInfo } = config
@@ -47,7 +47,7 @@ const handleDataLayerPush = async options => {
 
   _showPayloadInConsole({ dataLayerData, ...consoleLogData })
 
-  if (layerCheck) {
+  if (dataLayerCheck) {
     const dataLayerValueCheck = defaultDataLayerEventCheck(eventName)
 
     if (!dataLayerValueCheck) {

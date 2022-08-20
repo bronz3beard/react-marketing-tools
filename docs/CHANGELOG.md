@@ -30,3 +30,4 @@ __Changed__
 - README
 __Added__
 - appSessionCookieName and appName to useMarketingState Context 
+
