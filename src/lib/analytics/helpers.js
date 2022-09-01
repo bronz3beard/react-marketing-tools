@@ -46,12 +46,12 @@ export const buildNewUserData = (user, includeUserKeys) => {
   if (objectHasAttributes(user)) {
     if (includeUserKeys?.length > 0) {
       includeUserKeys.forEach(item => {
-        // if (includeUserKeys.some(key => key === item)) {
-        if (user[item]) {
-          userObject[item] = `${user[item]}`
+        if (user.hasOwnProperty(item)) {
+          userObject[item] = `${user[item] ?? ''}`
         } else {
-          console.error(
-            `analyticsEventService -> buildNewUserData: line 94 - The key:${item} does not exist on the data object`,
+          console.info(
+            `1. user data was not included in payload, 2. the key -> ${item} does not exist on the user data object or was not included in the "includeUserKeys" in your config.`,
+            user,
           )
         }
       })
