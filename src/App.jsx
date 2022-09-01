@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import {
   ContextApi,
   ContextState,
@@ -17,22 +17,27 @@ function App() {
   const { trackAnalyticsEvent } = useMarketingApi(ContextApi)
 
   useEffectOnce(function appLoadPageLandingWelcome() {
-    const eventNameInfo = {
-      actionPrefix: eventActionPrefixList.JOURNEY,
-      description: 'Welcome Landing',
-      globalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED,
+    const sendAnalyticsEvent = async () => {
+      const eventNameInfo = {
+        actionPrefix: eventActionPrefixList.JOURNEY,
+        description: 'Welcome Landing',
+        globalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED,
+      }
+
+      trackAnalyticsEvent({
+        data: {},
+        eventNameInfo,
+        analyticsType: analyticsPlatform.DATALAYER_PUSH,
+        dataLayerCheck: true,
+      })
     }
 
-    trackAnalyticsEvent({
-      data: {},
-      eventNameInfo,
-      analyticsType: analyticsPlatform.DATALAYER_PUSH,
-      dataLayerCheck: true,
-    })
+    sendAnalyticsEvent()
   })
 
-  const handleButtonClick = () => {
-    setCount(count => count + 1)
+  const handleButtonClick = useCallback(async () => {
+    const countActual = count + 1
+    setCount(countActual)
 
     const eventNameInfo = {
       eventName: 'count button click',
@@ -41,9 +46,9 @@ function App() {
       previousGlobalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED,
     }
 
-    trackAnalyticsEvent({
+    await trackAnalyticsEvent({
       data: {
-        count,
+        count: countActual,
         firstName: 'bob',
         lastName: 'yeah nah',
         email: 'yeahnah@gmail.com',
@@ -54,7 +59,7 @@ function App() {
         showJourneyPropsPayload: true,
       },
     })
-  }
+  }, [count])
 
   return (
     <div className="App">

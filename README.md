@@ -112,22 +112,27 @@ COMING SOON: [React Marketing Tools Demo](https://)
             // create session cookie, useful for unauthenticated user tracking and other things
             document.cookie = `${appSessionCookieName}=${uuid()};max-age=${70};SameSite=Strict;Secure`
 
-            const eventNameInfo = {
-                actionPrefix: eventActionPrefixList.JOURNEY,
-                description: 'Welcome Landing',
-                globalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED,
+            const sendAnalyticsEvent = async () => {
+                const eventNameInfo = {
+                    actionPrefix: eventActionPrefixList.JOURNEY,
+                    description: 'Welcome Landing',
+                    globalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED,
+                }
+
+                await trackAnalyticsEvent({
+                    data: {},
+                    eventNameInfo,
+                    analyticsType: analyticsPlatform.DATALAYER_PUSH,
+                    dataLayerCheck: true,
+                })
             }
 
-            trackAnalyticsEvent({
-                data: {},
-                eventNameInfo,
-                analyticsType: analyticsPlatform.DATALAYER_PUSH,
-                dataLayerCheck: true,
-            })
+            sendAnalyticsEvent()
         })
 
-        const handleButtonClick = () => {
-            setCount((count) => count + 1)
+        const handleButtonClick = async () => {
+            const countActual = count + 1
+            setCount(countActual)
 
             const eventNameInfo = {
                 eventName: 'count button click',
@@ -136,9 +141,9 @@ COMING SOON: [React Marketing Tools Demo](https://)
                 previousGlobalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED
             }
 
-            trackAnalyticsEvent({
+            await trackAnalyticsEvent({
                 data: {
-                    count,
+                    count: countActual,
                     firstName: 'bob',
                     lastName: 'yeah nah',
                     email: 'yeahnah@gmail.com',
@@ -150,6 +155,36 @@ COMING SOON: [React Marketing Tools Demo](https://)
                 }
             })
         }
+
+        /* Example: use GA4 directly 
+            const handleButtonClick = useCallback(async () => {
+                const countActual = count + 1
+
+                setCount(countActual)
+
+                const eventNameInfo = {
+                eventName: 'count button click',
+                actionPrefix: eventActionPrefixList.INTERACTION,
+                globalAppEvent: analyticsGlobalEventActionList.AUTHENTICATED,
+                previousGlobalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED,
+                }
+
+                await trackAnalyticsEvent({
+                data: {
+                    count: countActual,
+                    firstName: 'bob',
+                    lastName: 'yeah nah',
+                    email: 'yeahnah@gmail.com',
+                },
+                eventNameInfo,
+                analyticsType: analyticsPlatform.GOOGLE,
+                userDataToHashKeyArray: ['email', 'firstName', 'lastName'],
+                consoleLogData: {
+                    showJourneyPropsPayload: true,
+                },
+                })
+            }, [count])
+        */
         ...
 
         return (
@@ -166,22 +201,27 @@ COMING SOON: [React Marketing Tools Demo](https://)
 
     const WelcomePage = () => {
         useEffect(function appLoadPageLandingWelcome() {
-            const eventNameInfo = {
-                actionPrefix: eventActionPrefixList.JOURNEY,
-                description: 'Welcome Landing',
-                globalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED,
+            const sendAnalyticsEvent = async () => {
+                const eventNameInfo = {
+                    actionPrefix: eventActionPrefixList.JOURNEY,
+                    description: 'Welcome Landing',
+                    globalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED,
+                }
+
+                trackAnalyticsEvent({
+                    data: {},
+                    eventNameInfo,
+                    analyticsType: analyticsPlatform.DATALAYER_PUSH,
+                    dataLayerCheck: true,
+                })
             }
 
-            trackAnalyticsEvent({
-                data: {},
-                eventNameInfo,
-                analyticsType: analyticsPlatform.DATALAYER_PUSH,
-                dataLayerCheck: true,
-            })
+            sendAnalyticsEvent()
         })
 
-        const handleButtonClick = () => {
-            setCount((count) => count + 1)
+        const handleButtonClick = async () => {
+            const countActual = count + 1
+            setCount(countActual)
 
             const eventNameInfo = {
                 eventName: 'count button click',
@@ -190,9 +230,9 @@ COMING SOON: [React Marketing Tools Demo](https://)
                 previousGlobalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED
             }
 
-            trackAnalyticsEvent({
+            await trackAnalyticsEvent({
                 data: {
-                    count,
+                    count: countActual,
                     firstName: 'bob',
                     lastName: 'yeah nah',
                     email: 'yeahnah@gmail.com',

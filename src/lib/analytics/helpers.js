@@ -44,8 +44,9 @@ export const buildNewUserData = (user, includeUserKeys) => {
   const userObject = {}
 
   if (objectHasAttributes(user)) {
-    if (includeUserKeys.length > 0) {
+    if (includeUserKeys?.length > 0) {
       includeUserKeys.forEach(item => {
+        // if (includeUserKeys.some(key => key === item)) {
         if (user[item]) {
           userObject[item] = `${user[item]}`
         } else {

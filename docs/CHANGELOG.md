@@ -31,3 +31,9 @@ __Changed__
 __Added__
 - appSessionCookieName and appName to useMarketingState Context 
 
+## [0.0.9] - 01-09-2022
+__Changed__
+- user object attribute check for buildNewUserData
+- README
+__Fixed__
+- TOKENS assertion for GA4

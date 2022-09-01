@@ -71,6 +71,11 @@ const trackAnalyticsEvent = async options => {
   if (analyticsType === analyticsPlatform.GOOGLE) {
     let userDetails = {}
 
+    assertIsTrue(
+      userDataToHashKeyArray,
+      'User data must be hashed before sending to GA4, any user data that is considered "Identifiable"',
+    )
+
     if (objectHasAttributes(buildNewUserData(data, includeUserKeys))) {
       userDetails = await hashUserData(
         buildNewUserData(data, includeUserKeys),

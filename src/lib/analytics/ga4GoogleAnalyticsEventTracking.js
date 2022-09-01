@@ -14,7 +14,7 @@ const ga4GoogleAnalyticsEventTracking = async options => {
   const { appSessionCookieName, TOKENS } = { ...config }
 
   assertIsTrue(
-    TOKENS && !objectHasAttributes(TOKENS),
+    TOKENS && objectHasAttributes(TOKENS),
     'TOKENS in config must contain GA4_PUBLIC_API_SECRET and GA4_PUBLIC_MEASUREMENT_ID key: value if you want to use ga4GoogleAnalyticsEventTracking',
   )
 
