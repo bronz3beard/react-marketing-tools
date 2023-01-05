@@ -82,6 +82,7 @@ const buildConfig = options => {
     eventActionPrefix,
     globalEventActionList,
     includeUserKeys,
+    showMissingUserAttributesInConsole,
     TOKENS,
     withDeviceInfo = false,
     withServerLocationInfo = false,
@@ -95,6 +96,7 @@ const buildConfig = options => {
     appSessionCookieName,
     withDeviceInfo,
     includeUserKeys,
+    showMissingUserAttributesInConsole,
     withServerLocationInfo,
     eventActionPrefixList: {
       ...analyticsEventActionPrefixList,

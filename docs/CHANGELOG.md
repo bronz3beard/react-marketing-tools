@@ -37,3 +37,9 @@ __Changed__
 - README
 __Fixed__
 - TOKENS assertion for GA4
+
+## [0.0.9] - 01-09-2022
+__Added__
+- boolean check for user object attribute on buildNewUserData function
+__Changed__
+- README

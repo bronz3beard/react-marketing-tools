@@ -32,6 +32,7 @@ const analyticsConfig = {
     IMPORTANT_BUTTON_CLICKED: 'IMPORTANT_BUTTON_CLICKED',
   }, // this will extend the default values of globalEventActionList
   includeUserKeys,
+  showMissingUserAttributesInConsole: false, // showMissingUserAttributesInConsole,
   // TOKENS,
   withDeviceInfo: true,
   withServerLocationInfo: false,

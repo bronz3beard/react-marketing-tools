@@ -35,7 +35,7 @@ const trackAnalyticsEvent = async options => {
     dataLayerCheck = false,
     consoleLogData = null,
   } = options
-  const { includeUserKeys } = config
+  const { includeUserKeys, showMissingUserAttributesInConsole } = config
 
   assertIsTrue(
     objectHasAttributes(analyticsPlatform, analyticsType),
@@ -63,7 +63,11 @@ const trackAnalyticsEvent = async options => {
       data: {
         ...data,
       },
-      userDetails: buildNewUserData(data, includeUserKeys),
+      userDetails: buildNewUserData(
+        data,
+        includeUserKeys,
+        showMissingUserAttributesInConsole,
+      ),
       consoleLogData,
     })
   }
@@ -76,9 +80,21 @@ const trackAnalyticsEvent = async options => {
       'User data must be hashed before sending to GA4, any user data that is considered "Identifiable"',
     )
 
-    if (objectHasAttributes(buildNewUserData(data, includeUserKeys))) {
+    if (
+      objectHasAttributes(
+        buildNewUserData(
+          data,
+          includeUserKeys,
+          showMissingUserAttributesInConsole,
+        ),
+      )
+    ) {
       userDetails = await hashUserData(
-        buildNewUserData(data, includeUserKeys),
+        buildNewUserData(
+          data,
+          includeUserKeys,
+          showMissingUserAttributesInConsole,
+        ),
         userDataToHashKeyArray,
       )
     }

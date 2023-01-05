@@ -49,7 +49,7 @@ function App() {
     await trackAnalyticsEvent({
       data: {
         count: countActual,
-        firstName: 'bob',
+        // firstName: 'bob',
         lastName: 'yeah nah',
         email: 'yeahnah@gmail.com',
       },
@@ -60,6 +60,7 @@ function App() {
       },
     })
   }, [count])
+
 
   return (
     <div className="App">

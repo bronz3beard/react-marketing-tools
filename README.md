@@ -56,7 +56,8 @@ COMING SOON: [React Marketing Tools Demo](https://)
             IMPORTANT_BUTTON_CLICKED: 'IMPORTANT_BUTTON_CLICKED'
         },
         // TOKENS // (optional), 
-        includeUserKeys, 
+        includeUserKeys,
+        showMissingUserAttributesInConsole: false, // a boolean condition to show or hide "user" attributes that are not included in the "includeUserKeys" array, by console logging in dev tools.
         withDeviceInfo: true, // (optional) has default value
         withServerLocationInfo: false, // (optional) has default value
     }
@@ -68,6 +69,7 @@ COMING SOON: [React Marketing Tools Demo](https://)
         * @property {Object} eventActionPrefix: is a { key: 'value' } object that allows you to extend "analyticsEventActionPrefixList" object with custom eventActionPrefix. To see the build in list call the function showMeBuildInEventActionPrefixList().
         * @property {Array} globalEventActionList: is a { key: 'value' } object that allows you to extend "analyticsGlobalEventActionList" object with custom eventActionNames. To see the build in list call the function showMeBuildInGlobalEventActionList().
         * @property {Array} includeUserKeys: is an array of strings that represent keys from your user data that you want to whitelist, user data you wan to hash.
+        * @property {Boolean} showMissingUserAttributesInConsole a boolean condition to show or hide "user" attributes that are not included in the "includeUserKeys" array, by console logging in dev tools.
         * @property {Object} TOKENS: is a { key: 'value' } object that includes the following keys, IP_INFO_TOKEN, GA4_PUBLIC_API_SECRET, GA4_PUBLIC_MEASUREMENT_ID, depending on if you need these features enabled.
         * @property {Boolean} withDeviceInfo: if you want device information added to "globalVars" set this to true false by default.
         * @property {Boolean} withServerLocationInfo: if you want server information added to "journeyProps" set this to true false by default.

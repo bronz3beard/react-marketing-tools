@@ -38,9 +38,14 @@ export const hashUserData = async (user, includeUserKeys) => {
  *
  * @param {object} user the structure of this data is dictated by you, aka your API or DB.
  * @param {[string]} includeUserKeys is an array of strings that represent keys from your user data that you want to map over, if no keys are supplied the original passed in user data is returned.
+ * @param {boolean} showMissingUserAttributesInConsole a boolean condition to show or hide "user" attributes that are not included in the "includeUserKeys" array, by console logging in dev tools.
  * @returns If no "includeUserKeys" are supplied the original ser object is returned, otherwise, a new user object with only the key value pairs that you included in your includeUserKeys array is returned.
  */
-export const buildNewUserData = (user, includeUserKeys) => {
+export const buildNewUserData = (
+  user,
+  includeUserKeys,
+  showMissingUserAttributesInConsole,
+) => {
   const userObject = {}
 
   if (objectHasAttributes(user)) {
@@ -49,10 +54,12 @@ export const buildNewUserData = (user, includeUserKeys) => {
         if (user.hasOwnProperty(item)) {
           userObject[item] = `${user[item] ?? ''}`
         } else {
-          console.info(
-            `1. user data was not included in payload, 2. the key -> ${item} does not exist on the user data object or was not included in the "includeUserKeys" in your config.`,
-            user,
-          )
+          if (showMissingUserAttributesInConsole) {
+            console.info(
+              `1. user data was not included in payload, 2. the key -> ${item} does not exist on the user data object or was not included in the "includeUserKeys" in your config.`,
+              user,
+            )
+          }
         }
       })
     }
