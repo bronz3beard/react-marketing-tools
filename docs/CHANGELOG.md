@@ -44,8 +44,12 @@ __Added__
 __Changed__
 - README
 
-## [0.1.3] - 06-01-2023
+## [0.2.0] - 06-01-2023
 __Added__
 - typescript
 __Change__
 - jsDocs
+
+## [0.2.6] - 07-01-2023
+__Change__
+- README

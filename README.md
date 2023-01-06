@@ -20,13 +20,17 @@ COMING SOON: [React Marketing Tools Demo](https://)
 ```js
     import React from 'react'
     import ReactDOM from 'react-dom/client'
-    import { ReactMarketingProvider, buildConfig } from 'react-marketing-tools';
-    import { BuildConfigOptions } from './lib/types'
+    import {
+        ReactMarketingProvider,
+        buildConfig,
+        BuildConfigOptions,
+        Tokens,
+    } from 'react-marketing-tools'
     import App from './App'
 
     /*
         TOKENS are optional
-        const TOKENS = {
+        const TOKENS: Tokens = {
 
             // if withDeviceInfo is true you must supply this token.
             IP_INFO_TOKEN: 'SOME_TOKEN',
@@ -90,13 +94,14 @@ COMING SOON: [React Marketing Tools Demo](https://)
 ## Usage with Provider
 ```js
     import { useState, useEffect, useCallback, useRef } from 'react'
-    import { useMarketingApi, useMarketingState } from './lib'
     import {
+        useMarketingApi,
+        useMarketingState,
         EventNameInfo,
+        TrackAnalyticsEventOptions,
         ProviderApiProps,
         ProviderStateProps,
-        TrackAnalyticsEventOptions,
-    } from './types'
+    } from 'react-marketing-tools'
 
     function App() {
         const [count, setCount] = useState(0)
