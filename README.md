@@ -32,7 +32,7 @@ COMING SOON: [React Marketing Tools Demo](https://)
 
             // if analyticsType = analyticsPlatform.GOOGLE the below tokens must be supplied.
             GA4_PUBLIC_API_SECRET: 'SOME_TOKEN',
-            PUBLIC_MEASUREMENT_ID: 'SOME_TOKEN',
+            GA4_PUBLIC_MEASUREMENT_ID: 'SOME_TOKEN',
         }
     */
 
@@ -67,7 +67,7 @@ COMING SOON: [React Marketing Tools Demo](https://)
         * @property {string} appName: the name of your app this value must be passed in.
         * @property {string} appSessionCookieName This is used to get the cookie from storage based on a key you use, the value from the cookie will be used in "client_id:"
         * @property {Object} eventActionPrefix: is a { key: 'value' } object that allows you to extend "analyticsEventActionPrefixList" object with custom eventActionPrefix. To see the build in list call the function showMeBuildInEventActionPrefixList().
-        * @property {Array} globalEventActionList: is a { key: 'value' } object that allows you to extend "analyticsGlobalEventActionList" object with custom eventActionNames. To see the build in list call the function showMeBuildInGlobalEventActionList().
+        * @property {Object} globalEventActionList: is a { key: 'value' } object that allows you to extend "analyticsGlobalEventActionList" object with custom eventActionNames. To see the build in list call the function showMeBuildInGlobalEventActionList().
         * @property {Array} includeUserKeys: is an array of strings that represent keys from your user data that you want to whitelist, user data you wan to hash.
         * @property {Boolean} showMissingUserAttributesInConsole a boolean condition to show or hide "user" attributes that are not included in the "includeUserKeys" array, by console logging in dev tools.
         * @property {Object} TOKENS: is a { key: 'value' } object that includes the following keys, IP_INFO_TOKEN, GA4_PUBLIC_API_SECRET, GA4_PUBLIC_MEASUREMENT_ID, depending on if you need these features enabled.

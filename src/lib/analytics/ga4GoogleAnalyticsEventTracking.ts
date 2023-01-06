@@ -2,23 +2,48 @@ import { config } from '../buildConfig'
 import { assertIsTrue } from '../utilities/assertValueCheckers'
 import { objectHasAttributes } from '../utilities/commonFunctions'
 import { getCookieValueByName } from '../utilities/cookies'
+import { AllowedTypes } from './analyticsEventService'
 import { buildEventDataObject } from './helpers'
+import { Ga4GoogleAnalyticsEventTracking } from './types'
 
-/**
- *
- * @param {object} options
- */
-const ga4GoogleAnalyticsEventTracking = async options => {
+type Event = {
+  name: string
+  params: Record<AllowedTypes, AllowedTypes>
+}
+
+type GooglePayload = {
+  non_personalized_ads: boolean
+  client_id: string
+  user_id: string
+  user_properties: {
+    user_id: string
+    user_type: string
+    client_id: string
+  }
+  events: Event[]
+}
+
+const ga4GoogleAnalyticsEventTracking = async (
+  options: Ga4GoogleAnalyticsEventTracking,
+) => {
   const { consoleLogData, data, eventName, globalAppEvent, userDetails } =
     options
   const { appSessionCookieName, TOKENS } = { ...config }
 
   assertIsTrue(
-    TOKENS && objectHasAttributes(TOKENS),
+    !!TOKENS,
     'TOKENS in config must contain GA4_PUBLIC_API_SECRET and GA4_PUBLIC_MEASUREMENT_ID key: value if you want to use ga4GoogleAnalyticsEventTracking',
   )
+  assertIsTrue(
+    objectHasAttributes(TOKENS!, 'GA4_PUBLIC_API_SECRET'),
+    'GA4_PUBLIC_API_SECRET not supplied in config',
+  )
+  assertIsTrue(
+    objectHasAttributes(TOKENS!, 'GA4_PUBLIC_MEASUREMENT_ID'),
+    'GA4_PUBLIC_MEASUREMENT_ID not supplied in config',
+  )
 
-  const { GA4_PUBLIC_API_SECRET, GA4_PUBLIC_MEASUREMENT_ID } = TOKENS
+  const { GA4_PUBLIC_API_SECRET, GA4_PUBLIC_MEASUREMENT_ID } = { ...TOKENS }
   // build data append extra values if available
   const googleData = await buildEventDataObject(data, globalAppEvent)
 
@@ -38,14 +63,14 @@ const ga4GoogleAnalyticsEventTracking = async options => {
     // phone: userDetails.phone, needs to be hashed
   */
 
-  const googleDataPayload = {
+  const googleDataPayload: GooglePayload = {
     non_personalized_ads: false,
-    client_id: getCookieValueByName(appSessionCookieName),
+    client_id: getCookieValueByName(appSessionCookieName) ?? '',
     user_id: `${userDetails?.id ?? ''}`,
     user_properties: {
       user_id: `${userDetails?.id ?? ''}`,
-      user_type: data.totalListingForSale > 0 ? 'SELLER' : 'BUYER',
-      client_id: getCookieValueByName(appSessionCookieName),
+      user_type: `${userDetails.userType}`,
+      client_id: getCookieValueByName(appSessionCookieName) ?? '',
     },
     events: [
       {
@@ -68,11 +93,13 @@ const ga4GoogleAnalyticsEventTracking = async options => {
 
 export default ga4GoogleAnalyticsEventTracking
 
-/**
- *
- * @param {object} options
- */
-const _showPayloadInConsole = options => {
+type ShowPayloadInConsole = {
+  googleDataPayload: GooglePayload
+  showJourneyPropsPayload?: boolean
+  showUserProps?: boolean
+}
+
+const _showPayloadInConsole = (options: ShowPayloadInConsole) => {
   const { googleDataPayload, showJourneyPropsPayload, showUserProps } = options
 
   if (showUserProps) {

@@ -3,13 +3,14 @@ import ReactDOM from 'react-dom/client'
 import { ReactMarketingProvider, buildConfig } from './lib'
 import App from './App'
 import './index.css'
+import { BuildConfigOptions } from './lib/buildConfig'
 
 /* Example of how tokens could be added to config.
   const TOKENS = { // all TOKENS are optional
     IP_INFO_TOKEN: 'SOME_TOKEN', // if withDeviceInfo is true you must supply this token.
     // if analyticsType = analyticsPlatform.GOOGLE the below tokens must be supplied.
     GA4_PUBLIC_API_SECRET: 'SOME_TOKEN',
-    PUBLIC_MEASUREMENT_ID: 'SOME_TOKEN',
+    GA4_PUBLIC_MEASUREMENT_ID: 'SOME_TOKEN',
   }
 */
 
@@ -19,7 +20,7 @@ import './index.css'
 */
 const includeUserKeys = ['email', 'firstName', 'lastName']
 
-const analyticsConfig = {
+const analyticsConfig: BuildConfigOptions = {
   appName: 'my-awesome-app',
   appSessionCookieName: 'APP_SESSION',
   eventActionPrefix: {
@@ -40,7 +41,9 @@ const analyticsConfig = {
 
 buildConfig(analyticsConfig)
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
+
+root.render(
   <React.StrictMode>
     <ReactMarketingProvider>
       <App />

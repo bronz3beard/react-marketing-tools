@@ -5,12 +5,11 @@ import {
   defaultDataLayerEventCheck,
   deviceDetectorInfo,
 } from './helpers'
+import { DataLayer, HandleDataLayerPushOptions } from './types'
 
-/**
- *
- * @param {object} options
- */
-const handleDataLayerPush = async options => {
+const handleDataLayerPush = async (
+  options: HandleDataLayerPushOptions,
+): Promise<void> => {
   const {
     consoleLogData,
     data,
@@ -55,10 +54,10 @@ const handleDataLayerPush = async options => {
     const dataLayerValueCheck = defaultDataLayerEventCheck(eventName)
 
     if (!dataLayerValueCheck) {
-      window.dataLayer.push(dataLayerData)
+      ;(window as any).dataLayer.push(dataLayerData)
     }
   } else {
-    window.dataLayer.push(dataLayerData)
+    ;(window as any).dataLayer.push(dataLayerData)
   }
 }
 
@@ -68,7 +67,14 @@ export default handleDataLayerPush
  *
  * @param {object} options
  */
-const _showPayloadInConsole = options => {
+type ShowPayloadInConsoleOptions = {
+  dataLayerData: DataLayer
+  showGlobalVars?: boolean
+  showJourneyPropsPayload?: boolean
+  showUserProps?: boolean
+}
+
+const _showPayloadInConsole = (options: ShowPayloadInConsoleOptions): void => {
   const {
     dataLayerData,
     showGlobalVars,

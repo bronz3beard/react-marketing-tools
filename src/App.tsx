@@ -1,10 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import {
-  ContextApi,
-  ContextState,
-  useMarketingApi,
-  useMarketingState,
-} from './lib'
+import { useMarketingApi, useMarketingState } from './lib'
 import './App.css'
 
 function App() {
@@ -13,14 +8,14 @@ function App() {
     analyticsPlatform,
     eventActionPrefixList,
     analyticsGlobalEventActionList,
-  } = useMarketingState(ContextState)
-  const { trackAnalyticsEvent } = useMarketingApi(ContextApi)
+  } = useMarketingState()
+  const { trackAnalyticsEvent } = useMarketingApi()
 
   useEffectOnce(function appLoadPageLandingWelcome() {
     const sendAnalyticsEvent = async () => {
       const eventNameInfo = {
+        eventName: 'Welcome Landing',
         actionPrefix: eventActionPrefixList.JOURNEY,
-        description: 'Welcome Landing',
         globalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED,
       }
 
@@ -29,6 +24,7 @@ function App() {
         eventNameInfo,
         analyticsType: analyticsPlatform.DATALAYER_PUSH,
         dataLayerCheck: true,
+        userDataToHashKeyArray: null,
       })
     }
 
@@ -58,9 +54,10 @@ function App() {
       consoleLogData: {
         showJourneyPropsPayload: true,
       },
+      dataLayerCheck: false,
+      userDataToHashKeyArray: null,
     })
   }, [count])
-
 
   return (
     <div className="App">
@@ -82,7 +79,7 @@ function App() {
 
 export default App
 
-const useEffectOnce = effect => {
+const useEffectOnce = (effect: () => void) => {
   const hasRun = useRef(false)
 
   useEffect(() => {

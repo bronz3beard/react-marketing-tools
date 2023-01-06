@@ -7,6 +7,8 @@ import { buildServerLocationData } from '../ipInfo'
 import DeviceDetector from 'device-detector-js'
 import { config } from '../buildConfig'
 import { assertIsTrue } from '../utilities/assertValueCheckers'
+import { AllowedTypes, EventNameInfo } from './analyticsEventService'
+import { DataLayer } from './types'
 
 /**
  *
@@ -14,10 +16,13 @@ import { assertIsTrue } from '../utilities/assertValueCheckers'
  * @param {[string]} includeUserKeys is an array of strings that represent keys from your user data that you want to whitelist, the value for each key in the whitelist will be hashed.
  * @returns a new user object with all values hashed including only the whitelisted key value pairs
  */
-export const hashUserData = async (user, includeUserKeys) => {
+export const hashUserData = async (
+  user: Record<AllowedTypes, AllowedTypes>,
+  includeUserKeys: Array<string>,
+) => {
   // this is a whitelist of keys to hash
   const userKeyIncludeList = [...includeUserKeys]
-  const userObject = {}
+  const userObject: Record<AllowedTypes, AllowedTypes> = {}
 
   assertIsTrue(
     objectHasAttributes(user),
@@ -26,7 +31,9 @@ export const hashUserData = async (user, includeUserKeys) => {
 
   for (let key in user) {
     if (userKeyIncludeList.includes(key)) {
-      const dataValue = await hashString(user[key])
+      const value: string = user[key] as string
+
+      const dataValue = await hashString(value)
       userObject[key] = dataValue
     }
   }
@@ -42,11 +49,11 @@ export const hashUserData = async (user, includeUserKeys) => {
  * @returns If no "includeUserKeys" are supplied the original ser object is returned, otherwise, a new user object with only the key value pairs that you included in your includeUserKeys array is returned.
  */
 export const buildNewUserData = (
-  user,
-  includeUserKeys,
-  showMissingUserAttributesInConsole,
-) => {
-  const userObject = {}
+  user: Record<AllowedTypes, AllowedTypes>,
+  includeUserKeys: Array<string>,
+  showMissingUserAttributesInConsole: boolean | undefined,
+): Record<string, string> => {
+  const userObject: Record<string, string> = {}
 
   if (objectHasAttributes(user)) {
     if (includeUserKeys?.length > 0) {
@@ -91,7 +98,9 @@ export const buildNewUserData = (
  * @property {string} previousGlobalAppEvent an OPTIONAL value, the previous event name for this track event selected from the analyticsGlobalEventActionList.
  * @returns string eventName for this specific tracked event
  */
-export const buildAnalyticsEventName = eventNameInfo => {
+export const buildAnalyticsEventName = (
+  eventNameInfo: EventNameInfo,
+): string => {
   if (
     !objectHasAttributes(eventNameInfo, 'actionPrefix') &&
     !objectHasAttributes(eventNameInfo, 'globalAppEvent')
@@ -120,9 +129,13 @@ export const buildAnalyticsEventName = eventNameInfo => {
  * @param {string} globalAppEvent
  * @returns dataObject
  */
-export const buildEventDataObject = async (data, globalAppEvent) => {
+export const buildEventDataObject = async (
+  data: Record<AllowedTypes, AllowedTypes>,
+  globalAppEvent: string,
+): Promise<Record<AllowedTypes, AllowedTypes>> => {
   const timeElapsed = Date.now()
   const today = new Date(timeElapsed)
+  const HIT_TIMESTAMP: string = today.toISOString() as string
   const { withServerLocationInfo } = config
 
   const serverLocationData = await buildServerLocationData(
@@ -130,17 +143,18 @@ export const buildEventDataObject = async (data, globalAppEvent) => {
   )
 
   // this is data that is always sent in the payload
-  let actionDataObject = {
-    // TODO:: add default variable from user into this object maybe?
-    HIT_TIMESTAMP: today.toISOString(),
-    ...(!serverLocationData ? [] : serverLocationData),
-  }
+  let actionDataObject = !serverLocationData
+    ? {
+        // TODO:: add default variable from user into this object maybe?
+        HIT_TIMESTAMP,
+      }
+    : {
+        // TODO:: add default variable from user into this object maybe?
+        HIT_TIMESTAMP,
+        ...serverLocationData,
+      }
 
-  return await _appendValuesToJourneyData(
-    actionDataObject,
-    data,
-    globalAppEvent,
-  )
+  return _appendValuesToJourneyData(actionDataObject, data, globalAppEvent)
 }
 
 /**
@@ -148,18 +162,15 @@ export const buildEventDataObject = async (data, globalAppEvent) => {
  * @param {string} eventName
  * @returns a Boolean value, true if the event name is already in the dataLayer.
  */
-export const defaultDataLayerEventCheck = eventName => {
-  const dataLayerItem = window.dataLayer.find(item => item.event === eventName)
+export const defaultDataLayerEventCheck = (eventName: string) => {
+  const dataLayerItem = (window as any).dataLayer.find(
+    (item: DataLayer) => item.event === eventName,
+  )
 
   return !!dataLayerItem
 }
 
-/**
- *
- * @param {string} userAgent
- * @returns deviceInfo
- */
-export const deviceDetectorInfo = userAgent => {
+export const deviceDetectorInfo = (userAgent: string) => {
   // for more info on this package see here: https://www.npmjs.com/package/device-detector-js
   const deviceDetector = new DeviceDetector()
   const deviceInfo = deviceDetector.parse(userAgent)
@@ -171,12 +182,13 @@ export const deviceDetectorInfo = userAgent => {
 
 /**
  * check the currentSequence and/or previousSequence for the event exist in the analyticsGlobalEventActionList
- * @param {string} globalAppEvent
- * @param {string} previousGlobalAppEvent
  */
-const _checkEventSequence = (globalAppEvent, previousGlobalAppEvent = '') => {
+const _checkEventSequence = (
+  globalAppEvent: string,
+  previousGlobalAppEvent = '',
+) => {
   const { analyticsGlobalEventActionList } = config
-  let previousSequence = ''
+  let previousSequence: string | undefined = ''
 
   assertIsTrue(
     Object.values(analyticsGlobalEventActionList).includes(globalAppEvent),
@@ -209,22 +221,22 @@ const _checkEventSequence = (globalAppEvent, previousGlobalAppEvent = '') => {
  * @param {object} dataObject
  * @param {object} newData
  */
-const _addNewDetailsToJourneyData = (dataObject, newData) =>
-  Object.assign(dataObject, newData)
+const _addNewDetailsToJourneyData = (
+  dataObject: Record<AllowedTypes, AllowedTypes>,
+  newData: Record<AllowedTypes, AllowedTypes>,
+): Record<AllowedTypes, AllowedTypes> => Object.assign(dataObject, newData)
 
 /**
  * NOTE:: (Not finished) appendValuesToDefaultDataActionObject adds extra values to the default data object specific to the Journey, Interaction, Bubble.
- * @param {object} actionDataObject
- * @param {object} data
- * @param {string} globalAppEvent
  * @returns newActionDataObject
  */
+
 const _appendValuesToJourneyData = (
   // TODO:: this needs to be configurable and have new action data passed to it not created here
-  actionDataObject,
-  data,
-  globalAppEvent,
-) => {
+  actionDataObject: Record<AllowedTypes, AllowedTypes>,
+  data: Record<AllowedTypes, AllowedTypes>,
+  globalAppEvent: string,
+): Record<AllowedTypes, AllowedTypes> => {
   const { analyticsGlobalEventActionList, includeUserKeys } = config
   let newActionData = {}
 
@@ -239,10 +251,11 @@ const _appendValuesToJourneyData = (
       // but will only get mapped to analytics if tag manager or analytics platform is made away of a key value
       // maybe think about letting user pass in whitelist array per dataset/action
       Object.entries(data).map(([index, value]) => {
-        if (!includeUserKeys.includes(index)) {
+        const key: string = index as unknown as string
+        if (!includeUserKeys.includes(key)) {
           newActionData = {
             ...newActionData,
-            [index.toUpperCase()]: value,
+            [key.toUpperCase()]: value,
           }
         }
       })

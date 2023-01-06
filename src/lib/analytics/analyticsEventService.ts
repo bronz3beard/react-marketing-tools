@@ -22,11 +22,33 @@ import { assertIsTrue } from '../utilities/assertValueCheckers'
  * @property {object} data this is an object of any data you want to collect in analytics
  * @property {object} eventNameInfo
  * @property {string} analyticsType
- * @property {array | null} userDataToHashKeyArray default for this value is null, when used it should include an array of strings you wish to hash.
+ * @property {array | undefined} userDataToHashKeyArray default for this value is null, when used it should include an array of strings you wish to hash.
  * @property {boolean} dataLayerCheck
  * @property {object} consoleLogData (optional) is an object with the following attributes, "showGlobalVars", "showJourneyPropsPayload", "showUserProps" if any of the values are true you will be able to see the respective payload in your console.
  */
-const trackAnalyticsEvent = async options => {
+
+export type EventNameInfo = {
+  eventName: string
+  description?: string
+  actionPrefix: string
+  globalAppEvent: string
+  previousGlobalAppEvent?: string
+}
+
+export type AllowedTypes = string | number
+
+export type TrackAnalyticsEventOptions = {
+  data: Record<AllowedTypes, AllowedTypes>
+  eventNameInfo: EventNameInfo
+  analyticsType: string
+  userDataToHashKeyArray: Array<string> | null
+  dataLayerCheck: boolean
+  consoleLogData?: object
+}
+
+const trackAnalyticsEvent = async (
+  options: TrackAnalyticsEventOptions,
+): Promise<void> => {
   const {
     data,
     eventNameInfo,
@@ -76,7 +98,7 @@ const trackAnalyticsEvent = async options => {
     let userDetails = {}
 
     assertIsTrue(
-      userDataToHashKeyArray,
+      userDataToHashKeyArray !== null && userDataToHashKeyArray?.length > 0,
       'User data must be hashed before sending to GA4, any user data that is considered "Identifiable"',
     )
 
@@ -89,13 +111,15 @@ const trackAnalyticsEvent = async options => {
         ),
       )
     ) {
+      const hashList: Array<string> =
+        userDataToHashKeyArray as unknown as Array<string>
       userDetails = await hashUserData(
         buildNewUserData(
           data,
           includeUserKeys,
           showMissingUserAttributesInConsole,
         ),
-        userDataToHashKeyArray,
+        hashList,
       )
     }
 

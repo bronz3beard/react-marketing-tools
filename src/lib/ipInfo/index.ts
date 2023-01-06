@@ -1,11 +1,24 @@
 import { config } from '../buildConfig'
 import { assertIsTrue } from '../utilities/assertValueCheckers'
 
-export const buildServerLocationData = async withServerLocationInfo => {
+export type ServerLocationData = {
+  SERVER_CITY: string
+  SERVER_COUNTRY: string
+  SERVER_HOSTNAME: string
+  SERVER_IP: string
+  SERVER_LOCATION: string
+  SERVER_POSTAL: string
+  SERVER_REGION: string
+  SERVER_TIMEZONE: string
+}
+
+export const buildServerLocationData = async (
+  withServerLocationInfo: boolean | undefined,
+): Promise<ServerLocationData | undefined> => {
   const { TOKENS } = { ...config }
 
   assertIsTrue(
-    withServerLocationInfo ? TOKENS?.IP_INFO_TOKEN : true,
+    withServerLocationInfo ? !!TOKENS?.IP_INFO_TOKEN : true,
     'if you want serverLocationInfo your config must have the TOKEN.IP_INFO_TOKEN AND withServerLocationInfo must be true.',
   )
 
@@ -31,7 +44,19 @@ export const buildServerLocationData = async withServerLocationInfo => {
   return undefined
 }
 
-export const getIpInfo = IP_INFO_TOKEN =>
+export type IpInfo = {
+  city: string
+  country: string
+  SERVER_HOSTNAME: string
+  hostname: string
+  ip: string
+  loc: string
+  postal: string
+  region: string
+  timezone: string
+}
+
+export const getIpInfo = (IP_INFO_TOKEN: string): Promise<IpInfo> =>
   fetch(`https://ipinfo.io/110.174.218.10?token=${IP_INFO_TOKEN}`).then(
     response => response.json(),
   )
