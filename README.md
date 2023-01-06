@@ -89,7 +89,7 @@ COMING SOON: [React Marketing Tools Demo](https://)
 ## Usage with Provider
 ```js
     import { useState, useEffect } from 'react'
-    import { ContextApi, ContextState, useMarketingApi, useMarketingState } from 'react-marketing-tools'
+    import { useMarketingApi, useMarketingState } from 'react-marketing-tools'
 
     function App() {
         const [count, setCount] = useState(0)
@@ -98,7 +98,7 @@ COMING SOON: [React Marketing Tools Demo](https://)
             analyticsPlatform,
             eventActionPrefixList,
             analyticsGlobalEventActionList
-        } = useMarketingState(ContextState)
+        } = useMarketingState()
         const {
             trackAnalyticsEvent,
             /*
@@ -108,7 +108,7 @@ COMING SOON: [React Marketing Tools Demo](https://)
                 showMeBuildInEventActionPrefixList,
                 showMeBuildInGlobalEventActionList,
             */
-        } = useMarketingApi(ContextApi)
+        } = useMarketingApi()
 
         useEffect(function appLoadPageLandingWelcome() {
             // create session cookie, useful for unauthenticated user tracking and other things
