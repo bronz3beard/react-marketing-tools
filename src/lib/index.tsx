@@ -5,13 +5,10 @@ import {
   showMeBuildInAnalyticsPlatform,
   showMeBuildInEventActionPrefixList,
   showMeBuildInGlobalEventActionList,
-  Platform,
 } from './buildConfig'
-import {
-  trackAnalyticsEvent,
-  TrackAnalyticsEventOptions,
-} from './analytics/analyticsEventService'
+import { trackAnalyticsEvent } from './analytics/analyticsEventService'
 import { assertIsTrue } from './utilities/assertValueCheckers'
+import { Platform, TrackAnalyticsEventOptions } from './types'
 
 // for usage without the react context/provider aka use directly
 export { buildConfig, analyticsPlatform } from './buildConfig'

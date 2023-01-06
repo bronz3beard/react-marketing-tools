@@ -1,5 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { useMarketingApi, useMarketingState } from './lib'
+import {
+  ProviderApiProps,
+  ProviderStateProps,
+  useMarketingApi,
+  useMarketingState,
+} from './lib'
+import { EventNameInfo, TrackAnalyticsEventOptions } from './lib/types'
 import './App.css'
 
 function App() {
@@ -8,24 +14,26 @@ function App() {
     analyticsPlatform,
     eventActionPrefixList,
     analyticsGlobalEventActionList,
-  } = useMarketingState()
-  const { trackAnalyticsEvent } = useMarketingApi()
+  }: ProviderStateProps = useMarketingState()
+  const { trackAnalyticsEvent }: ProviderApiProps = useMarketingApi()
 
   useEffectOnce(function appLoadPageLandingWelcome() {
     const sendAnalyticsEvent = async () => {
-      const eventNameInfo = {
+      const eventNameInfo: EventNameInfo = {
         eventName: 'Welcome Landing',
         actionPrefix: eventActionPrefixList.JOURNEY,
         globalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED,
       }
 
-      trackAnalyticsEvent({
+      const trackingData: TrackAnalyticsEventOptions = {
         data: {},
         eventNameInfo,
         analyticsType: analyticsPlatform.DATALAYER_PUSH,
         dataLayerCheck: true,
         userDataToHashKeyArray: null,
-      })
+      }
+
+      await trackAnalyticsEvent(trackingData)
     }
 
     sendAnalyticsEvent()
@@ -35,14 +43,14 @@ function App() {
     const countActual = count + 1
     setCount(countActual)
 
-    const eventNameInfo = {
+    const eventNameInfo: EventNameInfo = {
       eventName: 'count button click',
       actionPrefix: eventActionPrefixList.INTERACTION,
       globalAppEvent: analyticsGlobalEventActionList.AUTHENTICATED,
       previousGlobalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED,
     }
 
-    await trackAnalyticsEvent({
+    const trackingData: TrackAnalyticsEventOptions = {
       data: {
         count: countActual,
         // firstName: 'bob',
@@ -56,7 +64,9 @@ function App() {
       },
       dataLayerCheck: false,
       userDataToHashKeyArray: null,
-    })
+    }
+
+    await trackAnalyticsEvent(trackingData)
   }, [count])
 
   return (

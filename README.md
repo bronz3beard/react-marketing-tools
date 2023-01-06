@@ -21,6 +21,7 @@ COMING SOON: [React Marketing Tools Demo](https://)
     import React from 'react'
     import ReactDOM from 'react-dom/client'
     import { ReactMarketingProvider, buildConfig } from 'react-marketing-tools';
+    import { BuildConfigOptions } from './lib/types'
     import App from './App'
 
     /*
@@ -43,7 +44,7 @@ COMING SOON: [React Marketing Tools Demo](https://)
         'lastName',
     ]
 
-    const analyticsConfig = { 
+    const analyticsConfig: BuildConfigOptions = {
         appName: 'my-awesome-app', // required
         appSessionCookieName: 'APP_SESSION',
         eventActionPrefix: { // this will extend the default values of eventActionPrefix 
@@ -88,19 +89,20 @@ COMING SOON: [React Marketing Tools Demo](https://)
 
 ## Usage with Provider
 ```js
-    import { useState, useEffect } from 'react'
-    import { ContextApi, ContextState, useMarketingApi, useMarketingState } from 'react-marketing-tools'
+    import { useState, useEffect, useCallback, useRef } from 'react'
+    import { ProviderApiProps, ProviderStateProps, useMarketingApi, useMarketingState } from './lib'
+    import { EventNameInfo, TrackAnalyticsEventOptions } from './lib/types'
 
     function App() {
         const [count, setCount] = useState(0)
         const {
-            appSessionCookieName,
             analyticsPlatform,
+            appSessionCookieName,
             eventActionPrefixList,
-            analyticsGlobalEventActionList
-        } = useMarketingState(ContextState)
+            analyticsGlobalEventActionList,
+        }: ProviderStateProps = useMarketingState()
         const {
-            trackAnalyticsEvent,
+            trackAnalyticsEvent
             /*
                 NOTE: If you want to see built in config items and your added items, use one of the following functions to the body of your functional component or useEffect/function
                 call it like so showMeBuildInAnalyticsPlatform() then check your console, in dev tools.
@@ -108,70 +110,77 @@ COMING SOON: [React Marketing Tools Demo](https://)
                 showMeBuildInEventActionPrefixList,
                 showMeBuildInGlobalEventActionList,
             */
-        } = useMarketingApi(ContextApi)
+        }: ProviderApiProps = useMarketingApi()
 
         useEffect(function appLoadPageLandingWelcome() {
             // create session cookie, useful for unauthenticated user tracking and other things
             document.cookie = `${appSessionCookieName}=${uuid()};max-age=${70};SameSite=Strict;Secure`
 
             const sendAnalyticsEvent = async () => {
-                const eventNameInfo = {
+                const eventNameInfo: EventNameInfo = {
+                    eventName: 'Welcome Landing',
                     actionPrefix: eventActionPrefixList.JOURNEY,
-                    description: 'Welcome Landing',
                     globalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED,
                 }
 
-                await trackAnalyticsEvent({
+                const trackingData: TrackAnalyticsEventOptions = {
                     data: {},
                     eventNameInfo,
                     analyticsType: analyticsPlatform.DATALAYER_PUSH,
                     dataLayerCheck: true,
-                })
+                    userDataToHashKeyArray: null,
+                }
+
+                await trackAnalyticsEvent(trackingData)
             }
 
             sendAnalyticsEvent()
-        })
+        }, [])
 
-        const handleButtonClick = async () => {
+        const handleButtonClick = useCallback(async () => {
             const countActual = count + 1
             setCount(countActual)
 
-            const eventNameInfo = {
+            const eventNameInfo: EventNameInfo = {
                 eventName: 'count button click',
                 actionPrefix: eventActionPrefixList.INTERACTION,
                 globalAppEvent: analyticsGlobalEventActionList.AUTHENTICATED,
-                previousGlobalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED
+                previousGlobalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED,
             }
 
-            await trackAnalyticsEvent({
+            const trackingData: TrackAnalyticsEventOptions = {
                 data: {
                     count: countActual,
-                    firstName: 'bob',
+                    // firstName: 'bob',
                     lastName: 'yeah nah',
                     email: 'yeahnah@gmail.com',
                 },
                 eventNameInfo,
                 analyticsType: analyticsPlatform.DATALAYER_PUSH,
                 consoleLogData: {
-                    showJourneyPropsPayload: true
-                }
-            })
-        }
+                    showJourneyPropsPayload: true,
+                },
+                dataLayerCheck: false,
+                userDataToHashKeyArray: null,
+            }
+
+            await trackAnalyticsEvent(trackingData)
+        }, [count])
 
         /* Example: use GA4 directly 
-            const handleButtonClick = useCallback(async () => {
-                const countActual = count + 1
+        const handleButtonClick = useCallback(async () => {
+            const countActual = count + 1
 
-                setCount(countActual)
+            setCount(countActual)
 
-                const eventNameInfo = {
+            const eventNameInfo: EventNameInfo = {
                 eventName: 'count button click',
                 actionPrefix: eventActionPrefixList.INTERACTION,
                 globalAppEvent: analyticsGlobalEventActionList.AUTHENTICATED,
                 previousGlobalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED,
-                }
+            }
 
-                await trackAnalyticsEvent({
+            const trackingData: TrackAnalyticsEventOptions = {
                 data: {
                     count: countActual,
                     firstName: 'bob',
@@ -184,9 +193,12 @@ COMING SOON: [React Marketing Tools Demo](https://)
                 consoleLogData: {
                     showJourneyPropsPayload: true,
                 },
-                })
-            }, [count])
+            }
+
+            await trackAnalyticsEvent(trackingData)
+        }, [count])
         */
+
         ...
 
         return (
@@ -200,22 +212,25 @@ COMING SOON: [React Marketing Tools Demo](https://)
 ```js
     import { useState, useEffect, useCallback } from 'react'
     import { trackAnalyticsEvent, analyticsPlatform } from "react-marketing-tools";
+    import { EventNameInfo, TrackAnalyticsEventOptions } from './lib/types'
 
     const WelcomePage = () => {
         useEffect(function appLoadPageLandingWelcome() {
             const sendAnalyticsEvent = async () => {
-                const eventNameInfo = {
+                const eventNameInfo: EventNameInfo = {
                     actionPrefix: eventActionPrefixList.JOURNEY,
                     description: 'Welcome Landing',
                     globalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED,
                 }
 
-                trackAnalyticsEvent({
+                const trackingData: TrackAnalyticsEventOptions = {
                     data: {},
                     eventNameInfo,
                     analyticsType: analyticsPlatform.DATALAYER_PUSH,
                     dataLayerCheck: true,
-                })
+                }
+
+                await trackAnalyticsEvent(trackingData)
             }
 
             sendAnalyticsEvent()
@@ -225,14 +240,14 @@ COMING SOON: [React Marketing Tools Demo](https://)
             const countActual = count + 1
             setCount(countActual)
 
-            const eventNameInfo = {
+            const eventNameInfo: EventNameInfo = {
                 eventName: 'count button click',
                 actionPrefix: eventActionPrefixList.INTERACTION,
                 globalAppEvent: analyticsGlobalEventActionList.AUTHENTICATED,
                 previousGlobalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED
             }
 
-            await trackAnalyticsEvent({
+            const trackingData: TrackAnalyticsEventOptions = {
                 data: {
                     count: countActual,
                     firstName: 'bob',
@@ -244,7 +259,9 @@ COMING SOON: [React Marketing Tools Demo](https://)
                 consoleLogData: {
                     showJourneyPropsPayload: true
                 }
-            })
+            }
+
+            await trackAnalyticsEvent(trackingData)
         }
         ...
 

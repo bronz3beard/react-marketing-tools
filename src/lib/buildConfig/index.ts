@@ -1,6 +1,5 @@
 import { assertIsTrue } from '../utilities/assertValueCheckers'
-
-export type Platform = Record<string, string>
+import { BuildConfigOptions, Config, Platform } from './types'
 
 export const analyticsPlatform: Platform = {
   GOOGLE: 'GOOGLE',
@@ -63,37 +62,9 @@ export const showMeBuildInGlobalEventActionList = (): void => {
   console.groupEnd()
 }
 
-type Tokens = {
-  IP_INFO_TOKEN?: string
-  GA4_PUBLIC_API_SECRET: string
-  GA4_PUBLIC_MEASUREMENT_ID: string
-}
-
-export type Config = {
-  TOKENS?: Tokens
-  appName: string
-  appSessionCookieName: string
-  withDeviceInfo?: boolean
-  includeUserKeys: Array<string>
-  showMissingUserAttributesInConsole: boolean | undefined
-  withServerLocationInfo: boolean | undefined
-  eventActionPrefixList: Record<string, string>
-  analyticsGlobalEventActionList: Record<string, string>
-}
-
 export let config: Config = {} as unknown as Config
 
-export type BuildConfigOptions = {
-  appName: string
-  appSessionCookieName: string
-  eventActionPrefix: Record<string, string>
-  globalEventActionList: Record<string, string>
-  includeUserKeys: Array<string>
-  showMissingUserAttributesInConsole: boolean | undefined
-  TOKENS?: Tokens
-  withDeviceInfo: boolean | undefined
-  withServerLocationInfo: boolean | undefined
-}
+
 
 const buildConfig = (options: BuildConfigOptions): void => {
   const {

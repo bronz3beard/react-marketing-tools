@@ -7,7 +7,7 @@ import { buildServerLocationData } from '../ipInfo'
 import DeviceDetector from 'device-detector-js'
 import { config } from '../buildConfig'
 import { assertIsTrue } from '../utilities/assertValueCheckers'
-import { AllowedTypes, EventNameInfo } from './analyticsEventService'
+import { AllowedTypes, EventNameInfo } from './types'
 import { DataLayer } from './types'
 
 /**
