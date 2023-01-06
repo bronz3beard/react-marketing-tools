@@ -20,5 +20,5 @@ export default defineConfig({
       },
     },
   },
-  plugins: [react(), dts()],
+  plugins: [dts(), react()],
 })

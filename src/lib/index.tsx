@@ -1,4 +1,11 @@
-import { useMemo, createContext, useContext, ReactNode, Provider } from 'react'
+import {
+  useMemo,
+  createContext,
+  useContext,
+  ReactNode,
+  Provider,
+  Context,
+} from 'react'
 import {
   config,
   analyticsPlatform,
@@ -30,12 +37,10 @@ export type ProviderApiProps = {
   showMeBuildInGlobalEventActionList: () => void
 }
 
-export const ContextState = createContext<ProviderStateProps>(
-  {} as unknown as ProviderStateProps,
-)
-export const ContextApi = createContext<ProviderApiProps>(
-  {} as unknown as ProviderApiProps,
-)
+export const ContextState: Context<ProviderStateProps> =
+  createContext<ProviderStateProps>({} as unknown as ProviderStateProps)
+export const ContextApi: Context<ProviderApiProps> =
+  createContext<ProviderApiProps>({} as unknown as ProviderApiProps)
 
 const ProviderState: Provider<ProviderStateProps> = ContextState.Provider
 const ProviderApi: Provider<ProviderApiProps> = ContextApi.Provider
@@ -43,6 +48,7 @@ const ProviderApi: Provider<ProviderApiProps> = ContextApi.Provider
 type ReactMarketingProviderProps = {
   children: ReactNode
 }
+
 export const ReactMarketingProvider = ({
   children,
 }: ReactMarketingProviderProps) => {
