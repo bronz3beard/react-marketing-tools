@@ -90,8 +90,13 @@ COMING SOON: [React Marketing Tools Demo](https://)
 ## Usage with Provider
 ```js
     import { useState, useEffect, useCallback, useRef } from 'react'
-    import { ProviderApiProps, ProviderStateProps, useMarketingApi, useMarketingState } from './lib'
-    import { EventNameInfo, TrackAnalyticsEventOptions } from './lib/types'
+    import { useMarketingApi, useMarketingState } from './lib'
+    import {
+        EventNameInfo,
+        ProviderApiProps,
+        ProviderStateProps,
+        TrackAnalyticsEventOptions,
+    } from './types'
 
     function App() {
         const [count, setCount] = useState(0)

@@ -6,6 +6,9 @@ import { defineConfig } from 'vite'
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
+    manifest: true,
+    minify: true,
+    reportCompressedSize: true,
     lib: {
       entry: path.resolve(__dirname, 'src/lib/index.tsx'),
       name: 'React Marketing Tools',

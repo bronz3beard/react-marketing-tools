@@ -15,27 +15,12 @@ import {
 } from './buildConfig'
 import { trackAnalyticsEvent } from './analytics/analyticsEventService'
 import { assertIsTrue } from './utilities/assertValueCheckers'
-import { Platform, TrackAnalyticsEventOptions } from './types'
+import { ProviderApiProps, ProviderStateProps } from './types'
 
 // for usage without the react context/provider aka use directly
 export { buildConfig, analyticsPlatform } from './buildConfig'
 export { trackAnalyticsEvent } from './analytics/analyticsEventService'
 //
-
-export type ProviderStateProps = {
-  appName: string
-  appSessionCookieName: string
-  analyticsPlatform: Platform
-  eventActionPrefixList: Record<string, string>
-  analyticsGlobalEventActionList: Record<string, string>
-}
-
-export type ProviderApiProps = {
-  trackAnalyticsEvent: (options: TrackAnalyticsEventOptions) => Promise<void>
-  showMeBuildInAnalyticsPlatform: () => void
-  showMeBuildInEventActionPrefixList: () => void
-  showMeBuildInGlobalEventActionList: () => void
-}
 
 export const ContextState: Context<ProviderStateProps> =
   createContext<ProviderStateProps>({} as unknown as ProviderStateProps)

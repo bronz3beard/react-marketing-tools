@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { ReactMarketingProvider, buildConfig } from './lib'
-import { BuildConfigOptions, Tokens } from './lib/types'
+import { BuildConfigOptions } from '.'
 import App from './App'
 import './index.css'
 

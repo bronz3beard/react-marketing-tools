@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { useMarketingApi, useMarketingState } from './lib'
 import {
+  EventNameInfo,
   ProviderApiProps,
   ProviderStateProps,
-  useMarketingApi,
-  useMarketingState,
-} from './lib'
-import { EventNameInfo, TrackAnalyticsEventOptions } from './lib/types'
+  TrackAnalyticsEventOptions,
+} from '.'
 import './App.css'
 
 function App() {
