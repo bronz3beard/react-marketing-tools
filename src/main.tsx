@@ -1,12 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { ReactMarketingProvider, buildConfig } from './lib'
+import { BuildConfigOptions, Tokens } from './lib/types'
 import App from './App'
 import './index.css'
-import { BuildConfigOptions } from './lib/buildConfig'
 
 /* Example of how tokens could be added to config.
-  const TOKENS = { // all TOKENS are optional
+  const TOKENS: Tokens = { // all TOKENS are optional
     IP_INFO_TOKEN: 'SOME_TOKEN', // if withDeviceInfo is true you must supply this token.
     // if analyticsType = analyticsPlatform.GOOGLE the below tokens must be supplied.
     GA4_PUBLIC_API_SECRET: 'SOME_TOKEN',

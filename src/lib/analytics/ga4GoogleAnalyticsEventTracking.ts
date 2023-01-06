@@ -2,26 +2,8 @@ import { config } from '../buildConfig'
 import { assertIsTrue } from '../utilities/assertValueCheckers'
 import { objectHasAttributes } from '../utilities/commonFunctions'
 import { getCookieValueByName } from '../utilities/cookies'
-import { AllowedTypes } from './analyticsEventService'
 import { buildEventDataObject } from './helpers'
-import { Ga4GoogleAnalyticsEventTracking } from './types'
-
-type Event = {
-  name: string
-  params: Record<AllowedTypes, AllowedTypes>
-}
-
-type GooglePayload = {
-  non_personalized_ads: boolean
-  client_id: string
-  user_id: string
-  user_properties: {
-    user_id: string
-    user_type: string
-    client_id: string
-  }
-  events: Event[]
-}
+import { Ga4GoogleAnalyticsEventTracking, GooglePayload } from './types'
 
 const ga4GoogleAnalyticsEventTracking = async (
   options: Ga4GoogleAnalyticsEventTracking,

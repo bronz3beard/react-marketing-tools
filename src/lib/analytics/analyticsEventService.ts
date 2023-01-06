@@ -11,6 +11,7 @@ import {
   replaceWhiteSpace,
 } from '../utilities/commonFunctions'
 import { assertIsTrue } from '../utilities/assertValueCheckers'
+import { TrackAnalyticsEventOptions } from './types'
 
 /* NOTE::
   https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events?client_type=gtag#limitations
@@ -26,25 +27,6 @@ import { assertIsTrue } from '../utilities/assertValueCheckers'
  * @property {boolean} dataLayerCheck
  * @property {object} consoleLogData (optional) is an object with the following attributes, "showGlobalVars", "showJourneyPropsPayload", "showUserProps" if any of the values are true you will be able to see the respective payload in your console.
  */
-
-export type EventNameInfo = {
-  eventName: string
-  description?: string
-  actionPrefix: string
-  globalAppEvent: string
-  previousGlobalAppEvent?: string
-}
-
-export type AllowedTypes = string | number
-
-export type TrackAnalyticsEventOptions = {
-  data: Record<AllowedTypes, AllowedTypes>
-  eventNameInfo: EventNameInfo
-  analyticsType: string
-  userDataToHashKeyArray: Array<string> | null
-  dataLayerCheck: boolean
-  consoleLogData?: object
-}
 
 const trackAnalyticsEvent = async (
   options: TrackAnalyticsEventOptions,
