@@ -53,3 +53,7 @@ __Change__
 ## [0.2.6] - 07-01-2023
 __Change__
 - README
+
+## [0.2.8] - 07-01-2023
+__Change__
+- README added new Codepen demo and a blog post link fora detailed implementing example

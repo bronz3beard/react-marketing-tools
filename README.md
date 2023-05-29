@@ -3,8 +3,8 @@
 
 React Marketing Tools are a set of tools to make it easier for you to implement analytics and track user journeys, interactions throughout your App. using dataLayer/Google Tag Manager, GA4 fetch directly or coming soon facebook pixel.
 
-COMING SOON: [React Marketing Tools Demo](https://)
-- For now you can clone and run locally. There is a very basic demo app, thanks to [Vite.](https://vitejs.dev/)
+[React Marketing Tools Demo](https://codepen.io/roryfn/pen/OJBGvMG)
+[Detailed Blog post on React Marketing Tools Implementation](https://blog.heyrory.com/google-analytics-4-google-tag-manager)
 
 
 # PR's
@@ -32,7 +32,7 @@ COMING SOON: [React Marketing Tools Demo](https://)
         TOKENS are optional
         const TOKENS: Tokens = {
 
-            // if withDeviceInfo is true you must supply this token.
+            // if withServerLocationInfo is true you must supply this token.
             IP_INFO_TOKEN: 'SOME_TOKEN',
 
             // if analyticsType = analyticsPlatform.GOOGLE the below tokens must be supplied.
@@ -128,6 +128,8 @@ COMING SOON: [React Marketing Tools Demo](https://)
 
             const sendAnalyticsEvent = async () => {
                 const eventNameInfo: EventNameInfo = {
+                    // If this is not passed in the event name will be a combination of actionPrefix & globalAppEvent
+                    // J_UNAUTHENTICATED
                     eventName: 'Welcome Landing',
                     actionPrefix: eventActionPrefixList.JOURNEY,
                     globalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED,
@@ -152,6 +154,8 @@ COMING SOON: [React Marketing Tools Demo](https://)
             setCount(countActual)
 
             const eventNameInfo: EventNameInfo = {
+                // If this is not passed in the event name will be a combination of actionPrefix & globalAppEvent
+                // I_AUTHENTICATED
                 eventName: 'count button click',
                 actionPrefix: eventActionPrefixList.INTERACTION,
                 globalAppEvent: analyticsGlobalEventActionList.AUTHENTICATED,
@@ -219,64 +223,4 @@ COMING SOON: [React Marketing Tools Demo](https://)
 ```
 
 ## Usage without Provider
-```js
-    import { useState, useEffect, useCallback } from 'react'
-    import { trackAnalyticsEvent, analyticsPlatform } from "react-marketing-tools";
-    import { EventNameInfo, TrackAnalyticsEventOptions } from './lib/types'
-
-    const WelcomePage = () => {
-        useEffect(function appLoadPageLandingWelcome() {
-            const sendAnalyticsEvent = async () => {
-                const eventNameInfo: EventNameInfo = {
-                    actionPrefix: eventActionPrefixList.JOURNEY,
-                    description: 'Welcome Landing',
-                    globalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED,
-                }
-
-                const trackingData: TrackAnalyticsEventOptions = {
-                    data: {},
-                    eventNameInfo,
-                    analyticsType: analyticsPlatform.DATALAYER_PUSH,
-                    dataLayerCheck: true,
-                }
-
-                await trackAnalyticsEvent(trackingData)
-            }
-
-            sendAnalyticsEvent()
-        })
-
-        const handleButtonClick = async () => {
-            const countActual = count + 1
-            setCount(countActual)
-
-            const eventNameInfo: EventNameInfo = {
-                eventName: 'count button click',
-                actionPrefix: eventActionPrefixList.INTERACTION,
-                globalAppEvent: analyticsGlobalEventActionList.AUTHENTICATED,
-                previousGlobalAppEvent: analyticsGlobalEventActionList.UNAUTHENTICATED
-            }
-
-            const trackingData: TrackAnalyticsEventOptions = {
-                data: {
-                    count: countActual,
-                    firstName: 'bob',
-                    lastName: 'yeah nah',
-                    email: 'yeahnah@gmail.com',
-                },
-                eventNameInfo,
-                analyticsType: analyticsPlatform.DATALAYER_PUSH,
-                consoleLogData: {
-                    showJourneyPropsPayload: true
-                }
-            }
-
-            await trackAnalyticsEvent(trackingData)
-        }
-        ...
-
-        return (
-            ...
-        )
-    }
-```
+> To view implementation and usage without the React Context/Provider visit this [codepen](https://codepen.io/roryfn/pen/OJBGvMG)
