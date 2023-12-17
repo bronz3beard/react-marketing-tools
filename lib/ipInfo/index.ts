@@ -1,6 +1,6 @@
 import { config } from '../buildConfig'
 import { assertIsTrue } from '../utilities/assertValueCheckers'
-import { IpInfo, ServerLocationData } from './types'
+import { IpInfo, ServerLocationData } from '../types'
 
 export const buildServerLocationData = async (
   withServerLocationInfo: boolean | undefined,

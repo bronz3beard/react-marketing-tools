@@ -5,7 +5,7 @@ import {
   defaultDataLayerEventCheck,
   deviceDetectorInfo,
 } from './helpers'
-import { DataLayer, HandleDataLayerPushOptions } from './types'
+import { DataLayer, HandleDataLayerPushOptions } from '../types'
 
 const handleDataLayerPush = async (
   options: HandleDataLayerPushOptions,

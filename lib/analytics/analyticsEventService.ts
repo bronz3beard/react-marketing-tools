@@ -11,7 +11,7 @@ import {
   replaceWhiteSpace,
 } from '../utilities/commonFunctions'
 import { assertIsTrue } from '../utilities/assertValueCheckers'
-import { TrackAnalyticsEventOptions } from './types'
+import { TrackAnalyticsEventOptions } from '../types'
 
 /* NOTE::
   https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events?client_type=gtag#limitations

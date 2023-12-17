@@ -1,9 +1,9 @@
-import { config } from '../types'
+import { config } from '..'
 import { assertIsTrue } from '../utilities/assertValueCheckers'
 import { objectHasAttributes } from '../utilities/commonFunctions'
 import { getCookieValueByName } from '../utilities/cookies'
 import { buildEventDataObject } from './helpers'
-import { Ga4GoogleAnalyticsEventTracking, GooglePayload } from './types'
+import { Ga4GoogleAnalyticsEventTracking, GooglePayload } from '../types'
 
 const ga4GoogleAnalyticsEventTracking = async (
   options: Ga4GoogleAnalyticsEventTracking,
