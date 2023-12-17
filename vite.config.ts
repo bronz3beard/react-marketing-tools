@@ -5,6 +5,11 @@ import { defineConfig } from 'vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  resolve: {
+    alias: {
+      'react-marketing-tools': './dist/react-marketing-tools.es.js',
+    },
+  },
   build: {
     manifest: true,
     minify: true,
