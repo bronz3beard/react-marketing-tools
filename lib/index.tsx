@@ -17,6 +17,7 @@ import {
   showMeBuildInGlobalEventActionList,
 } from './buildConfig'
 
+export * from './types'
 // for usage without the react context/provider aka use directly
 export {
   config,
