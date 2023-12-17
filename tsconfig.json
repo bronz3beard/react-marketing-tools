@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "outDir": "./dist",
     "declaration": true,
     "target": "ESNext",
     "useDefineForClassFields": true,
@@ -15,8 +16,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "typeRoots": ["./src/lib/types.ts"]
   },
-  "include": ["src"],
+  "include": ["src", "src/**/*.ts", "src/**/*.d.ts"],
+  "exclude": ["node_modules"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
+

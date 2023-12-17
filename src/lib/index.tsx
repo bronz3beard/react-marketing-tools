@@ -6,19 +6,26 @@ import {
   Provider,
   Context,
 } from 'react'
+import { trackAnalyticsEvent } from './analytics/analyticsEventService'
+import { assertIsTrue } from './utilities/assertValueCheckers'
+import type { ProviderStateProps, ProviderApiProps } from './types'
 import {
-  config,
   analyticsPlatform,
+  config,
   showMeBuildInAnalyticsPlatform,
   showMeBuildInEventActionPrefixList,
   showMeBuildInGlobalEventActionList,
 } from './buildConfig'
-import { trackAnalyticsEvent } from './analytics/analyticsEventService'
-import { assertIsTrue } from './utilities/assertValueCheckers'
-import { ProviderApiProps, ProviderStateProps } from './types'
-
+export * from './types'
 // for usage without the react context/provider aka use directly
-export { buildConfig, analyticsPlatform } from './buildConfig'
+export {
+  config,
+  analyticsPlatform,
+  buildConfig,
+  showMeBuildInAnalyticsPlatform,
+  showMeBuildInGlobalEventActionList,
+  showMeBuildInEventActionPrefixList,
+} from './buildConfig'
 export { trackAnalyticsEvent } from './analytics/analyticsEventService'
 //
 
@@ -47,7 +54,7 @@ export const ReactMarketingProvider = ({
     [trackAnalyticsEvent],
   )
 
-  const stateValue = useMemo(
+  const stateValue: ProviderStateProps = useMemo(
     () => ({
       analyticsPlatform,
       appName: config.appName,

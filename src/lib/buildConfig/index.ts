@@ -1,17 +1,35 @@
+import {
+  config as localConfig,
+  BuildConfigOptions,
+  Platform,
+  Config,
+  AnalyticsPlatform,
+} from '../types'
 import { assertIsTrue } from '../utilities/assertValueCheckers'
-import { BuildConfigOptions, Config, Platform } from './types'
 
-export const analyticsPlatform: Platform = {
+const analyticsEventActionPrefixList: Record<string, string> = {
+  JOURNEY: 'J',
+  INTERACTION: 'I',
+}
+
+const analyticsGlobalEventActionList: Record<string, string> = {
+  UNAUTHENTICATED: 'UNAUTHENTICATED',
+  AUTHENTICATED: 'AUTHENTICATED',
+  MENU_ACTIVE: 'MENU_ACTIVE',
+  MENU_INACTIVE: 'MENU_INACTIVE',
+}
+
+const analyticsPlatform: AnalyticsPlatform = {
   GOOGLE: 'GOOGLE',
   FACEBOOK: 'FACEBOOK',
   DATALAYER_PUSH: 'DATALAYER_PUSH',
 }
 
-export const showMeBuildInAnalyticsPlatform = (): void => {
+const showMeBuildInAnalyticsPlatform = (): void => {
   const platformList = []
 
   for (const item in analyticsPlatform) {
-    platformList.push({ [item]: `"${analyticsPlatform[item]}"` })
+    platformList.push({ [item]: `"${analyticsPlatform[item as Platform]}"` })
   }
 
   console.group()
@@ -20,12 +38,7 @@ export const showMeBuildInAnalyticsPlatform = (): void => {
   console.groupEnd()
 }
 
-export const analyticsEventActionPrefixList: Record<string, string> = {
-  JOURNEY: 'J',
-  INTERACTION: 'I',
-}
-
-export const showMeBuildInEventActionPrefixList = (): void => {
+const showMeBuildInEventActionPrefixList = (): void => {
   const eventActionPrefixList = []
 
   for (const item in analyticsEventActionPrefixList) {
@@ -40,14 +53,7 @@ export const showMeBuildInEventActionPrefixList = (): void => {
   console.groupEnd()
 }
 
-export const analyticsGlobalEventActionList: Record<string, string> = {
-  UNAUTHENTICATED: 'UNAUTHENTICATED',
-  AUTHENTICATED: 'AUTHENTICATED',
-  MENU_ACTIVE: 'MENU_ACTIVE',
-  MENU_INACTIVE: 'MENU_INACTIVE',
-}
-
-export const showMeBuildInGlobalEventActionList = (): void => {
+const showMeBuildInGlobalEventActionList = (): void => {
   const eventActionList = []
 
   for (const item in analyticsGlobalEventActionList) {
@@ -62,9 +68,7 @@ export const showMeBuildInGlobalEventActionList = (): void => {
   console.groupEnd()
 }
 
-export let config: Config = {} as unknown as Config
-
-
+let config: Config = { ...localConfig } as unknown as Config
 
 const buildConfig = (options: BuildConfigOptions): void => {
   const {
@@ -86,7 +90,7 @@ const buildConfig = (options: BuildConfigOptions): void => {
     appName,
     appSessionCookieName,
     withDeviceInfo,
-    includeUserKeys,
+    includeUserKeys: includeUserKeys || [],
     showMissingUserAttributesInConsole,
     withServerLocationInfo,
     eventActionPrefixList: {
@@ -100,4 +104,11 @@ const buildConfig = (options: BuildConfigOptions): void => {
   }
 }
 
-export { buildConfig }
+export {
+  config,
+  analyticsPlatform,
+  buildConfig,
+  showMeBuildInAnalyticsPlatform,
+  showMeBuildInGlobalEventActionList,
+  showMeBuildInEventActionPrefixList,
+}

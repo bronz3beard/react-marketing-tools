@@ -1,4 +1,4 @@
-import { config } from '../buildConfig'
+import { config } from '../types'
 import { assertIsTrue } from '../utilities/assertValueCheckers'
 import { objectHasAttributes } from '../utilities/commonFunctions'
 import { getCookieValueByName } from '../utilities/cookies'

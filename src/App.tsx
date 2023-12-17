@@ -2,11 +2,10 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useMarketingApi, useMarketingState } from './lib'
 import {
   EventNameInfo,
-  ProviderApiProps,
-  ProviderStateProps,
   TrackAnalyticsEventOptions,
-} from '.'
+} from './lib/analytics/types'
 import './App.css'
+import { ProviderApiProps, ProviderStateProps } from './lib'
 
 function App() {
   const [count, setCount] = useState(0)

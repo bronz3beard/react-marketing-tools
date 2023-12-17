@@ -5,7 +5,7 @@ import {
 } from './helpers'
 import ga4GoogleAnalyticsEventTracking from './ga4GoogleAnalyticsEventTracking'
 import handleDataLayerPush from './handleDataLayerPush'
-import { analyticsPlatform, config } from '../buildConfig'
+import { config, analyticsPlatform } from '../buildConfig'
 import {
   objectHasAttributes,
   replaceWhiteSpace,
@@ -69,7 +69,7 @@ const trackAnalyticsEvent = async (
       },
       userDetails: buildNewUserData(
         data,
-        includeUserKeys,
+        config.includeUserKeys,
         showMissingUserAttributesInConsole,
       ),
       consoleLogData,
