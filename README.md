@@ -3,8 +3,8 @@
 
 React Marketing Tools are a set of tools to make it easier for you to implement analytics and track user journeys, interactions throughout your App. using dataLayer/Google Tag Manager, GA4 fetch directly or coming soon facebook pixel.
 
-[React Marketing Tools Demo](https://codepen.io/roryfn/pen/OJBGvMG)
-[Detailed Blog post on React Marketing Tools Implementation](https://blog.heyrory.com/google-analytics-4-google-tag-manager)
+* [React Marketing Tools Demo](https://codepen.io/bronz3beard/pen/yLZmMeg)
+* [Detailed Blog post on React Marketing Tools Implementation](https://blog.heyrory.com/google-analytics-4-google-tag-manager)
 
 
 # PR's
