@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
+## [0.3.6] - 07-01-2023
+__Fixed__
+- package exports
+- types exports and paths
+- package.json
+
 ## [0.3.2] - 07-01-2023
 __Change__
 - package exports

@@ -1,7 +1,7 @@
 {
   "name": "react-marketing-tools",
   "type": "module",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "React Marketing Tools are a set of tools to make it easier for you to implement analytics and track user journeys, interactions throughout your App. using dataLayer/Google Tag Manager, GA4 fetch directly or coming soon facebook pixel.",
   "license": "MIT",
   "author": "bronz3beard <exempli.gratia.webdesign@gmail.com> (https://www.heyrory.com/)",
@@ -14,10 +14,10 @@
     "url": "https://github.com/bronz3beard/react-marketing-tools/issues"
   },
   "files": [
-    "./dist",
+    "./dist/index.d.ts",
     "./dist/manifest.json",
-    "./dist/react-data-matrix.es.js",
-    "./dist/react-data-matrix.umd.js",
+    "./dist/react-marketing-tools.es.js",
+    "./dist/react-marketing-tools.umd.js",
     "./README.md"
   ],
   "keywords": [
@@ -38,6 +38,7 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/react-marketing-tools.es.js",
       "require": "./dist/react-marketing-tools.umd.js"
     }
