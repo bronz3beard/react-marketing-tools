@@ -17,7 +17,28 @@ import {
   showMeBuildInGlobalEventActionList,
 } from './buildConfig'
 
-export * from './types'
+export type {
+  Event,
+  GooglePayload,
+  EventNameInfo,
+  AllowedTypes,
+  TrackAnalyticsEventOptions,
+  GlobalVars,
+  DataLayer,
+  ConsoleLogData,
+  AnalyticsTrackerDataOptions,
+  HandleDataLayerPushOptions,
+  ServerLocationData,
+  IpInfo,
+  Ga4GoogleAnalyticsEventTracking,
+  Platform,
+  AnalyticsPlatform,
+  Tokens,
+  Config,
+  BuildConfigOptions,
+  ProviderStateProps,
+  ProviderApiProps,
+} from './types'
 // for usage without the react context/provider aka use directly
 export {
   config,
