@@ -140,7 +140,7 @@ React Marketing Tools are a set of tools to make it easier for you to implement 
                     eventNameInfo,
                     analyticsType: analyticsPlatform.DATALAYER_PUSH,
                     dataLayerCheck: true,
-                    userDataToHashKeyArray: null,
+                    userDataKeysToHashArray: null,
                 }
 
                 await trackAnalyticsEvent(trackingData)
@@ -175,7 +175,7 @@ React Marketing Tools are a set of tools to make it easier for you to implement 
                     showJourneyPropsPayload: true,
                 },
                 dataLayerCheck: false,
-                userDataToHashKeyArray: null,
+                userDataKeysToHashArray: null,
             }
 
             await trackAnalyticsEvent(trackingData)
@@ -203,7 +203,7 @@ React Marketing Tools are a set of tools to make it easier for you to implement 
                 },
                 eventNameInfo,
                 analyticsType: analyticsPlatform.GOOGLE,
-                userDataToHashKeyArray: ['email', 'firstName', 'lastName'],
+                userDataKeysToHashArray: ['email', 'firstName', 'lastName'],
                 consoleLogData: {
                     showJourneyPropsPayload: true,
                 },

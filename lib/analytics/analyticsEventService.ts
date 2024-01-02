@@ -23,7 +23,7 @@ import { TrackAnalyticsEventOptions } from '../types'
  * @property {object} data this is an object of any data you want to collect in analytics
  * @property {object} eventNameInfo
  * @property {string} analyticsType
- * @property {array | undefined} userDataToHashKeyArray default for this value is null, when used it should include an array of strings you wish to hash.
+ * @property {array | undefined} userDataKeysToHashArray default for this value is null, when used it should include an array of strings you wish to hash.
  * @property {boolean} dataLayerCheck
  * @property {object} consoleLogData (optional) is an object with the following attributes, "showGlobalVars", "showJourneyPropsPayload", "showUserProps" if any of the values are true you will be able to see the respective payload in your console.
  */
@@ -35,7 +35,7 @@ const trackAnalyticsEvent = async (
     data,
     eventNameInfo,
     analyticsType,
-    userDataToHashKeyArray = null,
+    userDataKeysToHashArray = null,
     dataLayerCheck = false,
     consoleLogData = null,
   } = options
@@ -80,7 +80,7 @@ const trackAnalyticsEvent = async (
     let userDetails = {}
 
     assertIsTrue(
-      userDataToHashKeyArray !== null && userDataToHashKeyArray?.length > 0,
+      userDataKeysToHashArray !== null && userDataKeysToHashArray?.length > 0,
       'User data must be hashed before sending to GA4, any user data that is considered "Identifiable"',
     )
 
@@ -94,7 +94,7 @@ const trackAnalyticsEvent = async (
       )
     ) {
       const hashList: Array<string> =
-        userDataToHashKeyArray as unknown as Array<string>
+        userDataKeysToHashArray as unknown as Array<string>
       userDetails = await hashUserData(
         buildNewUserData(
           data,

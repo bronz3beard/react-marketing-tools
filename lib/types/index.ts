@@ -1,14 +1,15 @@
-export interface AnalyticsEventActionPrefix extends Record<string, string> {
-  JOURNEY: 'J'
-  INTERACTION: 'I'
+export interface AnalyticsEventActionPrefix
+  extends Record<string, string | undefined> {
+  JOURNEY?: 'J'
+  INTERACTION?: 'I'
 }
-export interface AnalyticsGlobalEventAction extends Record<string, string> {
-  UNAUTHENTICATED: 'UNAUTHENTICATED'
-  AUTHENTICATED: 'AUTHENTICATED'
-  MENU_ACTIVE: 'MENU_ACTIVE'
-  MENU_INACTIVE: 'MENU_INACTIVE'
+export interface AnalyticsGlobalEventAction
+  extends Record<string, string | undefined> {
+  UNAUTHENTICATED?: 'UNAUTHENTICATED'
+  AUTHENTICATED?: 'AUTHENTICATED'
+  MENU_ACTIVE?: 'MENU_ACTIVE'
+  MENU_INACTIVE?: 'MENU_INACTIVE'
 }
-
 // Event types
 export type Event = {
   name: string
@@ -30,7 +31,7 @@ export type GooglePayload = {
 
 // EventNameInfo type - Information about a specific analytics event
 export type EventNameInfo = {
-  eventName: string
+  eventName?: string
   description?: string
   actionPrefix: string
   globalAppEvent: string
@@ -45,8 +46,8 @@ export type TrackAnalyticsEventOptions = {
   data: Record<AllowedTypes, AllowedTypes>
   eventNameInfo: EventNameInfo
   analyticsType: string
-  userDataToHashKeyArray: Array<string> | null
-  dataLayerCheck: boolean
+  userDataKeysToHashArray?: Array<string> | null
+  dataLayerCheck?: boolean
   consoleLogData?: object
 }
 
