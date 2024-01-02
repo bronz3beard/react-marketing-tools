@@ -17,8 +17,6 @@ const analyticsEventActionPrefixList: AnalyticsEventActionPrefix = {
 const analyticsGlobalEventActionList: AnalyticsGlobalEventAction = {
   UNAUTHENTICATED: 'UNAUTHENTICATED',
   AUTHENTICATED: 'AUTHENTICATED',
-  MENU_ACTIVE: 'MENU_ACTIVE',
-  MENU_INACTIVE: 'MENU_INACTIVE',
 }
 
 const analyticsPlatform: AnalyticsPlatform = {

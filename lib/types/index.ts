@@ -1,15 +1,6 @@
-export interface AnalyticsEventActionPrefix
-  extends Record<string, string | undefined> {
-  JOURNEY?: 'J'
-  INTERACTION?: 'I'
-}
-export interface AnalyticsGlobalEventAction
-  extends Record<string, string | undefined> {
-  UNAUTHENTICATED?: 'UNAUTHENTICATED'
-  AUTHENTICATED?: 'AUTHENTICATED'
-  MENU_ACTIVE?: 'MENU_ACTIVE'
-  MENU_INACTIVE?: 'MENU_INACTIVE'
-}
+export interface AnalyticsEventActionPrefix extends Record<string, string> {}
+
+export interface AnalyticsGlobalEventAction extends Record<string, string> {}
 // Event types
 export type Event = {
   name: string

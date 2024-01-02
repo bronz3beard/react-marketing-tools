@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
-## [0.4.1] - 02-01-2024
+## [0.4.2] - 02-01-2024
 __Fixed__
 - IP_INFO_TOKEN
 __Changed__

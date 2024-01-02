@@ -83,8 +83,16 @@ export const ReactMarketingProvider = ({
       analyticsPlatform,
       appName: config.appName,
       appSessionCookieName: config.appSessionCookieName,
-      eventActionPrefixList: config.eventActionPrefixList,
-      analyticsGlobalEventActionList: config.analyticsGlobalEventActionList,
+      eventActionPrefixList: {
+        JOURNEY: 'J',
+        INTERACTION: 'I',
+        ...config.eventActionPrefixList,
+      },
+      analyticsGlobalEventActionList: {
+        UNAUTHENTICATED: 'UNAUTHENTICATED',
+        AUTHENTICATED: 'AUTHENTICATED',
+        ...config.analyticsGlobalEventActionList,
+      },
     }),
     [config, analyticsPlatform],
   )
