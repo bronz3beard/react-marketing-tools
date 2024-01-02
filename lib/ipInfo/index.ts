@@ -27,6 +27,6 @@ export const buildServerLocationData = async (
 }
 
 export const getIpInfo = (IP_INFO_TOKEN: string): Promise<IpInfo> =>
-  fetch(`https://ipinfo.io/110.174.218.10?token=${IP_INFO_TOKEN}`).then(
-    response => response.json(),
+  fetch(`https://ipinfo.io?token=${IP_INFO_TOKEN}`).then(response =>
+    response.json(),
   )
