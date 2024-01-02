@@ -1,3 +1,14 @@
+export interface AnalyticsEventActionPrefix extends Record<string, string> {
+  JOURNEY: 'J'
+  INTERACTION: 'I'
+}
+export interface AnalyticsGlobalEventAction extends Record<string, string> {
+  UNAUTHENTICATED: 'UNAUTHENTICATED'
+  AUTHENTICATED: 'AUTHENTICATED'
+  MENU_ACTIVE: 'MENU_ACTIVE'
+  MENU_INACTIVE: 'MENU_INACTIVE'
+}
+
 // Event types
 export type Event = {
   name: string
@@ -124,18 +135,19 @@ export type Config = {
   includeUserKeys: Array<string>
   showMissingUserAttributesInConsole: boolean | undefined
   withServerLocationInfo: boolean | undefined
-  eventActionPrefixList: Record<string, string>
-  analyticsGlobalEventActionList: Record<string, string>
+  eventActionPrefixList: AnalyticsEventActionPrefix
+  analyticsGlobalEventActionList: AnalyticsGlobalEventAction
 }
 
 // BuildConfigOptions type - Options for building the analytics configuration
 export type BuildConfigOptions = {
   appName: string
   appSessionCookieName: string
-  eventActionPrefix?: Record<string, string>
-  globalEventActionList?: Record<string, string>
+  eventActionPrefix?: AnalyticsEventActionPrefix
+  globalEventActionList?: AnalyticsGlobalEventAction
   includeUserKeys?: Array<string> | undefined
   showMissingUserAttributesInConsole?: boolean
+  showMeBuildInEventActionPrefixList?: boolean
   TOKENS?: Tokens
   withDeviceInfo?: boolean
   withServerLocationInfo?: boolean
@@ -148,8 +160,8 @@ export type ProviderStateProps = {
   appName: string
   appSessionCookieName: string
   analyticsPlatform: AnalyticsPlatform
-  eventActionPrefixList: Record<string, string>
-  analyticsGlobalEventActionList: Record<string, string>
+  eventActionPrefixList: AnalyticsEventActionPrefix
+  analyticsGlobalEventActionList: AnalyticsGlobalEventAction
 }
 
 // ProviderApiProps type - Represents props for the analytics provider API

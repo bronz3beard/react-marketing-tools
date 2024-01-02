@@ -136,10 +136,11 @@ export const buildEventDataObject = async (
   const timeElapsed = Date.now()
   const today = new Date(timeElapsed)
   const HIT_TIMESTAMP: string = today.toISOString() as string
-  const { withServerLocationInfo } = config
+  const { withServerLocationInfo, TOKENS } = config
 
   const serverLocationData = await buildServerLocationData(
     withServerLocationInfo,
+    TOKENS?.IP_INFO_TOKEN,
   )
 
   // this is data that is always sent in the payload

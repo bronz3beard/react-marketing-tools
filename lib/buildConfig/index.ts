@@ -4,15 +4,17 @@ import {
   Platform,
   Config,
   AnalyticsPlatform,
+  AnalyticsEventActionPrefix,
+  AnalyticsGlobalEventAction,
 } from '../types'
 import { assertIsTrue } from '../utilities/assertValueCheckers'
 
-const analyticsEventActionPrefixList: Record<string, string> = {
+const analyticsEventActionPrefixList: AnalyticsEventActionPrefix = {
   JOURNEY: 'J',
   INTERACTION: 'I',
 }
 
-const analyticsGlobalEventActionList: Record<string, string> = {
+const analyticsGlobalEventActionList: AnalyticsGlobalEventAction = {
   UNAUTHENTICATED: 'UNAUTHENTICATED',
   AUTHENTICATED: 'AUTHENTICATED',
   MENU_ACTIVE: 'MENU_ACTIVE',

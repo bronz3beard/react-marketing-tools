@@ -38,6 +38,8 @@ export type {
   BuildConfigOptions,
   ProviderStateProps,
   ProviderApiProps,
+  AnalyticsEventActionPrefix,
+  AnalyticsGlobalEventAction,
 } from './types'
 // for usage without the react context/provider aka use directly
 export {
@@ -97,9 +99,9 @@ export const ReactMarketingProvider = ({
 /**
  * @property {string} appName
  * @property {string} appSessionCookieName
- * @property {object} analyticsPlatform
- * @property {object} eventActionPrefixList
- * @property {object} analyticsGlobalEventActionList
+ * @property {AnalyticsPlatform} analyticsPlatform
+ * @property {AnalyticsEventActionPrefix} eventActionPrefixList
+ * @property {AnalyticsGlobalEventAction} analyticsGlobalEventActionList
  */
 export const useMarketingState = (): ProviderStateProps => {
   const ctx = useContext(ContextState)
