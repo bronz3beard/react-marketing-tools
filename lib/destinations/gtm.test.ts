@@ -102,6 +102,29 @@ describe('GTM destination', () => {
     ).toThrow(/GTM-XXXXXXX/)
   })
 
+  it('loads the container from a custom domain such as a server-side GTM', () => {
+    createAnalytics({
+      consent: 'granted',
+      gtm: {
+        containerId: 'GTM-TEST1',
+        scriptUrl: 'https://sgtm.example.com/gtm.js',
+      },
+    }).start()
+
+    expect(Array.from(document.scripts).map(script => script.src)).toEqual([
+      'https://sgtm.example.com/gtm.js?id=GTM-TEST1',
+    ])
+  })
+
+  it('rejects a non-https script URL when the instance is created', () => {
+    expect(() =>
+      createAnalytics({
+        consent: 'granted',
+        gtm: { containerId: 'GTM-TEST1', scriptUrl: 'http://sgtm.test/gtm.js' },
+      }),
+    ).toThrow(/gtm.scriptUrl must be an https:\/\/ URL/)
+  })
+
   it('pushes identify without traits, and page views with an event id', () => {
     const analytics = createAnalytics({
       consent: 'granted',

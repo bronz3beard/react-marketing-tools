@@ -48,12 +48,29 @@ export type GtmConfig = {
   containerId: string
   /** Set to `false` when the page already includes the GTM snippet. Defaults to `true`. */
   loadScript?: boolean
+  /** Load `gtm.js` from this https URL instead of googletagmanager.com, e.g. your server-side GTM domain. */
+  scriptUrl?: string
+}
+
+export type Ga4Config = {
+  /** Google Analytics 4 measurement ID, e.g. `G-XXXXXXX`. */
+  measurementId: string
+  /**
+   * `'auto'` (default): GA4 records page views itself, including history changes when Enhanced Measurement is on.
+   * `'manual'`: only `analytics.page()` sends page views.
+   */
+  pageViews?: 'auto' | 'manual'
+  /** Set to `false` when the page already loads gtag.js. Defaults to `true`. */
+  loadScript?: boolean
+  /** Your server-side GTM URL (https). Hits go there instead of Google, and events carry `event_id`. */
+  serverContainerUrl?: string
 }
 
 export type AnalyticsConfig = {
   /** Initial consent state. Required, so every site makes an explicit choice. */
   consent: ConsentStatus
   gtm?: GtmConfig
+  ga4?: Ga4Config
   /** Custom destinations, in addition to the built-in ones. */
   destinations?: Destination[]
   /** Content-Security-Policy nonce added to every script the library injects. */

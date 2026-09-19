@@ -75,3 +75,5 @@ analytics.track('sign_up', { method: 'google' })
 - [Tracking events](./tracking-events.md): naming rules, page views, users, personal data and errors
 - [Configuration](./configuration.md): every option
 - [Google Tag Manager](./google-tag-manager.md): what reaches the dataLayer and how to use it in GTM
+- [Google Analytics 4](./google-analytics-4.md): events, user ids and page views through gtag.js
+- [Server-side tagging](./server-side-tagging.md): send hits through your own domain

@@ -4,30 +4,27 @@ import type {
   GtmConfig,
   Identity,
 } from '../core/types.js'
-
-type DataLayerWindow = Window & { dataLayer?: unknown[] }
+import { dataLayer, toHttpsUrl } from './googleTag.js'
+import { injectScript, isScriptOnPage } from './loadScript.js'
 
 type GtmDestinationOptions = GtmConfig & { nonce?: string }
 
 const CONTAINER_ID = /^GTM-[A-Z0-9]+$/
 
-const dataLayer = (): unknown[] =>
-  ((window as DataLayerWindow).dataLayer ??= [])
-
-const isScriptOnPage = (src: string): boolean =>
-  Array.from(document.scripts).some(script => script.src === src)
-
-const injectScript = ({ src, nonce }: { src: string; nonce?: string }) => {
-  const script = document.createElement('script')
-  script.async = true
-  script.src = src
-  if (nonce) script.setAttribute('nonce', nonce)
-  document.head.append(script)
+// A custom script URL serves gtm.js from your own domain, e.g. a server-side GTM container.
+const containerScriptSrc = (containerId: string, scriptUrl?: string) => {
+  const url = toHttpsUrl(
+    scriptUrl ?? 'https://www.googletagmanager.com/gtm.js',
+    'gtm.scriptUrl',
+  )
+  url.searchParams.set('id', containerId)
+  return url.href
 }
 
 export const createGtmDestination = ({
   containerId,
   loadScript = true,
+  scriptUrl,
   nonce,
 }: GtmDestinationOptions): Destination => {
   if (!CONTAINER_ID.test(containerId)) {
@@ -36,7 +33,7 @@ export const createGtmDestination = ({
     )
   }
 
-  const src = `https://www.googletagmanager.com/gtm.js?id=${containerId}`
+  const src = containerScriptSrc(containerId, scriptUrl)
 
   return {
     name: 'gtm',

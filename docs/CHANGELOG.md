@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Security__ in case of vulnerabilities.
 
 ## [Unreleased]
+__Added__
+- Google Analytics 4 destination (`ga4: { measurementId }`) through gtag.js: events, `user_id` from `identify()` (cleared
+  by `reset()`), and automatic or manual (`pageViews: 'manual'`) page views. It reuses a page's existing `gtag`.
+- server-side tagging: `ga4.serverContainerUrl` routes GA4 hits to your server container and adds `event_id` to events
+  for server-side deduplication; `gtm.scriptUrl` loads the Tag Manager container from your own domain
+- docs: Google Analytics 4, server-side tagging
 __Removed__
 - the `device-detector-js` dependency; the package now has no runtime dependencies
 - the unused 0.4 source and its type declarations (no longer exported since 1.0.0-alpha.2)

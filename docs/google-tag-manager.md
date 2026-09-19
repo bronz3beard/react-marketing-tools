@@ -22,6 +22,9 @@ gtm: { containerId: 'GTM-XXXXXXX', loadScript: false }
 With a Content-Security-Policy, pass your nonce as the top-level `nonce` option and follow Google's
 [CSP guide for Tag Manager](https://developers.google.com/tag-platform/security/guides/csp).
 
+To load the container from your own domain, for example a server-side Tag Manager container, set
+`scriptUrl: 'https://sgtm.example.com/gtm.js'`. See [Server-side tagging](./server-side-tagging.md).
+
 ## What reaches the dataLayer
 
 ```ts

@@ -8,6 +8,7 @@ export type {
   ConsentStatus,
   Destination,
   EventParams,
+  Ga4Config,
   GtmConfig,
   Identity,
   IdentityTraits,

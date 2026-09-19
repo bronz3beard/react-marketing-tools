@@ -1,3 +1,4 @@
+import { createGa4Destination } from '../destinations/ga4.js'
 import { createGtmDestination } from '../destinations/gtm.js'
 import { AnalyticsError } from './errors.js'
 import type {
@@ -47,6 +48,9 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
   const destinations: Destination[] = [
     ...(config.gtm
       ? [createGtmDestination({ ...config.gtm, nonce: config.nonce })]
+      : []),
+    ...(config.ga4
+      ? [createGa4Destination({ ...config.ga4, nonce: config.nonce })]
       : []),
     ...(config.destinations ?? []),
   ]

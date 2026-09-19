@@ -5,14 +5,16 @@
 | Option | Type | Default | What it does |
 | --- | --- | --- | --- |
 | `consent` | `'granted' \| 'denied'` | required | The consent state before the visitor makes a choice. It is required so every site decides deliberately. Consent Mode support (mapping it to Google and Meta) arrives in a later alpha. |
-| `gtm` | `{ containerId: string; loadScript?: boolean }` | none | Sends events to the Google Tag Manager dataLayer. See [Google Tag Manager](./google-tag-manager.md). |
+| `gtm` | `{ containerId: string; loadScript?: boolean; scriptUrl?: string }` | none | Sends events to the Google Tag Manager dataLayer. See [Google Tag Manager](./google-tag-manager.md). |
+| `ga4` | `{ measurementId: string; pageViews?: 'auto' \| 'manual'; loadScript?: boolean; serverContainerUrl?: string }` | none | Sends events to Google Analytics 4 through gtag.js. See [Google Analytics 4](./google-analytics-4.md). |
 | `destinations` | `Destination[]` | `[]` | Your own destinations, which receive every event alongside the built-in ones. |
 | `nonce` | `string` | none | Content-Security-Policy nonce added to every script the library injects. |
 | `debug` | `boolean` | `false` | Throw on invalid events and personal data instead of reporting them. Turn on in development. See [Errors](./tracking-events.md#errors). |
 | `onError` | `(error: AnalyticsError) => void` | `console.error` | Receives every problem the library reports. |
 
-`createAnalytics()` throws straight away if `consent` isn't `'granted'` or `'denied'`, or if `gtm.containerId` doesn't
-look like `GTM-XXXXXXX`, so configuration mistakes show up on the first page load.
+`createAnalytics()` throws straight away if `consent` isn't `'granted'` or `'denied'`, if `gtm.containerId` doesn't look
+like `GTM-XXXXXXX`, if `ga4.measurementId` doesn't look like `G-XXXXXXX`, or if `gtm.scriptUrl` or
+`ga4.serverContainerUrl` isn't an `https://` URL. Configuration mistakes show up on the first page load.
 
 ## Events
 
