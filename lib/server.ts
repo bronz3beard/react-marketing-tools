@@ -7,6 +7,8 @@ export type {
   ConversionsApiOptions,
   ConversionsApiResult,
 } from './server/conversionsApi.js'
+export { createTrackHandler } from './server/createTrackHandler.js'
+export type { TrackHandlerOptions } from './server/createTrackHandler.js'
 export { readGa4Cookies } from './server/ga4Cookies.js'
 export { sendMeasurementProtocolEvent } from './server/measurementProtocol.js'
 export type {

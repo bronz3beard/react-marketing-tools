@@ -10,7 +10,8 @@ third-party domains, control over what each vendor receives, and resilience agai
 | --- | --- | --- |
 | [Google tag gateway for advertisers](https://developers.google.com/tag-platform/tag-manager/server-side/dependency-serving) | nothing new: Google tags are served through your CDN or load balancer | You only need Google tags served first-party, without running a container |
 | [Server-side Google Tag Manager](https://developers.google.com/tag-platform/tag-manager/server-side) | a server container (Google recommends Cloud Run; managed hosts also exist) | You want to transform data or forward events to several vendors from your server |
-| [GA4 Measurement Protocol](./measurement-protocol.md) and [Meta Conversions API](./meta-conversions-api.md) | a function call in your own server code (`react-marketing-tools/server`) | Events happen on your server, such as a purchase confirmed by a payment webhook, or you want Meta to receive events the browser Pixel misses |
+| [GA4 Measurement Protocol](./measurement-protocol.md) and [Meta Conversions API](./meta-conversions-api.md) | a function call in your own server code (`react-marketing-tools/server`) | Events happen on your server, such as a purchase confirmed by a payment webhook |
+| [Relay to the Meta Conversions API](./meta-conversions-api.md#relaying-the-pixels-events) | one route in your app (`createTrackHandler`) | You want Meta to receive the events the browser Pixel misses, counted once |
 
 ## Sending GA4 hits to a server container
 

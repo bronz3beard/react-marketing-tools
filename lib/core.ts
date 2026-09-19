@@ -18,5 +18,6 @@ export type {
   Identity,
   IdentityTraits,
   MetaPixelConfig,
+  ServerRelayConfig,
   TrackOptions,
 } from './core/types.js'

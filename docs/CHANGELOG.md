@@ -11,6 +11,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
+## [1.0.0-beta.0] - 19-09-2026
+__Added__
+- relay to the Meta Conversions API, deduplicated with the Pixel:
+  - `server: { endpoint }` posts every Pixel event (same Meta event name, params and event ID) to your endpoint with
+    `navigator.sendBeacon` (keepalive `fetch` fallback), with the identified user and `fbc`/`fbp`, only with `adUserData`
+    consent. Page views are relayed only when the Pixel doesn't send its own.
+  - `createTrackHandler({ allowedOrigins, meta })` from `react-marketing-tools/server`: a Web-standard
+    `(Request) => Response` endpoint that checks the origin, body size (16 KB), body and consent, adds the visitor's IP
+    address and user agent, and forwards the event with `sendConversionsApiEvent()`. Nothing is forwarded to GA4.
+- docs: relaying the Pixel's events (Next.js and Express examples)
+__Changed__
+- 1.0 is feature-complete for its core toolbox and moves from alpha to beta
+
 ## [1.0.0-alpha.6] - 19-09-2026
 __Added__
 - `react-marketing-tools/server` entry for Node.js 22.12+ and edge runtimes, with no dependencies:

@@ -8,7 +8,8 @@ createAnalytics({
 ```
 
 The library loads Meta's official Pixel (`fbevents.js`), initialises your pixel, and sends every event with the same
-`eventID` the other destinations receive, so the Pixel and the Conversions API can be deduplicated.
+`eventID` the other destinations receive, so the Pixel and the Conversions API can be deduplicated. To send every Pixel
+event through the Conversions API as well, add the [relay](./meta-conversions-api.md#relaying-the-pixels-events).
 
 ## Events
 
@@ -84,8 +85,8 @@ Values are passed as they are; the Pixel normalises and SHA-256 hashes them befo
 - A sign-in **after** `start()` reaches GTM and GA4 straight away, but the Pixel only picks the user up on the next page
   load. The same applies to `reset()` on sign-out.
 
-The [Conversions API](./meta-conversions-api.md) sends user data with each event from your server and doesn't have this
-limit.
+The [relay to the Conversions API](./meta-conversions-api.md#relaying-the-pixels-events) sends the user with every event
+from your server, so it doesn't have this limit.
 
 ## Page views
 

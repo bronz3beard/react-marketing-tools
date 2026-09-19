@@ -3,6 +3,7 @@ import { createAttributionTracker } from '../attribution/tracker.js'
 import { createGa4Destination } from '../destinations/ga4.js'
 import { createGtmDestination } from '../destinations/gtm.js'
 import { createMetaPixelDestination } from '../destinations/metaPixel.js'
+import { createServerRelayDestination } from '../destinations/serverRelay.js'
 import {
   applyConsentUpdate,
   CONSENT_KEYS,
@@ -82,6 +83,16 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
           createMetaPixelDestination({
             ...config.metaPixel,
             nonce: config.nonce,
+          }),
+        ]
+      : []),
+    ...(config.server
+      ? [
+          createServerRelayDestination({
+            ...config.server,
+            relayPageViews:
+              !config.metaPixel || config.metaPixel.pageViews === 'manual',
+            onError,
           }),
         ]
       : []),

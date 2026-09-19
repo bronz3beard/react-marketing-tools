@@ -1,7 +1,7 @@
 {
   "name": "react-marketing-tools",
   "type": "module",
-  "version": "1.0.0-alpha.6",
+  "version": "1.0.0-beta.0",
   "description": "One track() call for Google Tag Manager, Google Analytics 4 and the Meta Pixel, with Consent Mode v2, UTM attribution and personal-data redaction built in. React bindings included.",
   "license": "MIT",
   "author": "bronz3beard <exempli.gratia.webdesign@gmail.com> (https://www.heyrory.com/)",

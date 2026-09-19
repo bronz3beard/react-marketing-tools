@@ -150,6 +150,14 @@ export type MetaPixelConfig = {
   loadScript?: boolean
 }
 
+export type ServerRelayConfig = {
+  /**
+   * Where to post events for your `createTrackHandler()` endpoint, which forwards them to the Meta Conversions API with
+   * the Pixel's event ID. A path on your site (`'/api/track'`) or an https URL.
+   */
+  endpoint: string
+}
+
 export type AnalyticsConfig = {
   /** Initial consent for every purpose. Required, so every site makes an explicit choice. */
   consent: ConsentStatus
@@ -166,6 +174,8 @@ export type AnalyticsConfig = {
   gtm?: GtmConfig
   ga4?: Ga4Config
   metaPixel?: MetaPixelConfig
+  /** Relays events to your server for the Meta Conversions API. Only with `adUserData` consent. */
+  server?: ServerRelayConfig
   /** Custom destinations, in addition to the built-in ones. */
   destinations?: Destination[]
   /** Content-Security-Policy nonce added to every script the library injects. */

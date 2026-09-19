@@ -1,24 +1,108 @@
 # Meta Conversions API
 
 The browser Pixel misses events that ad blockers and browser privacy features stop, and events that never happen in the
-browser. `sendConversionsApiEvent` sends events to Meta from your server through the
-[Conversions API](https://developers.facebook.com/docs/marketing-api/conversions-api), with customer information
-normalised and SHA-256 hashed the way Meta requires.
+browser. The [Conversions API](https://developers.facebook.com/docs/marketing-api/conversions-api) sends events to Meta
+from your server, with customer information normalised and SHA-256 hashed the way Meta requires. There are two ways to
+use it:
 
-```ts
-import { sendConversionsApiEvent } from 'react-marketing-tools/server'
-```
+- [Relay the Pixel's events](#relaying-the-pixels-events) through your server, so Meta gets each one from both and counts
+  it once.
+- [Send events only your server sees](#sending-an-event), such as a purchase confirmed by a payment webhook.
 
-It runs anywhere with `fetch` and Web Crypto: Node.js 22.12 or later, and edge runtimes.
+Both run anywhere with `fetch` and Web Crypto: Node.js 22.12 or later, and edge runtimes.
 
 ## Setup
 
 1. In Meta Events Manager, open your dataset (the Pixel), then **Settings → Conversions API → Generate access token**.
 2. Keep the token on your server, for example in `META_CAPI_TOKEN`. Never send it to the browser.
 
+## Relaying the Pixel's events
+
+Point the page at an endpoint on your site:
+
+```ts
+createAnalytics({
+  consent: 'denied',
+  metaPixel: { pixelId: '1234567890123456' },
+  server: { endpoint: '/api/track' },
+})
+```
+
+and mount the handler there:
+
+```ts
+// app/api/track/route.ts (Next.js App Router)
+import { createTrackHandler } from 'react-marketing-tools/server'
+
+export const POST = createTrackHandler({
+  allowedOrigins: ['https://shop.example.com'],
+  meta: { pixelId: '1234567890123456', accessToken: process.env.META_CAPI_TOKEN! },
+})
+```
+
+For every event the Pixel receives, the page posts the same Meta event name, parameters and event ID to your endpoint
+with `navigator.sendBeacon`, which still delivers when the visitor leaves the page. The handler adds the visitor's IP
+address and user agent from the request, hashes the customer information (see
+[Customer information](#customer-information)), and sends the event to the Conversions API. Meta receives the event from
+both and counts it once.
+
+- Nothing is relayed without `adUserData` consent, the signal the Pixel follows. The handler also ignores events whose
+  body says it's denied.
+- The user identified with `identify()` is sent with every event, with the Meta click and browser IDs (`fbc`, `fbp`).
+  Unlike the Pixel, which only takes user data when it initialises, the relay picks up a sign-in straight away.
+- Page views are relayed only when there's no Pixel, or its page views are manual (`metaPixel.pageViews: 'manual'`). The
+  Pixel's automatic page views carry no event ID, so a relayed copy would be counted twice.
+- Nothing is forwarded to GA4, which can't deduplicate events: each one would be counted twice.
+
+The handler is a Web-standard `(request: Request) => Promise<Response>`, so it mounts as it is in Next.js, Remix,
+SvelteKit, Hono, Bun, Deno and Cloudflare Workers. With Express, convert the request:
+
+```ts
+app.post('/api/track', express.text({ limit: '16kb' }), async (req, res) => {
+  const response = await handleTrack(
+    new Request('http://localhost/api/track', {
+      method: 'POST',
+      headers: {
+        origin: req.get('origin') ?? '',
+        'user-agent': req.get('user-agent') ?? '',
+        'x-forwarded-for': req.ip ?? '', // set Express's `trust proxy` behind a proxy
+      },
+      body: req.body,
+    }),
+  )
+  res.sendStatus(response.status)
+})
+```
+
+The handler answers:
+
+| Status | When |
+| --- | --- |
+| 204 | The event was sent to Meta, or the visitor denied consent and it wasn't |
+| 400 | The body isn't a relayed event, or the request has no `User-Agent` |
+| 403 | The `Origin` header isn't one of `allowedOrigins` |
+| 405 | The request isn't a `POST` |
+| 413 | The body is over 16 KB |
+| 502 | Meta rejected the event or couldn't be reached; the details go to `onError` (default `console.error`) |
+
+`allowedOrigins` lists exact origins, such as `https://shop.example.com`. It stops other websites from sending events
+through their visitors' browsers but, like any public analytics endpoint, not someone who calls it directly. Browsers
+send `Origin: null` from pages with `Referrer-Policy: no-referrer`, which the handler rejects.
+
+The IP address is the first entry of the `X-Forwarded-For` header, which hosting platforms and CDNs set. If your server
+isn't behind one, set the header yourself, as the Express example does.
+
+| Handler option | Default | What it does |
+| --- | --- | --- |
+| `allowedOrigins` | required | The origins allowed to send events. |
+| `meta` | required | `{ pixelId, accessToken, testEventCode?, graphApiVersion? }`, as for `sendConversionsApiEvent`. |
+| `onError` | `console.error` | Receives Meta's rejections and network failures. |
+
 ## Sending an event
 
 ```ts
+import { sendConversionsApiEvent } from 'react-marketing-tools/server'
+
 const result = await sendConversionsApiEvent({
   pixelId: '1234567890123456',
   accessToken: process.env.META_CAPI_TOKEN!,
@@ -78,9 +162,9 @@ events, such as `'physical_store'` or `'system_generated'`.
 
 ## Deduplication
 
-If the browser Pixel also sends the same action, Meta counts it once when both have the same event name and event ID.
-Pass the Pixel's event ID as `eventId`. The library gives every browser event an ID, and the relay coming in the next
-release passes it to your server for you. Events only your server sees don't need one.
+Meta counts an event once when the Pixel and the Conversions API send it with the same event name and event ID, within
+48 hours. The [relay](#relaying-the-pixels-events) does this for every Pixel event. Events only your server sees don't
+need an ID; just don't also track them in the browser.
 
 ## Consent
 

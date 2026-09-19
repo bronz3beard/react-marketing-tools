@@ -6,7 +6,7 @@
 One `track()` call for Google Tag Manager, Google Analytics 4 and the Meta Pixel, with Consent Mode v2, UTM attribution
 and personal-data redaction built in.
 
-> **1.0 is in alpha** on the `next` tag. `npm install react-marketing-tools` still installs 0.4.x, whose API 1.0
+> **1.0 is in beta** on the `next` tag. `npm install react-marketing-tools` still installs 0.4.x, whose API 1.0
 > replaces; see the [changelog](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/CHANGELOG.md).
 
 ## Install
@@ -84,7 +84,21 @@ await sendMeasurementProtocolEvent({
 })
 ```
 
-`sendConversionsApiEvent` does the same for Meta, hashing customer information as Meta requires.
+`sendConversionsApiEvent` does the same for Meta, hashing customer information as Meta requires. To have Meta receive
+the events the browser Pixel misses, counted once, relay them through your server:
+
+```ts
+// analytics.ts
+createAnalytics({ /* …as above */ server: { endpoint: '/api/track' } })
+
+// app/api/track/route.ts (Next.js; any Request → Response server works)
+import { createTrackHandler } from 'react-marketing-tools/server'
+
+export const POST = createTrackHandler({
+  allowedOrigins: ['https://shop.example.com'],
+  meta: { pixelId: '1234567890123456', accessToken: process.env.META_CAPI_TOKEN! },
+})
+```
 
 ## Documentation
 
