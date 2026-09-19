@@ -6,7 +6,8 @@ import { gzipSync } from 'node:zlib'
 const budgetsKb = {
   // Still the 0.4 API, dominated by device-detector-js; replaced by the React bindings in batch B6.
   'dist/index.js': 199,
-  'dist/core.js': 1.1,
+  // 1.0.0-alpha.1: 0.96 → 2.09 kB for GA4 validation, PII redaction, error policy and identify/page/reset.
+  'dist/core.js': 2.2,
 }
 
 for (const [file, budgetKb] of Object.entries(budgetsKb)) {

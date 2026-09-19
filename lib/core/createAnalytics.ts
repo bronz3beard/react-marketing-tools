@@ -1,10 +1,18 @@
 import { createGtmDestination } from '../destinations/gtm.js'
+import { AnalyticsError } from './errors.js'
 import type {
   Analytics,
   AnalyticsConfig,
   AnalyticsEvent,
   Destination,
+  EventParams,
 } from './types.js'
+import {
+  containsEmail,
+  findEventNameProblem,
+  findParamProblems,
+  redactPii,
+} from './validate.js'
 
 const isBrowser = (): boolean => typeof window !== 'undefined'
 
@@ -35,18 +43,77 @@ const assertValidConfig = (config: AnalyticsConfig): void => {
 export const createAnalytics = (config: AnalyticsConfig): Analytics => {
   assertValidConfig(config)
 
+  const { debug = false, onError = console.error } = config
   const destinations: Destination[] = [
     ...(config.gtm
       ? [createGtmDestination({ ...config.gtm, nonce: config.nonce })]
       : []),
     ...(config.destinations ?? []),
   ]
-  // Events tracked before start() — e.g. from child components, whose effects run before their parent's.
-  const queue: AnalyticsEvent[] = []
+  // Calls made before start(), e.g. from child components, whose effects run before their parent's. One queue keeps
+  // track, page, identify and reset in the order they happened.
+  const queue: ((destination: Destination) => void)[] = []
   let started = false
 
-  const deliver = (event: AnalyticsEvent) => {
-    for (const destination of destinations) destination.track(event)
+  // Mistakes in how the library is called throw in debug so they surface in development; in production they're
+  // reported and the app keeps running.
+  const fail = (error: AnalyticsError): void => {
+    if (debug) throw error
+    onError(error)
+  }
+
+  // A failing vendor must never break the app or the other destinations, in any mode.
+  const dispatch = (call: (destination: Destination) => void) => {
+    for (const destination of destinations) {
+      try {
+        call(destination)
+      } catch (cause) {
+        onError(
+          new AnalyticsError(
+            'destination_failed',
+            `destination "${destination.name}" failed`,
+            { cause },
+          ),
+        )
+      }
+    }
+  }
+
+  const send = (call: (destination: Destination) => void) => {
+    if (started) dispatch(call)
+    else queue.push(call)
+  }
+
+  const createEvent = (
+    name: string,
+    params: EventParams,
+  ): AnalyticsEvent | undefined => {
+    const nameProblem = findEventNameProblem(name)
+    if (nameProblem) {
+      fail(new AnalyticsError('invalid_event', nameProblem))
+      return undefined
+    }
+
+    for (const problem of findParamProblems(params)) {
+      fail(new AnalyticsError('invalid_param', `event "${name}" ${problem}`))
+    }
+
+    const { params: safeParams, redactedKeys } = redactPii(params)
+    if (redactedKeys.length > 0) {
+      fail(
+        new AnalyticsError(
+          'pii_redacted',
+          `event "${name}": personal data redacted from ${redactedKeys.join(', ')}`,
+        ),
+      )
+    }
+
+    return {
+      name,
+      params: safeParams,
+      eventId: createEventId(),
+      timestamp: Date.now(),
+    }
   }
 
   return {
@@ -54,21 +121,47 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
       if (started || !isBrowser()) return
       started = true
 
-      for (const destination of destinations) destination.start()
-      queue.splice(0).forEach(deliver)
+      dispatch(destination => destination.start())
+      queue.splice(0).forEach(dispatch)
     },
     track(name, params = {}) {
       if (!isBrowser()) return
 
-      const event: AnalyticsEvent = {
-        name,
-        params,
-        eventId: createEventId(),
-        timestamp: Date.now(),
-      }
+      const event = createEvent(name, params)
+      if (event) send(destination => destination.track(event))
+    },
+    page(params = {}) {
+      if (!isBrowser()) return
 
-      if (started) deliver(event)
-      else queue.push(event)
+      const event = createEvent('page_view', {
+        page_location: location.href,
+        page_title: document.title,
+        ...params,
+      })
+      if (event) {
+        send(destination =>
+          destination.page ? destination.page(event) : destination.track(event),
+        )
+      }
+    },
+    identify(userId, traits = {}) {
+      if (!isBrowser()) return
+
+      if (!userId || containsEmail(userId)) {
+        fail(
+          new AnalyticsError(
+            'invalid_user_id',
+            'identify() needs a non-empty user id that is not personal data such as an email address',
+          ),
+        )
+        return
+      }
+      send(destination => destination.identify?.({ userId, traits }))
+    },
+    reset() {
+      if (!isBrowser()) return
+
+      send(destination => destination.reset?.())
     },
   }
 }

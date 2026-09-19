@@ -1,4 +1,9 @@
-import type { AnalyticsEvent, Destination, GtmConfig } from '../core/types.js'
+import type {
+  AnalyticsEvent,
+  Destination,
+  GtmConfig,
+  Identity,
+} from '../core/types.js'
 
 type DataLayerWindow = Window & { dataLayer?: unknown[] }
 
@@ -46,6 +51,14 @@ export const createGtmDestination = ({
     track({ name, params, eventId }: AnalyticsEvent) {
       // `event` and `event_id` are set last so params can never overwrite them.
       dataLayer().push({ ...params, event: name, event_id: eventId })
+    },
+    identify({ userId }: Identity) {
+      // Traits are personal data and never go to the dataLayer.
+      dataLayer().push({ event: 'identify', user_id: userId })
+    },
+    reset() {
+      // GTM keeps pushed keys in its data model, so user_id must be cleared explicitly.
+      dataLayer().push({ event: 'reset', user_id: undefined })
     },
   }
 }

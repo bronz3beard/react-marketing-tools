@@ -37,6 +37,16 @@ pushes:
 - `event` is the name passed to `track()`, and `event_id` is the event's UUID. Params can't overwrite either key.
 - Params are pushed flat, so a Data Layer Variable named `method` reads them directly.
 
+The other calls push:
+
+| Call | dataLayer push |
+| --- | --- |
+| `page()` | `{ page_location, page_title, event: 'page_view', event_id }` |
+| `identify('user-42', traits)` | `{ event: 'identify', user_id: 'user-42' }` (traits are never pushed) |
+| `reset()` | `{ event: 'reset', user_id: undefined }` (removes `user_id` from GTM's data model) |
+
+To send the user id to GA4 from GTM, read `user_id` with a Data Layer Variable in your Google tag's configuration.
+
 ## Using events in GTM
 
 1. **Trigger:** create a *Custom Event* trigger whose event name is `sign_up`.

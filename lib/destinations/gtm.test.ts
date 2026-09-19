@@ -101,4 +101,45 @@ describe('GTM destination', () => {
       createAnalytics({ consent: 'granted', gtm: { containerId: 'UA-1234' } }),
     ).toThrow(/GTM-XXXXXXX/)
   })
+
+  it('pushes identify without traits, and page views with an event id', () => {
+    const analytics = createAnalytics({
+      consent: 'granted',
+      gtm: { containerId: 'GTM-TEST1', loadScript: false },
+    })
+
+    analytics.start()
+    analytics.identify('user-42', { email: 'a@b.com' })
+    analytics.page()
+
+    expect(readDataLayer()).toEqual([
+      { event: 'identify', user_id: 'user-42' },
+      {
+        page_location: location.href,
+        page_title: document.title,
+        event: 'page_view',
+        event_id: expect.any(String),
+      },
+    ])
+    expect(JSON.stringify(readDataLayer())).not.toContain('a@b.com')
+  })
+
+  it('clears user_id from GTM’s data model on reset', () => {
+    const analytics = createAnalytics({
+      consent: 'granted',
+      gtm: { containerId: 'GTM-TEST1', loadScript: false },
+    })
+
+    analytics.start()
+    analytics.identify('user-42')
+    analytics.reset()
+
+    // GTM merges every push into one data model; this reproduces that merge.
+    const dataModel = Object.assign({}, ...(readDataLayer() ?? []))
+    expect(dataModel).toHaveProperty('user_id', undefined)
+    expect(readDataLayer()?.at(-1)).toEqual({
+      event: 'reset',
+      user_id: undefined,
+    })
+  })
 })

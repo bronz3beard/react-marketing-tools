@@ -11,6 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
+## [1.0.0-alpha.1] - 19-09-2026
+__Added__
+- `page()`, `identify(userId, traits)` and `reset()`, queued in call order with `track()`. GTM receives `page_view`,
+  `identify` (no traits) and `reset` (clears `user_id` from its data model).
+- GA4 naming rules for event and param names (pattern, 40 characters, reserved `google_`/`ga_`/`firebase_` prefixes), plus
+  GA4 param count and value length limits
+- personal-data redaction: values of `email`/`phone`/`first_name`/`last_name`/`address`/`password` params, and email
+  addresses inside any string (including URL-encoded ones), become `[redacted]` before leaving the page
+- `onError` (default `console.error`) and `debug`; problems arrive as an `AnalyticsError` with a `code`. A failing
+  destination never breaks the app or the other destinations.
+- docs: tracking events
+
 ## [1.0.0-alpha.0] - 19-09-2026
 Published on the `next` dist-tag; `latest` stays on 0.4.x. The package root (`react-marketing-tools`) still exports
 the 0.4 API in this alpha.

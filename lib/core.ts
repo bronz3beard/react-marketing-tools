@@ -1,4 +1,6 @@
 export { createAnalytics } from './core/createAnalytics.js'
+export { AnalyticsError } from './core/errors.js'
+export type { AnalyticsErrorCode } from './core/errors.js'
 export type {
   Analytics,
   AnalyticsConfig,
@@ -7,4 +9,6 @@ export type {
   Destination,
   EventParams,
   GtmConfig,
+  Identity,
+  IdentityTraits,
 } from './core/types.js'
