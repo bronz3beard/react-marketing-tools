@@ -67,6 +67,12 @@ const Row = ({ row }: { row: InspectorRow }) => {
           {noteFor(key, row) && <p className="hint">{noteFor(key, row)}</p>}
         </div>
       ))}
+      {row.pixelLive && (
+        <p className="hint">
+          Your Meta Pixel script is running, so its calls go straight to Meta.
+          See them in Events Manager → Test events.
+        </p>
+      )}
     </li>
   )
 }

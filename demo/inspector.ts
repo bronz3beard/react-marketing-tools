@@ -9,6 +9,8 @@ export type InspectorRow = {
   eventId?: string
   consent?: ConsentState
   calls: Record<CallGroup, unknown[]>
+  /** The real Meta Pixel script is running, so its calls go straight to Meta instead of the queue shown here. */
+  pixelLive: boolean
 }
 
 export type Inspector = {
@@ -20,7 +22,7 @@ export type Inspector = {
 
 type DemoWindow = Window & {
   dataLayer?: unknown[]
-  fbq?: { queue?: unknown[] }
+  fbq?: { queue?: unknown[]; callMethod?: unknown }
 }
 
 // gtag() and fbq() queue the Arguments object of each call; GTM's own pushes are plain objects.
@@ -32,8 +34,8 @@ const toCall = (entry: unknown): unknown[] =>
 
 /**
  * A custom destination that shows what the built-in destinations handed to each vendor. Custom destinations run after
- * the built-in ones, so when it's called they've already queued their calls. Nothing leaves the page: the playground
- * doesn't load vendor scripts, and the relay's beacons are kept here instead of sent.
+ * the built-in ones, so when it's called they've already queued their calls. With placeholder IDs nothing leaves the
+ * page: vendor scripts aren't loaded, and the relay's beacons are kept here instead of sent.
  */
 export const createInspector = (): Inspector => {
   const page = window as DemoWindow
@@ -69,7 +71,11 @@ export const createInspector = (): Inspector => {
       pixel: pixelQueue.length,
       beacons: beacons.length,
     }
-    rows = [{ id: nextId++, label, eventId, consent, calls }, ...rows]
+    const pixelLive = page.fbq?.callMethod !== undefined
+    rows = [
+      { id: nextId++, label, eventId, consent, calls, pixelLive },
+      ...rows,
+    ]
     notify()
   }
 

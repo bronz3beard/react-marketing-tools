@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { useAnalytics, type ConsentState } from 'react-marketing-tools'
+import type { ConsentState, ConsentUpdate } from 'react-marketing-tools'
 
 const PURPOSES: { key: keyof ConsentState; label: string; detail: string }[] = [
   {
@@ -24,15 +23,15 @@ const PURPOSES: { key: keyof ConsentState; label: string; detail: string }[] = [
   },
 ]
 
-export const ConsentPanel = () => {
-  const { consent } = useAnalytics()
-  const [state, setState] = useState(consent.get)
-
-  const change = (key: keyof ConsentState, granted: boolean) => {
-    consent.update({ [key]: granted ? 'granted' : 'denied' })
-    // `ads` also moves the purposes that follow it, so read the whole state back.
-    setState(consent.get())
-  }
+export const ConsentPanel = ({
+  state,
+  onChange,
+}: {
+  state: ConsentState
+  onChange: (update: ConsentUpdate) => void
+}) => {
+  const change = (key: keyof ConsentState, granted: boolean) =>
+    onChange({ [key]: granted ? 'granted' : 'denied' })
 
   return (
     <section className="panel" aria-labelledby="consent-title">
