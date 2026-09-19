@@ -18,9 +18,16 @@ export type ConsentUpdate = Partial<ConsentState>
 /** Event parameters, passed to every destination as-is. */
 export type EventParams = Record<string, unknown>
 
+/** Per-call adjustments for one destination, when the automatic mapping isn't what you want. */
+export type TrackOptions = {
+  /** Meta Pixel: send as this event name (standard or custom), with these params merged over the mapped ones. */
+  meta?: { event?: string; params?: EventParams }
+}
+
 export type AnalyticsEvent = {
   name: string
   params: EventParams
+  options?: TrackOptions
   /** Unique per `track()` call and shared by every destination, so vendors can deduplicate the same event. */
   eventId: string
   /** Milliseconds since the Unix epoch at the moment `track()` was called. */
@@ -46,8 +53,11 @@ export type Identity = {
 /** Somewhere events are sent. Built-in destinations are configured by key; custom ones go in `destinations`. */
 export type Destination = {
   name: string
-  /** Called once, in the browser, by `analytics.start()`, with the consent state the page started with. */
-  start(context: { consent: ConsentState }): void
+  /**
+   * Called once, in the browser, by `analytics.start()`, with the consent state the page started with and the user
+   * identified before start, if any. Some vendors (the Meta Pixel) only accept user data when they initialise.
+   */
+  start(context: { consent: ConsentState; identity?: Identity }): void
   track(event: AnalyticsEvent): void
   /** Receives every consent change, in order with events. */
   consent?(state: ConsentState): void
@@ -85,6 +95,18 @@ export type Ga4Config = {
   waitForUpdate?: number
 }
 
+export type MetaPixelConfig = {
+  /** Meta Pixel (dataset) ID, e.g. `1234567890123456`. */
+  pixelId: string
+  /**
+   * `'auto'` (default): the Pixel sends PageView on load and on client-side navigation itself.
+   * `'manual'`: only `analytics.page()` sends PageView.
+   */
+  pageViews?: 'auto' | 'manual'
+  /** Set to `false` when the page already includes the Meta Pixel base code. Defaults to `true`. */
+  loadScript?: boolean
+}
+
 export type AnalyticsConfig = {
   /** Initial consent for every purpose. Required, so every site makes an explicit choice. */
   consent: ConsentStatus
@@ -95,6 +117,7 @@ export type AnalyticsConfig = {
   respectGpc?: boolean
   gtm?: GtmConfig
   ga4?: Ga4Config
+  metaPixel?: MetaPixelConfig
   /** Custom destinations, in addition to the built-in ones. */
   destinations?: Destination[]
   /** Content-Security-Policy nonce added to every script the library injects. */
@@ -109,7 +132,7 @@ export type Analytics = {
   /** Loads vendor scripts and delivers queued events. Safe to call more than once; does nothing outside the browser. */
   start(): void
   /** Sends an event to every destination, queued until `start()`. Does nothing outside the browser. */
-  track(name: string, params?: EventParams): void
+  track(name: string, params?: EventParams, options?: TrackOptions): void
   /** Sends a `page_view` with the current `page_location` and `page_title`, plus any params given. */
   page(params?: EventParams): void
   /** Associates later events with a user. `userId` must not be personal data such as an email address. */

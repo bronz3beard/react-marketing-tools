@@ -8,13 +8,15 @@
 | `respectGpc` | `boolean` | `true` | Start advertising consent denied when the browser sends Global Privacy Control. See [Consent](./consent.md#global-privacy-control). |
 | `gtm` | `{ containerId: string; loadScript?: boolean; scriptUrl?: string; waitForUpdate?: number }` | none | Sends events to the Google Tag Manager dataLayer. See [Google Tag Manager](./google-tag-manager.md). |
 | `ga4` | `{ measurementId: string; pageViews?: 'auto' \| 'manual'; loadScript?: boolean; serverContainerUrl?: string; waitForUpdate?: number }` | none | Sends events to Google Analytics 4 through gtag.js. See [Google Analytics 4](./google-analytics-4.md). |
+| `metaPixel` | `{ pixelId: string; pageViews?: 'auto' \| 'manual'; loadScript?: boolean }` | none | Sends events to the Meta Pixel. See [Meta Pixel](./meta-pixel.md). |
 | `destinations` | `Destination[]` | `[]` | Your own destinations, which receive every event alongside the built-in ones. |
 | `nonce` | `string` | none | Content-Security-Policy nonce added to every script the library injects. |
 | `debug` | `boolean` | `false` | Throw on invalid events and personal data instead of reporting them. Turn on in development. See [Errors](./tracking-events.md#errors). |
 | `onError` | `(error: AnalyticsError) => void` | `console.error` | Receives every problem the library reports. |
 
 `createAnalytics()` throws straight away if `consent` isn't `'granted'` or `'denied'`, if `gtm.containerId` doesn't look
-like `GTM-XXXXXXX`, if `ga4.measurementId` doesn't look like `G-XXXXXXX`, or if `gtm.scriptUrl` or
+like `GTM-XXXXXXX`, if `ga4.measurementId` doesn't look like `G-XXXXXXX`, if `metaPixel.pixelId` isn't numeric, or if
+`gtm.scriptUrl` or
 `ga4.serverContainerUrl` isn't an `https://` URL. Configuration mistakes show up on the first page load.
 
 ## Events

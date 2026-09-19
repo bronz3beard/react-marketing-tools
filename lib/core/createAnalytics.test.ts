@@ -383,6 +383,62 @@ describe('consent', () => {
     )
   })
 
+  it('hands destinations the user identified before start, and forgets them on reset', () => {
+    const starts: unknown[] = []
+    const destination: Destination = {
+      name: 'spy',
+      start: context => starts.push(context.identity),
+      track() {},
+    }
+
+    const identified = createAnalytics({
+      consent: 'granted',
+      destinations: [destination],
+    })
+    identified.identify('user-42', { email: 'a@b.com' })
+    identified.start()
+
+    const loggedOut = createAnalytics({
+      consent: 'granted',
+      destinations: [destination],
+    })
+    loggedOut.identify('user-42')
+    loggedOut.reset()
+    loggedOut.start()
+
+    expect(starts).toEqual([
+      { userId: 'user-42', traits: { email: 'a@b.com' } },
+      undefined,
+    ])
+  })
+
+  it('redacts personal data from per-destination override params too', () => {
+    const { destination, events } = recordingDestination()
+    const onError = vi.fn()
+    const analytics = createAnalytics({
+      consent: 'granted',
+      destinations: [destination],
+      onError,
+    })
+
+    analytics.start()
+    analytics.track(
+      'lead_form',
+      {},
+      { meta: { event: 'Lead', params: { email: 'a@b.com' } } },
+    )
+
+    expect(events[0].options).toEqual({
+      meta: { event: 'Lead', params: { email: '[redacted]' } },
+    })
+    expect(onError).toHaveBeenCalledWith(
+      expect.objectContaining({
+        code: 'pii_redacted',
+        message: expect.stringContaining('meta.email'),
+      }),
+    )
+  })
+
   it('throws on an invalid consent update in debug mode', () => {
     const analytics = createAnalytics({ consent: 'denied', debug: true })
 

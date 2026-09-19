@@ -44,12 +44,15 @@ An update with an unknown purpose or a value other than `'granted'`/`'denied'` i
 
 ## How it maps to vendors
 
-| Purpose | Google Consent Mode v2 |
-| --- | --- |
-| `analytics` | `analytics_storage` |
-| `ads` | `ad_storage` (and `ad_user_data`, `ad_personalization` when not set separately) |
-| `adUserData` | `ad_user_data` |
-| `adPersonalization` | `ad_personalization` |
+| Purpose | Google Consent Mode v2 | Meta Pixel |
+| --- | --- | --- |
+| `analytics` | `analytics_storage` | — |
+| `ads` | `ad_storage` (and `ad_user_data`, `ad_personalization` when not set separately) | through `adUserData` |
+| `adUserData` | `ad_user_data` | `fbq('consent', 'grant' \| 'revoke')` |
+| `adPersonalization` | `ad_personalization` | — |
+
+For the Meta Pixel, a denied starting state queues `fbq('consent', 'revoke')` before `init`; Meta then holds the Pixel
+until consent is granted.
 
 For GA4 and Google Tag Manager, `start()` sends `gtag('consent', 'default', …)` before anything else, and every
 `update()` sends `gtag('consent', 'update', …)`. When a signal starts denied, the default includes `wait_for_update`

@@ -11,6 +11,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
+## [1.0.0-alpha.4] - 19-09-2026
+__Added__
+- Meta Pixel destination (`metaPixel: { pixelId }`), loaded with Meta's official base code:
+  - GA4 recommended events become Meta standard events (`purchase` → `Purchase`, `sign_up` → `CompleteRegistration`,
+    `generate_lead` → `Lead`, and more); other events are sent with `trackCustom`
+  - every event carries the shared `eventID`, ready for deduplication with the Conversions API
+  - ecommerce `items` become `content_ids`/`contents`/`num_items`, and `search_term` becomes `search_string`
+  - consent follows `adUserData`: `revoke` is queued before `init` when denied, and updates send `grant`/`revoke`
+  - advanced matching (`em`, `ph`, `fn`, `ln`, `external_id`) from the user identified before `start()`
+  - automatic or manual (`pageViews: 'manual'`) page views
+- `track(name, params, options)`: per-destination overrides, starting with `{ meta: { event, params } }`
+- docs: Meta Pixel
+__Changed__
+- custom destinations' `start()` context also carries `identity` (the user identified before start)
+
 ## [1.0.0-alpha.3] - 19-09-2026
 __Added__
 - Google Analytics 4 destination (`ga4: { measurementId }`) through gtag.js: events, `user_id` from `identify()` (cleared

@@ -1,5 +1,6 @@
 import { createGa4Destination } from '../destinations/ga4.js'
 import { createGtmDestination } from '../destinations/gtm.js'
+import { createMetaPixelDestination } from '../destinations/metaPixel.js'
 import {
   applyConsentUpdate,
   CONSENT_KEYS,
@@ -15,6 +16,8 @@ import type {
   ConsentUpdate,
   Destination,
   EventParams,
+  Identity,
+  TrackOptions,
 } from './types.js'
 import {
   containsEmail,
@@ -59,12 +62,22 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
     gpc: respectGpc && readGlobalPrivacyControl(),
   })
   let consent = initialConsent
+  // The current user, handed to destinations at start: the Meta Pixel only accepts user data when it initialises.
+  let identity: Identity | undefined
   const destinations: Destination[] = [
     ...(config.gtm
       ? [createGtmDestination({ ...config.gtm, nonce: config.nonce })]
       : []),
     ...(config.ga4
       ? [createGa4Destination({ ...config.ga4, nonce: config.nonce })]
+      : []),
+    ...(config.metaPixel
+      ? [
+          createMetaPixelDestination({
+            ...config.metaPixel,
+            nonce: config.nonce,
+          }),
+        ]
       : []),
     ...(config.destinations ?? []),
   ]
@@ -102,10 +115,15 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
     else queue.push(call)
   }
 
-  const createEvent = (
-    name: string,
-    params: EventParams,
-  ): AnalyticsEvent | undefined => {
+  const createEvent = ({
+    name,
+    params,
+    options,
+  }: {
+    name: string
+    params: EventParams
+    options?: TrackOptions
+  }): AnalyticsEvent | undefined => {
     const nameProblem = findEventNameProblem(name)
     if (nameProblem) {
       fail(new AnalyticsError('invalid_event', nameProblem))
@@ -116,7 +134,13 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
       fail(new AnalyticsError('invalid_param', `event "${name}" ${problem}`))
     }
 
-    const { params: safeParams, redactedKeys } = redactPii(params)
+    // Per-destination override params leave the page too, so they get the same personal-data protection.
+    const safe = redactPii(params)
+    const safeMeta = options?.meta?.params && redactPii(options.meta.params)
+    const redactedKeys = [
+      ...safe.redactedKeys,
+      ...(safeMeta?.redactedKeys.map(key => `meta.${key}`) ?? []),
+    ]
     if (redactedKeys.length > 0) {
       fail(
         new AnalyticsError(
@@ -128,7 +152,12 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
 
     return {
       name,
-      params: safeParams,
+      params: safe.params,
+      ...(options && {
+        options: safeMeta
+          ? { ...options, meta: { ...options.meta, params: safeMeta.params } }
+          : options,
+      }),
       eventId: createEventId(),
       timestamp: Date.now(),
     }
@@ -139,22 +168,27 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
       if (started || !isBrowser()) return
       started = true
 
-      dispatch(destination => destination.start({ consent: initialConsent }))
+      dispatch(destination =>
+        destination.start({ consent: initialConsent, identity }),
+      )
       queue.splice(0).forEach(dispatch)
     },
-    track(name, params = {}) {
+    track(name, params = {}, options) {
       if (!isBrowser()) return
 
-      const event = createEvent(name, params)
+      const event = createEvent({ name, params, options })
       if (event) send(destination => destination.track(event))
     },
     page(params = {}) {
       if (!isBrowser()) return
 
-      const event = createEvent('page_view', {
-        page_location: location.href,
-        page_title: document.title,
-        ...params,
+      const event = createEvent({
+        name: 'page_view',
+        params: {
+          page_location: location.href,
+          page_title: document.title,
+          ...params,
+        },
       })
       if (event) {
         send(destination =>
@@ -174,11 +208,14 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
         )
         return
       }
-      send(destination => destination.identify?.({ userId, traits }))
+      const current = { userId, traits }
+      identity = current
+      send(destination => destination.identify?.(current))
     },
     reset() {
       if (!isBrowser()) return
 
+      identity = undefined
       send(destination => destination.reset?.())
     },
     consent: {

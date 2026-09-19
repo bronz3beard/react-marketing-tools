@@ -14,4 +14,6 @@ export type {
   GtmConfig,
   Identity,
   IdentityTraits,
+  MetaPixelConfig,
+  TrackOptions,
 } from './core/types.js'

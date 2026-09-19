@@ -40,6 +40,16 @@ Only top-level params are checked; nested values such as ecommerce `items` are s
 To use personal data for matching users (for example Meta's advanced matching), pass it to `identify()` as traits. Traits
 go only to destinations that match users with them, and never into event params or the dataLayer.
 
+## Per-destination options
+
+`track()` takes an optional third argument for vendor-specific adjustments. Today it supports the Meta Pixel:
+
+```ts
+analytics.track('lead_form', { form: 'demo' }, { meta: { event: 'Lead', params: { content_category: 'b2b' } } })
+```
+
+See [Meta Pixel](./meta-pixel.md#choosing-the-meta-event-yourself).
+
 ## Page views
 
 `page()` sends a `page_view` event with the current `page_location` and `page_title`. Params you pass are added:
