@@ -1,30 +1,40 @@
-// Fails when the published JavaScript grows past its gzip budget. The budget covers every file in dist/ (entries plus
-// shared chunks), which is what an app using the package downloads. It is the measured size + ~5%.
-// Raise it only deliberately, with the reason in the commit message — never to silence an unexpected jump.
-// History: 1.0.0-alpha.2 — 2.55 kB (core, GTM, validation, React bindings; the 0.4 bundle was 189 kB).
+// Fails when a package entry grows past its gzip budget. Each entry is measured with the chunks it imports, gzipped
+// together, which is roughly what an app's bundler ships for that import. Budgets are the measured size + ~5%.
+// Raise one only deliberately, with the reason in the commit message — never to silence an unexpected jump.
+// History (total of every dist file until alpha.5, per entry since alpha.6):
+//          1.0.0-alpha.2 — 2.55 kB (core, GTM, validation, React bindings; the 0.4 bundle was 189 kB).
 //          B7a — 2.98 kB (+ GA4 via gtag.js, server-side GTM routing, shared Google tag plumbing).
 //          1.0.0-alpha.3 — 3.49 kB (+ Consent Mode v2, consent API, Global Privacy Control).
 //          1.0.0-alpha.4 — 4.62 kB (+ Meta Pixel destination, GA4→Meta event/param mapping, identity at start).
 //          1.0.0-alpha.5 — 5.66 kB (+ UTM/click-ID attribution, consent-gated storage, cookie parsing, fbc/fbp).
-import { readdirSync, readFileSync } from 'node:fs'
-import { join } from 'node:path'
+//          1.0.0-alpha.6 — index 5.47, core 5.31, server 3.00 kB (+ `server` entry: Measurement Protocol, Conversions API).
+import { Buffer } from 'node:buffer'
+import { readFileSync } from 'node:fs'
+import { dirname, join, normalize } from 'node:path'
 import { gzipSync } from 'node:zlib'
 
-const BUDGET_KB = 6.0
+const BUDGETS_KB = { index: 5.75, core: 5.6, server: 3.15 }
 
-const files = readdirSync('dist', { recursive: true })
-  .filter(file => file.endsWith('.js'))
-  .sort()
+const RELATIVE_IMPORT = /(?:from|import)\s*["'](\.{1,2}\/[^"']+)["']/g
 
-let totalKb = 0
-for (const file of files) {
-  const sizeKb = gzipSync(readFileSync(join('dist', file))).length / 1024
-  totalKb += sizeKb
-  console.log(`     dist/${file}: ${sizeKb.toFixed(2)} kB gzip`)
+const withImports = (file, seen = new Set()) => {
+  if (seen.has(file)) return seen
+  seen.add(file)
+  for (const [, specifier] of readFileSync(file, 'utf8').matchAll(
+    RELATIVE_IMPORT,
+  )) {
+    withImports(normalize(join(dirname(file), specifier)), seen)
+  }
+  return seen
 }
 
-const withinBudget = totalKb <= BUDGET_KB
-if (!withinBudget) process.exitCode = 1
-console.log(
-  `${withinBudget ? 'ok  ' : 'FAIL'} total: ${totalKb.toFixed(2)} kB gzip (budget ${BUDGET_KB} kB)`,
-)
+for (const [entry, budgetKb] of Object.entries(BUDGETS_KB)) {
+  const files = [...withImports(join('dist', `${entry}.js`))]
+  const sizeKb =
+    gzipSync(Buffer.concat(files.map(file => readFileSync(file)))).length / 1024
+  const withinBudget = sizeKb <= budgetKb
+  if (!withinBudget) process.exitCode = 1
+  console.log(
+    `${withinBudget ? 'ok  ' : 'FAIL'} ${entry}: ${sizeKb.toFixed(2)} kB gzip (budget ${budgetKb} kB) — ${files.join(', ')}`,
+  )
+}

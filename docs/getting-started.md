@@ -78,4 +78,7 @@ analytics.track('sign_up', { method: 'google' })
 - [Attribution](./attribution-utm.md): UTM params and ad click IDs
 - [Google Tag Manager](./google-tag-manager.md): what reaches the dataLayer and how to use it in GTM
 - [Google Analytics 4](./google-analytics-4.md): events, user ids and page views through gtag.js
+- [Meta Pixel](./meta-pixel.md): standard events, consent and advanced matching
 - [Server-side tagging](./server-side-tagging.md): send hits through your own domain
+- [GA4 Measurement Protocol](./measurement-protocol.md) and [Meta Conversions API](./meta-conversions-api.md): send
+  events from your server

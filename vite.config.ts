@@ -10,10 +10,12 @@ export default defineConfig({
     minify: true,
     reportCompressedSize: true,
     lib: {
-      // ESM-only (decision D6). `index` = core + React bindings; `core` = framework-agnostic.
+      // ESM-only (decision D6). `index` = core + React bindings; `core` = framework-agnostic;
+      // `server` = Measurement Protocol + Conversions API for Node and edge runtimes.
       entry: {
         index: resolve(import.meta.dirname, 'lib/index.ts'),
         core: resolve(import.meta.dirname, 'lib/core.ts'),
+        server: resolve(import.meta.dirname, 'lib/server.ts'),
       },
       formats: ['es'],
       fileName: (_format, entryName) => `${entryName}.js`,

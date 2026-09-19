@@ -11,6 +11,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
+## [1.0.0-alpha.6] - 19-09-2026
+__Added__
+- `react-marketing-tools/server` entry for Node.js 22.12+ and edge runtimes, with no dependencies:
+  - `sendMeasurementProtocolEvent()`: GA4 events from your server, with `session_id` and `engagement_time_msec` so they
+    join the visitor's session, advertising consent, the EU endpoint (`region: 'eu'`) and a `validate` mode that returns
+    GA4's validation messages
+  - `readGa4Cookies()`: the GA4 client and session IDs from the `_ga` and `_ga_<stream>` cookies (`GS1` and `GS2`)
+  - `sendConversionsApiEvent()`: Meta Conversions API events (Graph API `v26.0`, configurable), with customer information
+    normalised and SHA-256 hashed as Meta requires, browser signals (`fbc`, `fbp`, IP address, user agent) sent unhashed,
+    and `testEventCode`
+  - both check arguments before sending, redact personal data from event params, and resolve HTTP errors as
+    `{ ok: false }` instead of throwing
+- docs: GA4 Measurement Protocol, Meta Conversions API
+__Changed__
+- the size check budgets each entry (with the chunks it imports) instead of the total of every file
+
 ## [1.0.0-alpha.5] - 19-09-2026
 __Added__
 - attribution: UTM params and ad click IDs (`gclid`, `gbraid`, `wbraid`, `dclid`, `fbclid`, `msclkid`, `ttclid`,

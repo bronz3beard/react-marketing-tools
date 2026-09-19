@@ -70,6 +70,22 @@ analytics.consent.update({ analytics: 'granted', ads: 'granted' }) // Google Con
 Configure only the destinations you use. Without React, import `createAnalytics` from `react-marketing-tools/core` and
 call `analytics.start()` yourself.
 
+Send events that happen on your server, such as a purchase confirmed by a payment webhook, from
+`react-marketing-tools/server`:
+
+```ts
+import { sendMeasurementProtocolEvent } from 'react-marketing-tools/server'
+
+await sendMeasurementProtocolEvent({
+  measurementId: 'G-XXXXXXX',
+  apiSecret: process.env.GA4_API_SECRET!,
+  clientId: order.ga4ClientId, // saved at checkout with readGa4Cookies()
+  events: [{ name: 'purchase', params: { transaction_id: order.id, value: 42, currency: 'USD' } }],
+})
+```
+
+`sendConversionsApiEvent` does the same for Meta, hashing customer information as Meta requires.
+
 ## Documentation
 
 - [Getting started](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/getting-started.md)
@@ -82,6 +98,8 @@ call `analytics.start()` yourself.
 - [Google Analytics 4](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/google-analytics-4.md)
 - [Meta Pixel](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/meta-pixel.md)
 - [Server-side tagging](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/server-side-tagging.md)
+- [GA4 Measurement Protocol](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/measurement-protocol.md): GA4 events from your server
+- [Meta Conversions API](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/meta-conversions-api.md): Meta events from your server
 - [Changelog](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/CHANGELOG.md)
 
 ## License

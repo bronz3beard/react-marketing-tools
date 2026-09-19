@@ -84,8 +84,8 @@ Values are passed as they are; the Pixel normalises and SHA-256 hashes them befo
 - A sign-in **after** `start()` reaches GTM and GA4 straight away, but the Pixel only picks the user up on the next page
   load. The same applies to `reset()` on sign-out.
 
-The Conversions API relay (coming in a later release) sends user data with each event from your server and doesn't have
-this limit.
+The [Conversions API](./meta-conversions-api.md) sends user data with each event from your server and doesn't have this
+limit.
 
 ## Page views
 
