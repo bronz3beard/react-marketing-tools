@@ -58,6 +58,60 @@ See [Meta Pixel](./meta-pixel.md#choosing-the-meta-event-yourself).
 analytics.page({ page_type: 'pricing' })
 ```
 
+## Journeys
+
+A journey tracks a multi-step flow, such as a checkout or a sign-up, as a sequence of events you can build a funnel
+from:
+
+```ts
+const checkout = analytics.journey('checkout')
+
+checkout.step('shipping')
+checkout.step('payment', { method: 'card' })
+checkout.complete({ value: 42, currency: 'USD' }) // or checkout.abandon('timeout')
+```
+
+| Call | Event | Params |
+| --- | --- | --- |
+| the journey's first call | `journey_start` | `journey_id`, `journey_name` |
+| `step(name, params?)` | `journey_step` | your params, `journey_id`, `journey_name`, `step_name`, `step_index` (1 for the first step) |
+| `complete(params?)` | `journey_complete` | your params, `journey_id`, `journey_name`, `step_count` |
+| `abandon(reason?)` | `journey_abandon` | `journey_id`, `journey_name`, `step_count`, the last `step_name`, `reason` |
+
+- Each journey gets its own `journey_id`, so create one per flow, not on every render (see
+  [React](./react.md#journeys)). Creating one sends nothing; `journey_start` goes out with its first call.
+- After `complete()` or `abandon()`, the journey has ended: further calls send nothing and are reported as
+  `journey_ended` (they throw with `debug: true`).
+- A journey lives in memory, so it spans client-side navigation but not a full page load.
+- Journey events are ordinary events: they reach every destination, including the Meta Pixel as custom events.
+
+To see the funnel in GA4, register `journey_name` and `step_name` as event-scoped custom dimensions (**Admin → Custom
+definitions**), then build a funnel exploration (**Explore → Funnel exploration**) with a step for `journey_start` and
+one per `journey_step`, each filtered on those dimensions, and a final `journey_complete` step.
+
+## Click autocapture
+
+Turn it on, then mark the elements whose clicks you want tracked:
+
+```ts
+createAnalytics({ consent: 'granted', ga4: { measurementId: 'G-XXXXXXX' }, autocapture: { clicks: true } })
+```
+
+```html
+<button data-analytics-event="cta_click" data-analytics-param-location="hero" data-analytics-param-button-text="Start">
+  Start
+</button>
+```
+
+A click anywhere inside the button sends `track('cta_click', { location: 'hero', button_text: 'Start' })`.
+
+- `data-analytics-param-*` attributes become params, with dashes turned into underscores. Values are strings; use
+  `track()` for numbers such as `value`.
+- The nearest marked element around the click wins, and elements added later are covered too.
+- One listener on the document, added by `start()`, handles every click. It listens in the capture phase, so a handler
+  that calls `stopPropagation()` doesn't hide the click.
+- The events go through the same checks as `track()`, including personal-data redaction.
+
 ## Users
 
 ```ts
@@ -81,6 +135,7 @@ The library never lets an analytics problem break your app. Problems are passed 
 | `invalid_consent` | `consent.update()` got an unknown purpose or value | update ignored |
 | `destination_failed` | a vendor script threw, or the relay couldn't reach your endpoint | other destinations still receive the event |
 | `visitor_id_failed` | the `visitorId.fingerprint` function failed | no visitor ID for this page load |
+| `journey_ended` | a journey was used after `complete()` or `abandon()` | call ignored |
 
 With `debug: true`, every problem except `destination_failed` and `visitor_id_failed` throws at the call site instead,
 so it shows up in development:

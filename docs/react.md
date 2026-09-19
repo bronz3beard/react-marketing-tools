@@ -31,7 +31,7 @@ The provider calls `analytics.start()` after it mounts. It's safe under `<Strict
 
 ## Hook
 
-`useAnalytics()` returns the instance, with `track`, `page`, `identify` and `reset`:
+`useAnalytics()` returns the instance, with `track`, `page`, `journey`, `identify`, `reset` and the rest:
 
 ```tsx
 const Checkout = () => {
@@ -127,3 +127,24 @@ Next.js requires components that call `useSearchParams()` to be rendered inside 
 
 `page()` reads `location.href` and `document.title` when it's called, so the title must already be updated. Frameworks
 that set the title after navigation may need `page({ page_title: 'Pricing' })`.
+
+## Journeys
+
+A [journey](./tracking-events.md#journeys) has its own ID, so create it once for the component that spans the flow,
+not on every render:
+
+```tsx
+const CheckoutFlow = () => {
+  const { journey } = useAnalytics()
+  const [checkout] = useState(() => journey('checkout'))
+  const [step, setStep] = useState<'shipping' | 'payment'>('shipping')
+
+  return step === 'shipping' ? (
+    <Shipping onDone={() => { checkout.step('shipping'); setStep('payment') }} />
+  ) : (
+    <Payment onPaid={total => checkout.complete({ value: total, currency: 'USD' })} />
+  )
+}
+```
+
+Creating a journey sends nothing, so `<StrictMode>` calling the `useState` initialiser twice in development is harmless.

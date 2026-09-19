@@ -6,6 +6,7 @@ export type AnalyticsErrorCode =
   | 'pii_redacted'
   | 'destination_failed'
   | 'visitor_id_failed'
+  | 'journey_ended'
 
 /** Every problem the library reports to `onError`, or throws when `debug` is on. */
 export class AnalyticsError extends Error {

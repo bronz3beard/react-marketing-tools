@@ -150,6 +150,19 @@ export type MetaPixelConfig = {
   loadScript?: boolean
 }
 
+/**
+ * A multi-step flow, such as a checkout. Its first call also sends `journey_start`; every event carries `journey_id` and
+ * `journey_name`.
+ */
+export type Journey = {
+  /** Sends `journey_step` with `step_name` and `step_index` (1 for the first step). */
+  step(stepName: string, params?: EventParams): void
+  /** Sends `journey_complete` with `step_count`. The journey then ends. */
+  complete(params?: EventParams): void
+  /** Sends `journey_abandon` with `step_count`, the last `step_name` and `reason`. The journey then ends. */
+  abandon(reason?: string): void
+}
+
 export type ServerRelayConfig = {
   /**
    * Where to post events for your `createTrackHandler()` endpoint, which forwards them to the Meta Conversions API with
@@ -181,6 +194,8 @@ export type AnalyticsConfig = {
   attribution?: boolean | { ttlDays?: number }
   /** A stable ID for this visitor, only with consent and never sent to GA4. Defaults to `'random'`. */
   visitorId?: VisitorIdConfig
+  /** `clicks`: track clicks on elements with a `data-analytics-event` attribute. Off by default. */
+  autocapture?: { clicks?: boolean }
   gtm?: GtmConfig
   ga4?: Ga4Config
   metaPixel?: MetaPixelConfig
@@ -203,6 +218,8 @@ export type Analytics = {
   track(name: string, params?: EventParams, options?: TrackOptions): void
   /** Sends a `page_view` with the current `page_location` and `page_title`, plus any params given. */
   page(params?: EventParams): void
+  /** Starts tracking a multi-step flow. Create it once per flow (not on every render): each journey has its own ID. */
+  journey(name: string): Journey
   /** Associates later events with a user. `userId` must not be personal data such as an email address. */
   identify(userId: string, traits?: IdentityTraits): void
   /** Forgets the identified user, e.g. on logout. */

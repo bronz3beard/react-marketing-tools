@@ -7,6 +7,7 @@
 | `consent` | `'granted' \| 'denied'` | required | The consent state for every purpose before the visitor makes a choice. It is required so every site decides deliberately. See [Consent](./consent.md). |
 | `attribution` | `boolean \| { ttlDays?: number }` | `true` (90 days) | Capture UTM params and ad click IDs. See [Attribution](./attribution-utm.md). |
 | `visitorId` | `'random' \| false \| { fingerprint: () => Promise<string> }` | `'random'` | A stable ID for a consenting visitor, never sent to Google Analytics. See [Visitor ID](./visitor-id.md). |
+| `autocapture` | `{ clicks?: boolean }` | off | `clicks: true` tracks clicks on elements with a `data-analytics-event` attribute. See [Click autocapture](./tracking-events.md#click-autocapture). |
 | `respectGpc` | `boolean` | `true` | Start advertising consent denied when the browser sends Global Privacy Control. See [Consent](./consent.md#global-privacy-control). |
 | `gtm` | `{ containerId: string; loadScript?: boolean; scriptUrl?: string; waitForUpdate?: number }` | none | Sends events to the Google Tag Manager dataLayer. See [Google Tag Manager](./google-tag-manager.md). |
 | `ga4` | `{ measurementId: string; pageViews?: 'auto' \| 'manual'; loadScript?: boolean; serverContainerUrl?: string; waitForUpdate?: number }` | none | Sends events to Google Analytics 4 through gtag.js. See [Google Analytics 4](./google-analytics-4.md). |

@@ -11,6 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
+## [1.0.0-beta.2] - 19-09-2026
+__Added__
+- journeys: `analytics.journey(name)` returns `step()`, `complete()` and `abandon()`, sending `journey_start` (with the
+  first call), `journey_step`, `journey_complete` and `journey_abandon` with a shared `journey_id` and `journey_name`,
+  `step_name`, `step_index` and `step_count`; calls after a journey ended are reported as the new `journey_ended` code
+- click autocapture: `autocapture: { clicks: true }` tracks clicks on elements with `data-analytics-event`, with
+  `data-analytics-param-*` attributes as params, through one capture-phase listener added by `start()`
+- docs: journeys (with a GA4 funnel how-to), click autocapture, journeys in React
+__Changed__
+- docs: the visitor ID page describes how the ID follows consent; compliance decisions are left to the implementer
+
 ## [1.0.0-beta.1] - 19-09-2026
 __Added__
 - visitor ID: `analytics.getVisitorId()` resolves a stable ID for a consenting visitor, once `start()` has run. It's never
@@ -23,7 +34,7 @@ __Added__
 - `react-marketing-tools/fingerprintjs`: `fingerprintjs()` adapter for FingerprintJS v5 (MIT), an optional peer
   dependency loaded only when the ID is first needed, with its statistics request turned off
 - the relay sends the visitor ID as Meta's `external_id` for visitors who aren't identified
-- docs: visitor ID, with a legal section
+- docs: visitor ID
 __Changed__
 - the relay's `destination_failed` errors are listed in the errors table
 

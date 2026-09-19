@@ -17,6 +17,7 @@ export type {
   GtmConfig,
   Identity,
   IdentityTraits,
+  Journey,
   MetaPixelConfig,
   ServerRelayConfig,
   TrackOptions,

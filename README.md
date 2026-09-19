@@ -60,6 +60,20 @@ export const SignUpButton = () => {
 }
 ```
 
+Or without code, with `autocapture: { clicks: true }` in the config:
+
+```html
+<button data-analytics-event="cta_click" data-analytics-param-location="hero">Start</button>
+```
+
+Follow a multi-step flow as a funnel:
+
+```ts
+const checkout = analytics.journey('checkout')
+checkout.step('shipping') // journey_start, then journey_step
+checkout.complete({ value: 42, currency: 'USD' }) // journey_complete
+```
+
 The same instance identifies users, records consent and gives a consenting visitor a stable ID:
 
 ```ts
@@ -105,7 +119,7 @@ export const POST = createTrackHandler({
 
 - [Getting started](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/getting-started.md)
 - [React](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/react.md): provider, hook, Next.js App Router, single-page apps
-- [Tracking events](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/tracking-events.md): naming rules, page views, users, personal data, errors
+- [Tracking events](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/tracking-events.md): naming rules, page views, journeys, click autocapture, users, personal data, errors
 - [Configuration](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/configuration.md)
 - [Consent](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/consent.md): Consent Mode v2 and Global Privacy Control
 - [Attribution](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/attribution-utm.md): UTM params and ad click IDs

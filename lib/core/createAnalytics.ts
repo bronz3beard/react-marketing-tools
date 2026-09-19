@@ -1,10 +1,12 @@
 import { deriveFbc, parseAttribution } from '../attribution/attribution.js'
 import { createAttributionTracker } from '../attribution/tracker.js'
+import { captureClicks } from '../autocapture/clicks.js'
 import { createGa4Destination } from '../destinations/ga4.js'
 import { createGtmDestination } from '../destinations/gtm.js'
 import { createMetaPixelDestination } from '../destinations/metaPixel.js'
 import { createServerRelayDestination } from '../destinations/serverRelay.js'
 import { createVisitorIdSource } from '../identity/visitorId.js'
+import { createJourney } from '../journeys/journey.js'
 import {
   applyConsentUpdate,
   CONSENT_KEYS,
@@ -212,6 +214,18 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
     }
   }
 
+  // Shared by track(), journeys and click autocapture.
+  const trackEvent = (
+    name: string,
+    params: EventParams = {},
+    options?: TrackOptions,
+  ): void => {
+    if (!isBrowser()) return
+
+    const event = createEvent({ name, params, options })
+    if (event) send(destination => destination.track(event))
+  }
+
   return {
     start() {
       if (started || !isBrowser()) return
@@ -228,14 +242,11 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
         destination.start({ consent: initialConsent, identity }),
       )
       queue.splice(0).forEach(dispatch)
+      if (config.autocapture?.clicks) captureClicks(trackEvent)
       markStarted()
     },
-    track(name, params = {}, options) {
-      if (!isBrowser()) return
-
-      const event = createEvent({ name, params, options })
-      if (event) send(destination => destination.track(event))
-    },
+    track: trackEvent,
+    journey: name => createJourney({ name, track: trackEvent, fail }),
     page(params = {}) {
       if (!isBrowser()) return
 

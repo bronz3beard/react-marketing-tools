@@ -25,7 +25,7 @@ browser's `localStorage` (`rmt:vid`), only with `analytics` consent.
 ## Fingerprint
 
 A fingerprint recognises a browser from its characteristics (screen, fonts, graphics and more) rather than from
-storage, so it survives cleared site data. It's more intrusive, so it needs more consent (see [Legal](#legal)).
+storage, so it survives cleared site data.
 
 ```sh
 npm install @fingerprintjs/fingerprintjs@^5
@@ -80,25 +80,10 @@ without one.
 
 `reset()` on sign-out doesn't change the visitor ID: it identifies the browser, not the user.
 
-## Legal
+## Consent
 
-This isn't legal advice; check with your data protection officer or lawyer.
-
-- In the EU, keeping an ID in the browser's storage and reading a device's characteristics to fingerprint it both fall
-  under Article 5(3) of the ePrivacy Directive: unless strictly necessary for a service the visitor asked for, they
-  need the visitor's consent. The European Data Protection Board's
-  [Guidelines 2/2023 on the technical scope of Article 5(3)](https://www.edpb.europa.eu/our-work-tools/our-documents/guidelines/guidelines-22023-technical-scope-art-53-eprivacy-directive_en)
-  (final version adopted 16 October 2024) cover techniques beyond cookies, building on the Article 29 Working Party's
-  Opinion 9/2014 on device fingerprinting.
-- In the UK, the ICO says "businesses must give users fair choices over whether to be tracked before using
-  fingerprinting technology, including obtaining consent from their users where necessary"
-  ([19 December 2024](https://ico.org.uk/about-the-ico/media-centre/news-and-blogs/2024/12/our-response-to-google-s-policy-change-on-fingerprinting/)).
-- A visitor ID is an online identifier, which makes it personal data under the GDPR (Article 4(1)). Cover it in your
-  privacy notice and your access and erasure processes.
-
-What the library does for you: nothing is stored or computed before `start()` and the consent it needs, the stored ID
-is erased when analytics consent is withdrawn, fingerprinting needs advertising consent as well, and the ID never
-reaches Google Analytics.
+The visitor ID follows the consent state your app gives the library (see [Consent](./consent.md)): the random ID needs
+`analytics`, and a fingerprint needs `analytics` and `ads`. Whether and how you ask visitors for consent is up to you.
 
 ## Options
 
