@@ -10,16 +10,23 @@ export default defineConfig({
     minify: true,
     reportCompressedSize: true,
     lib: {
-      // ESM-only (decision D6). `index` still exports the 0.4 API until the React bindings replace it (batch B6).
+      // ESM-only (decision D6). `index` = core + React bindings; `core` = framework-agnostic.
       entry: {
-        index: resolve(import.meta.dirname, 'lib/index.tsx'),
+        index: resolve(import.meta.dirname, 'lib/index.ts'),
         core: resolve(import.meta.dirname, 'lib/core.ts'),
       },
       formats: ['es'],
       fileName: (_format, entryName) => `${entryName}.js`,
     },
     rollupOptions: {
-      external: ['react', 'react-dom'],
+      external: ['react', 'react-dom', 'react/jsx-runtime'],
+      output: {
+        // Unhashed shared-chunk names: npm versions the files, and size budgets need stable paths.
+        chunkFileNames: 'chunks/[name].js',
+        // Marks the React entry as a client module for React Server Components (Next.js App Router).
+        // Directives in source are stripped by the bundler, so it is added to the output instead.
+        banner: chunk => (chunk.name === 'index' ? "'use client'" : ''),
+      },
     },
   },
   test: {

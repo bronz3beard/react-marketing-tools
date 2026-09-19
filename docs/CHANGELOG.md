@@ -11,6 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
+## [1.0.0-alpha.2] - 19-09-2026
+__Added__
+- React bindings: `<AnalyticsProvider analytics={analytics}>` (starts analytics after mount; safe under StrictMode)
+  and `useAnalytics()`. Components can track on mount; those events are queued until the provider starts.
+- the package entry is marked `'use client'` for React Server Components (Next.js App Router);
+  `react-marketing-tools/core` stays unmarked for server and non-React code
+- docs: React (provider, hook, Next.js App Router, page views in single-page apps)
+__Changed__
+- **Breaking:** `react-marketing-tools` now exports the 1.0 API (everything in `react-marketing-tools/core` plus the
+  React bindings) instead of the 0.4 API (`buildConfig`, `trackAnalyticsEvent`, `ReactMarketingProvider`,
+  `useMarketingState`, `useMarketingApi`)
+- **Breaking:** peer dependency is now `react >=18`
+- the published JavaScript is 2.55 kB gzipped (0.4.x was 189 kB)
+
 ## [1.0.0-alpha.1] - 19-09-2026
 __Added__
 - `page()`, `identify(userId, traits)` and `reset()`, queued in call order with `track()`. GTM receives `page_view`,

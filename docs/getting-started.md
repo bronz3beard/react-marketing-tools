@@ -17,7 +17,7 @@ Create one analytics instance at module scope:
 
 ```ts
 // analytics.ts
-import { createAnalytics } from 'react-marketing-tools/core'
+import { createAnalytics } from 'react-marketing-tools'
 
 export const analytics = createAnalytics({
   consent: 'granted',
@@ -25,28 +25,53 @@ export const analytics = createAnalytics({
 })
 ```
 
-Start it once from your browser entry point, then track from anywhere:
+Wrap your app once:
 
-```ts
-// main.ts
+```tsx
+// main.tsx
+import { AnalyticsProvider } from 'react-marketing-tools'
 import { analytics } from './analytics'
 
-analytics.start()
+createRoot(document.getElementById('root')!).render(
+  <AnalyticsProvider analytics={analytics}>
+    <App />
+  </AnalyticsProvider>,
+)
 ```
 
-```ts
-analytics.track('sign_up', { method: 'google' })
+Track from any component:
+
+```tsx
+import { useAnalytics } from 'react-marketing-tools'
+
+export const SignUpButton = () => {
+  const { track } = useAnalytics()
+  return <button onClick={() => track('sign_up', { method: 'google' })}>Sign up</button>
+}
 ```
 
 - `createAnalytics()` has no side effects, so it is safe to import during server rendering.
-- `start()` loads the Google Tag Manager container and sends any events tracked before it. Calling it again does nothing.
-- Events tracked before `start()` are queued and sent in order. On the server, `start()` and `track()` do nothing.
+- The provider calls `analytics.start()` once your app mounts. That loads the Google Tag Manager container and sends
+  anything tracked earlier, in order, including events components track when they first mount.
+- On the server, `start()` and `track()` do nothing.
 
-React bindings (`<AnalyticsProvider>` and `useAnalytics()`) arrive in a later alpha. Until then, call `start()` from your
-entry point.
+Using Next.js or a router? See [React](./react.md).
+
+### Without React
+
+Import from `react-marketing-tools/core` and call `analytics.start()` yourself once the page has loaded:
+
+```ts
+import { createAnalytics } from 'react-marketing-tools/core'
+
+const analytics = createAnalytics({ consent: 'granted', gtm: { containerId: 'GTM-XXXXXXX' } })
+analytics.start()
+analytics.track('sign_up', { method: 'google' })
+```
 
 ## Next steps
 
+- [React](./react.md): the provider and hook, Next.js App Router, page views in single-page apps
 - [Tracking events](./tracking-events.md): naming rules, page views, users, personal data and errors
 - [Configuration](./configuration.md): every option
 - [Google Tag Manager](./google-tag-manager.md): what reaches the dataLayer and how to use it in GTM

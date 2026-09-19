@@ -1,4 +1,4 @@
-import { config } from '..'
+import { config } from '../buildConfig/index.js'
 import { assertIsTrue } from '../utilities/assertValueCheckers'
 import { objectHasAttributes } from '../utilities/commonFunctions'
 import { getCookieValueByName } from '../utilities/cookies'
