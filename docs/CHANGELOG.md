@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
+## [Unreleased]
+__Removed__
+- the `device-detector-js` dependency; the package now has no runtime dependencies
+- the unused 0.4 source and its type declarations (no longer exported since 1.0.0-alpha.2)
+
 ## [1.0.0-alpha.2] - 19-09-2026
 __Added__
 - React bindings: `<AnalyticsProvider analytics={analytics}>` (starts analytics after mount; safe under StrictMode)
