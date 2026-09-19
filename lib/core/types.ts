@@ -24,10 +24,53 @@ export type TrackOptions = {
   meta?: { event?: string; params?: EventParams }
 }
 
+export type CampaignParam =
+  | 'utm_source'
+  | 'utm_medium'
+  | 'utm_campaign'
+  | 'utm_term'
+  | 'utm_content'
+  | 'utm_id'
+  | 'utm_source_platform'
+  | 'utm_creative_format'
+  | 'utm_marketing_tactic'
+  | 'gclid'
+  | 'gbraid'
+  | 'wbraid'
+  | 'dclid'
+  | 'fbclid'
+  | 'msclkid'
+  | 'ttclid'
+  | 'li_fat_id'
+  | 'twclid'
+
+/** Where a visit came from: the campaign params and ad click IDs of its landing URL. */
+export type Attribution = Partial<Record<CampaignParam, string>> & {
+  /** Origin and path of the landing page, without its query string. */
+  landing_page: string
+  /** Origin and path of the referring page, when there was one. */
+  referrer?: string
+  /** Milliseconds since the Unix epoch when the visit was captured. */
+  captured_at: number
+}
+
+export type AttributionSnapshot = {
+  /** The first campaign touch within the attribution window. */
+  firstTouch?: Attribution
+  /** The most recent campaign touch in this browser session. */
+  lastTouch?: Attribution
+  /** Meta click ID (`_fbc`), for the Conversions API. Only with `adUserData` consent. */
+  fbc?: string
+  /** Meta browser ID (`_fbp`), for the Conversions API. Only with `adUserData` consent. */
+  fbp?: string
+}
+
 export type AnalyticsEvent = {
   name: string
   params: EventParams
   options?: TrackOptions
+  /** The last campaign touch when the event was tracked. */
+  attribution?: Attribution
   /** Unique per `track()` call and shared by every destination, so vendors can deduplicate the same event. */
   eventId: string
   /** Milliseconds since the Unix epoch at the moment `track()` was called. */
@@ -115,6 +158,11 @@ export type AnalyticsConfig = {
    * An explicit `analytics.consent.update()` still wins.
    */
   respectGpc?: boolean
+  /**
+   * Capture UTM params and ad click IDs from landing URLs. Defaults to `true`. First and last touch are stored in the
+   * browser only with analytics consent; `ttlDays` (default 90) is how long a first touch is kept.
+   */
+  attribution?: boolean | { ttlDays?: number }
   gtm?: GtmConfig
   ga4?: Ga4Config
   metaPixel?: MetaPixelConfig
@@ -139,6 +187,8 @@ export type Analytics = {
   identify(userId: string, traits?: IdentityTraits): void
   /** Forgets the identified user, e.g. on logout. */
   reset(): void
+  /** Campaign attribution for this visitor. Empty outside the browser. */
+  getAttribution(): AttributionSnapshot
   consent: {
     /** Records the visitor's choice, e.g. from your consent banner. Omitted purposes keep their current state. */
     update(update: ConsentUpdate): void

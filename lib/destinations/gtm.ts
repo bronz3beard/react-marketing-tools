@@ -54,9 +54,14 @@ export const createGtmDestination = ({
       dataLayer().push({ 'gtm.start': Date.now(), event: 'gtm.js' })
       injectScript({ src, nonce })
     },
-    track({ name, params, eventId }: AnalyticsEvent) {
-      // `event` and `event_id` are set last so params can never overwrite them.
-      dataLayer().push({ ...params, event: name, event_id: eventId })
+    track({ name, params, eventId, attribution }: AnalyticsEvent) {
+      // `attribution`, `event` and `event_id` are set last so params can never overwrite them.
+      dataLayer().push({
+        ...params,
+        ...(attribution && { attribution }),
+        event: name,
+        event_id: eventId,
+      })
     },
     consent(state: ConsentState) {
       updateConsent(state)

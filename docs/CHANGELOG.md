@@ -11,6 +11,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
+## [1.0.0-alpha.5] - 19-09-2026
+__Added__
+- attribution: UTM params and ad click IDs (`gclid`, `gbraid`, `wbraid`, `dclid`, `fbclid`, `msclkid`, `ttclid`,
+  `li_fat_id`, `twclid`) captured from landing URLs and from `page()` navigations; first and last touch through
+  `analytics.getAttribution()`
+- attribution storage only with analytics consent (first touch in `localStorage` for 90 days, configurable with
+  `attribution: { ttlDays }`; last touch in `sessionStorage`), restored when consent is granted and erased when it's
+  withdrawn. Captured values are email-redacted and capped, and landing and referrer URLs keep only origin and path.
+- Google Tag Manager pushes include `attribution` (the last touch)
+- `fbc` and `fbp` (Meta click and browser IDs) through `getAttribution()`, only with `adUserData` consent
+- docs: attribution
+__Changed__
+- README rewritten: install and usage only, with links to the docs. The blog post and CodePen links were removed; a
+  hosted demo will replace them.
+- package description and keywords describe the 1.0 toolbox
+
 ## [1.0.0-alpha.4] - 19-09-2026
 __Added__
 - Meta Pixel destination (`metaPixel: { pixelId }`), loaded with Meta's official base code:

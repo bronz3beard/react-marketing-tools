@@ -40,6 +40,9 @@ describe('GA4 destination', () => {
     Reflect.deleteProperty(window, 'dataLayer')
     Reflect.deleteProperty(window, 'gtag')
     document.head.innerHTML = ''
+    // Attribution persists campaign touches for the session; each test starts from a fresh visit.
+    localStorage.clear()
+    sessionStorage.clear()
   })
 
   it('loads gtag.js once and queues js then config, as Arguments objects', () => {
@@ -160,6 +163,20 @@ describe('GA4 destination', () => {
       'event',
       'purchase',
       { value: 42, event_id: expect.any(String) },
+    ])
+  })
+
+  it('never adds campaign params to GA4 events, which reads them from page_location itself', () => {
+    history.replaceState({}, '', '/?utm_source=news&gclid=abc')
+    const analytics = startedGa4()
+
+    analytics.track('sign_up', { method: 'google' })
+    history.replaceState({}, '', '/')
+
+    expect(gtagCalls().at(-1)).toEqual([
+      'event',
+      'sign_up',
+      { method: 'google' },
     ])
   })
 

@@ -74,6 +74,8 @@ analytics.track('sign_up', { method: 'google' })
 - [React](./react.md): the provider and hook, Next.js App Router, page views in single-page apps
 - [Tracking events](./tracking-events.md): naming rules, page views, users, personal data and errors
 - [Configuration](./configuration.md): every option
+- [Consent](./consent.md): Consent Mode v2 and Global Privacy Control
+- [Attribution](./attribution-utm.md): UTM params and ad click IDs
 - [Google Tag Manager](./google-tag-manager.md): what reaches the dataLayer and how to use it in GTM
 - [Google Analytics 4](./google-analytics-4.md): events, user ids and page views through gtag.js
 - [Server-side tagging](./server-side-tagging.md): send hits through your own domain

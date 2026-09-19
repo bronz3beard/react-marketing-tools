@@ -1,3 +1,5 @@
+import { deriveFbc, parseAttribution } from '../attribution/attribution.js'
+import { createAttributionTracker } from '../attribution/tracker.js'
 import { createGa4Destination } from '../destinations/ga4.js'
 import { createGtmDestination } from '../destinations/gtm.js'
 import { createMetaPixelDestination } from '../destinations/metaPixel.js'
@@ -13,6 +15,7 @@ import type {
   Analytics,
   AnalyticsConfig,
   AnalyticsEvent,
+  AttributionSnapshot,
   ConsentUpdate,
   Destination,
   EventParams,
@@ -25,8 +28,11 @@ import {
   findParamProblems,
   redactPii,
 } from './validate.js'
+import { parseCookie } from '../shared/cookies.js'
 
 const isBrowser = (): boolean => typeof window !== 'undefined'
+
+const DEFAULT_ATTRIBUTION_DAYS = 90
 
 // crypto.randomUUID only exists in secure contexts (HTTPS, localhost); plain-HTTP pages fall back to getRandomValues.
 const createEventId = (): string =>
@@ -85,6 +91,30 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
   // track, page, identify and reset in the order they happened.
   const queue: ((destination: Destination) => void)[] = []
   let started = false
+
+  const attribution =
+    config.attribution === false
+      ? undefined
+      : createAttributionTracker({
+          ttlDays:
+            (typeof config.attribution === 'object' &&
+              config.attribution.ttlDays) ||
+            DEFAULT_ATTRIBUTION_DAYS,
+        })
+  let landingCaptured = false
+  // Read once, on first use in the browser, so events tracked before start() carry the landing campaign too.
+  const captureLanding = () => {
+    if (landingCaptured) return
+    landingCaptured = true
+    attribution?.observe(
+      parseAttribution({
+        url: location.href,
+        referrer: document.referrer,
+        capturedAt: Date.now(),
+      }),
+    )
+  }
+  const canStoreAttribution = () => started && consent.analytics === 'granted'
 
   // Mistakes in how the library is called throw in debug so they surface in development; in production they're
   // reported and the app keeps running.
@@ -150,9 +180,13 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
       )
     }
 
+    captureLanding()
+    const lastTouch = attribution?.get().lastTouch
+
     return {
       name,
       params: safe.params,
+      ...(lastTouch && { attribution: lastTouch }),
       ...(options && {
         options: safeMeta
           ? { ...options, meta: { ...options.meta, params: safeMeta.params } }
@@ -168,6 +202,12 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
       if (started || !isBrowser()) return
       started = true
 
+      captureLanding()
+      if (canStoreAttribution()) {
+        attribution?.restore()
+        attribution?.persist()
+      }
+
       dispatch(destination =>
         destination.start({ consent: initialConsent, identity }),
       )
@@ -181,6 +221,13 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
     },
     page(params = {}) {
       if (!isBrowser()) return
+
+      // A client-side navigation can land on a new campaign URL; its referrer is the previous page, so none is kept.
+      captureLanding()
+      attribution?.observe(
+        parseAttribution({ url: location.href, capturedAt: Date.now() }),
+      )
+      if (canStoreAttribution()) attribution?.persist()
 
       const event = createEvent({
         name: 'page_view',
@@ -241,11 +288,36 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
           return
         }
 
+        const previous = consent
         const next = applyConsentUpdate(consent, update)
         consent = next
+
+        if (previous.analytics === 'granted' && next.analytics === 'denied') {
+          // Withdrawal: stored attribution is erased straight away, even before start().
+          attribution?.erase()
+        } else if (canStoreAttribution()) {
+          attribution?.restore()
+          attribution?.persist()
+        }
+
         send(destination => destination.consent?.(next))
       },
       get: () => consent,
+    },
+    getAttribution() {
+      if (!isBrowser()) return {}
+
+      captureLanding()
+      const touches: AttributionSnapshot = attribution?.get() ?? {}
+      // _fbc and _fbp identify the browser to Meta, so they're only read with consent to share user data with ad platforms.
+      if (consent.adUserData !== 'granted') return touches
+
+      const fbp = parseCookie(document.cookie, '_fbp')
+      const fbc = deriveFbc({
+        fbcCookie: parseCookie(document.cookie, '_fbc'),
+        touch: touches.lastTouch,
+      })
+      return { ...touches, ...(fbc && { fbc }), ...(fbp && { fbp }) }
     },
   }
 }

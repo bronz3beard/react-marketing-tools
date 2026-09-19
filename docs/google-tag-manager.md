@@ -42,6 +42,8 @@ pushes:
 
 - `event` is the name passed to `track()`, and `event_id` is the event's UUID. Params can't overwrite either key.
 - Params are pushed flat, so a Data Layer Variable named `method` reads them directly.
+- When the visit came from a campaign, the push also carries `attribution` (the last touch: UTM params, click IDs, landing
+  page). Read it with a Data Layer Variable such as `attribution.utm_source`. See [Attribution](./attribution-utm.md).
 
 The other calls push:
 

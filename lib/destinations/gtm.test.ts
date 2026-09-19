@@ -26,6 +26,9 @@ describe('GTM destination', () => {
     Reflect.deleteProperty(window, 'dataLayer')
     Reflect.deleteProperty(window, 'gtag')
     document.head.innerHTML = ''
+    // Attribution persists campaign touches for the session; each test starts from a fresh visit.
+    localStorage.clear()
+    sessionStorage.clear()
   })
 
   it('pushes each event to the dataLayer with its params and a shared event id', () => {
@@ -168,6 +171,23 @@ describe('GTM destination', () => {
     expect(Array.from(document.scripts).map(script => script.src)).toEqual([
       'https://sgtm.example.com/gtm.js?id=GTM-TEST1',
     ])
+  })
+
+  it('adds the campaign attribution to each event', () => {
+    history.replaceState({}, '', '/?utm_source=news&utm_medium=email')
+    const analytics = createAnalytics({
+      consent: 'granted',
+      gtm: { containerId: 'GTM-TEST1', loadScript: false },
+    })
+
+    analytics.start()
+    analytics.track('sign_up')
+    history.replaceState({}, '', '/')
+
+    expect(pushedObjects().at(-1)).toMatchObject({
+      event: 'sign_up',
+      attribution: { utm_source: 'news', utm_medium: 'email' },
+    })
   })
 
   it('rejects a non-https script URL when the instance is created', () => {
