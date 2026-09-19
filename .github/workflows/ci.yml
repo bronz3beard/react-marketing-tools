@@ -35,3 +35,4 @@ jobs:
       - run: npm run check:package
       - run: npm run check:size
       - run: npm pack --dry-run
+      - run: npm run demo:build

@@ -42,6 +42,13 @@ export default defineConfig({
   test: {
     // Default to Node; DOM-dependent test files opt in with `// @vitest-environment jsdom`.
     environment: 'node',
-    include: ['lib/**/*.test.{ts,tsx}'],
+    include: ['lib/**/*.test.{ts,tsx}', 'demo/**/*.test.{ts,tsx}'],
+    // The playground imports the library by its package name, as an app would (see demo/vite.config.ts).
+    alias: [
+      {
+        find: /^react-marketing-tools$/,
+        replacement: resolve(import.meta.dirname, 'lib/index.ts'),
+      },
+    ],
   },
 })

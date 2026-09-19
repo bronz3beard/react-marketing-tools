@@ -23,8 +23,11 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* The playground (demo/) imports the library by its package name */
+    "paths": { "react-marketing-tools": ["./lib/index.ts"] }
   },
-  "include": ["./lib", "./vite.config.ts"],
+  "include": ["./lib", "./demo", "./vite.config.ts"],
   "exclude": ["./dist"]
 }
