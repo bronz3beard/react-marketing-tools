@@ -1,0 +1,58 @@
+name: Release
+
+# Publishing a GitHub Release publishes the package to npm through trusted publishing (OIDC, no npm token), with
+# provenance. A release marked "pre-release" goes to the `next` dist-tag; a full release goes to `latest`.
+# One-time setup on npmjs.com: package settings → Trusted Publisher → GitHub Actions, user `bronz3beard`,
+# repository `react-marketing-tools`, workflow `release.yml`. Without it, the publish step fails and nothing is published.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      TAG: ${{ github.event.release.tag_name }}
+      PRERELEASE: ${{ github.event.release.prerelease }}
+    steps:
+      - uses: actions/checkout@v7
+      # Trusted publishing needs Node 22.14+ and npm 11.5.1+; Node 24 bundles a recent enough npm.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - name: Check the release matches package.json
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if [ "$TAG" != "v$version" ]; then
+            echo "::error::Release tag $TAG doesn't match package.json version $version (expected v$version)."
+            exit 1
+          fi
+          case "$version" in
+            *-*)
+              if [ "$PRERELEASE" != "true" ]; then
+                echo "::error::$version is a prerelease version: mark the GitHub Release as a pre-release so it goes to the next tag."
+                exit 1
+              fi
+              ;;
+          esac
+      - name: Check npm supports trusted publishing
+        run: |
+          node -e '
+            const [major, minor, patch] = process.argv[1].split(".").map(Number)
+            const ok = major > 11 || (major === 11 && (minor > 5 || (minor === 5 && patch >= 1)))
+            if (!ok) { console.error(`npm ${process.argv[1]} is older than 11.5.1, which trusted publishing needs.`); process.exit(1) }
+          ' "$(npm --version)"
+      - run: npm ci
+      # prepublishOnly builds the package and checks its size first.
+      - run: npm publish --tag ${{ github.event.release.prerelease && 'next' || 'latest' }}

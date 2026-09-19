@@ -19,8 +19,13 @@ __Added__
 - click autocapture: `autocapture: { clicks: true }` tracks clicks on elements with `data-analytics-event`, with
   `data-analytics-param-*` attributes as params, through one capture-phase listener added by `start()`
 - docs: journeys (with a GA4 funnel how-to), click autocapture, journeys in React
+- [playground](https://bronz3beard.github.io/react-marketing-tools/) on GitHub Pages: track events, change consent,
+  walk a journey, open campaign links and try your own IDs, and see what each vendor receives
+- docs: an index of every doc, a migration guide from 0.4, debugging, and the release process
+- releases are published from GitHub Releases with npm trusted publishing, which adds provenance
 __Changed__
 - docs: the visitor ID page describes how the ID follows consent; compliance decisions are left to the implementer
+- README: playground link and a table of what each destination receives
 
 ## [1.0.0-beta.1] - 19-09-2026
 __Added__

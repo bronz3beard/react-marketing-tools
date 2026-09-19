@@ -65,6 +65,7 @@
   "scripts": {
     "build": "vite build && tsc -p tsconfig.build.json",
     "build:watch": "vite build --watch",
+    "check:links": "node scripts/check-links.mjs",
     "check:package": "publint --strict && attw --pack . --profile esm-only",
     "check:size": "node scripts/check-size.mjs",
     "demo:build": "vite build --config demo/vite.config.ts",

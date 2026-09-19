@@ -6,8 +6,12 @@
 One `track()` call for Google Tag Manager, Google Analytics 4 and the Meta Pixel, with Consent Mode v2, UTM attribution
 and personal-data redaction built in.
 
+**[Try it in the playground](https://bronz3beard.github.io/react-marketing-tools/)**: see what each vendor receives for
+every event, without sending anything.
+
 > **1.0 is in beta** on the `next` tag. `npm install react-marketing-tools` still installs 0.4.x, whose API 1.0
-> replaces; see the [changelog](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/CHANGELOG.md).
+> replaces; see the [migration guide](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/migration-v1.md)
+> and the [changelog](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/CHANGELOG.md).
 
 ## Install
 
@@ -115,8 +119,18 @@ export const POST = createTrackHandler({
 })
 ```
 
+## What each destination receives
+
+| | Google Tag Manager | Google Analytics 4 | Meta Pixel | Conversions API relay |
+| --- | --- | --- | --- | --- |
+| `track()` | dataLayer push with `event_id` | gtag.js event | standard or custom event with `eventID` | the same event from your server |
+| `identify()` | `user_id` | `user_id` | advanced matching | user data, hashed on your server |
+| `consent.update()` | Consent Mode v2 | Consent Mode v2 | `grant` / `revoke` | only with `adUserData` |
+| Attribution | `attribution` (last touch) | read from the page URL | `fbc` | `fbc`, `fbp` |
+
 ## Documentation
 
+- [All docs](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/README.md)
 - [Getting started](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/getting-started.md)
 - [React](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/react.md): provider, hook, Next.js App Router, single-page apps
 - [Tracking events](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/tracking-events.md): naming rules, page views, journeys, click autocapture, users, personal data, errors
@@ -130,6 +144,8 @@ export const POST = createTrackHandler({
 - [Server-side tagging](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/server-side-tagging.md)
 - [GA4 Measurement Protocol](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/measurement-protocol.md): GA4 events from your server
 - [Meta Conversions API](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/meta-conversions-api.md): Meta events from your server
+- [Debugging](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/debugging.md): see what's sent, and fix common problems
+- [Migrating from 0.4](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/migration-v1.md)
 - [Changelog](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/CHANGELOG.md)
 
 ## License

@@ -24,4 +24,4 @@ Please delete options that are not relevant.
 
 ## Final check before release
 
--[ ] update [CHANGELOG.md](https://github.com/bronz3beard/react-merketing-tools/blob/main/docs/CHANGELOG.md)
+-[ ] update [CHANGELOG.md](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/CHANGELOG.md)
