@@ -2,16 +2,16 @@ import {
   buildAnalyticsEventName,
   buildNewUserData,
   hashUserData,
-} from './helpers'
-import ga4GoogleAnalyticsEventTracking from './ga4GoogleAnalyticsEventTracking'
-import handleDataLayerPush from './handleDataLayerPush'
-import { config, analyticsPlatform } from '../buildConfig'
+} from './helpers.js'
+import ga4GoogleAnalyticsEventTracking from './ga4GoogleAnalyticsEventTracking.js'
+import handleDataLayerPush from './handleDataLayerPush.js'
+import { config, analyticsPlatform } from '../buildConfig/index.js'
 import {
   objectHasAttributes,
   replaceWhiteSpace,
-} from '../utilities/commonFunctions'
-import { assertIsTrue } from '../utilities/assertValueCheckers'
-import { TrackAnalyticsEventOptions } from '../types'
+} from '../utilities/commonFunctions.js'
+import { assertIsTrue } from '../utilities/assertValueCheckers.js'
+import { TrackAnalyticsEventOptions } from '../types/index.js'
 
 /* NOTE::
   https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events?client_type=gtag#limitations

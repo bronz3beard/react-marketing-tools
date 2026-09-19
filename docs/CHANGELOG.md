@@ -11,26 +11,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
-## [Unreleased]
-__Changed__
-- development toolchain: Vite 8, TypeScript 7 (with TypeScript 6 side-by-side for lint tooling), `@types/node` 22
-- type declarations are now emitted by `tsc` (output identical to 0.4.3)
-- `check-types` script renamed to `typecheck`
-- linting moved to ESLint 10 flat config (`eslint.config.js`) with typescript-eslint and React Hooks rules; formatting to Prettier 3
+## [0.4.4] - 19-09-2026
 __Fixed__
+- `trackAnalyticsEvent` rejected every event unless server location lookup was configured, so nothing reached the
+  dataLayer with the documented setup. Events are now delivered with the default config; enabling
+  `withServerLocationInfo` without an `IP_INFO_TOKEN` still throws.
+- tracking threw a `TypeError` when `window.dataLayer` did not exist yet; it is now created, as the GTM snippet does
+- `require('react-marketing-tools')` returned an empty module in Node (the UMD build was loaded as ESM); CommonJS
+  consumers now load `dist/react-marketing-tools.umd.cjs`
+- the published type declarations were incomplete and failed to resolve; every declaration file now ships, with
+  CommonJS twins (`.d.cts`) for `require` consumers
+- the bundle embedded React's JSX runtime from the React version it was built with; it no longer does, and works
+  with React 17, 18 and 19
 - `npm ci` failed with a peer dependency conflict (`@vitejs/plugin-react` vs `vite`)
 - lint could not run (legacy CommonJS `.eslintrc.js` in an ES module package, missing parser)
 __Added__
-- Vitest test suite and GitHub Actions CI (Node 22, 24, 26)
+- `react >=17` peer dependency (React was previously undeclared)
+- `sideEffects: false` so bundlers can tree-shake
+- Vitest test suite, GitHub Actions CI (Node 22, 24, 26), package checks (publint, arethetypeswrong) and a bundle
+  size gate
 - `lint`, `format` and `format:check` scripts, enforced in CI
 - Dependabot for npm and GitHub Actions (weekly, grouped)
+- `prepublishOnly` rebuilds and size-checks the package before every publish
+__Changed__
+- the UMD bundle is also published as `dist/react-marketing-tools.umd.cjs`; the `.umd.js` path is kept for CDN users
+- `ReactMarketingProvider` declares its return type as `ReactElement`
+- development toolchain: Vite 8, TypeScript 7 (with TypeScript 6 side-by-side for lint tooling), React 19,
+  `@types/node` 22, ESLint 10 flat config with typescript-eslint and React Hooks rules, Prettier 3
+- type declarations are emitted by `tsc`
+- `check-types` script renamed to `typecheck`
 __Removed__
 - unused `prop-types` dependency
-- `vite-plugin-dts` and `@vitejs/plugin-react` dev dependencies
-- ESLint 8, `eslint-plugin-react` and the duplicate `eslintConfig` block in `package.json`
+- `vite-plugin-dts`, `@vitejs/plugin-react`, ESLint 8, `eslint-plugin-react` and the duplicate `eslintConfig` block
+  in `package.json`
+- broken `dev`/`preview` scripts and `index.html` (they referenced a missing `src/main.tsx`)
 __Security__
 - all `npm audit` advisories resolved (the remaining 6 came from ESLint 8's dependency tree)
-- broken `dev`/`preview` scripts and `index.html` (they referenced a missing `src/main.tsx`)
 
 ## [0.4.3] - 02-01-2024
 __Fixed__

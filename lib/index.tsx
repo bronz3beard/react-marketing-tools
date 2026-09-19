@@ -1,21 +1,23 @@
 import {
   useMemo,
   createContext,
+  createElement,
   useContext,
+  ReactElement,
   ReactNode,
   Provider,
   Context,
 } from 'react'
-import { trackAnalyticsEvent } from './analytics/analyticsEventService'
-import { assertIsTrue } from './utilities/assertValueCheckers'
-import type { ProviderStateProps, ProviderApiProps } from './types'
+import { trackAnalyticsEvent } from './analytics/analyticsEventService.js'
+import { assertIsTrue } from './utilities/assertValueCheckers.js'
+import type { ProviderStateProps, ProviderApiProps } from './types/index.js'
 import {
   analyticsPlatform,
   config,
   showMeBuildInAnalyticsPlatform,
   showMeBuildInEventActionPrefixList,
   showMeBuildInGlobalEventActionList,
-} from './buildConfig'
+} from './buildConfig/index.js'
 
 export type {
   Event,
@@ -40,7 +42,7 @@ export type {
   ProviderApiProps,
   AnalyticsEventActionPrefix,
   AnalyticsGlobalEventAction,
-} from './types'
+} from './types/index.js'
 // for usage without the react context/provider aka use directly
 export {
   config,
@@ -49,8 +51,8 @@ export {
   showMeBuildInAnalyticsPlatform,
   showMeBuildInGlobalEventActionList,
   showMeBuildInEventActionPrefixList,
-} from './buildConfig'
-export { trackAnalyticsEvent } from './analytics/analyticsEventService'
+} from './buildConfig/index.js'
+export { trackAnalyticsEvent } from './analytics/analyticsEventService.js'
 //
 
 export const ContextState: Context<ProviderStateProps> =
@@ -67,7 +69,7 @@ type ReactMarketingProviderProps = {
 
 export const ReactMarketingProvider = ({
   children,
-}: ReactMarketingProviderProps) => {
+}: ReactMarketingProviderProps): ReactElement => {
   const api = useMemo<ProviderApiProps>(
     () => ({
       trackAnalyticsEvent,
@@ -97,10 +99,12 @@ export const ReactMarketingProvider = ({
     [config, analyticsPlatform],
   )
 
-  return (
-    <ProviderState value={stateValue}>
-      <ProviderApi value={api}>{children}</ProviderApi>
-    </ProviderState>
+  // createElement instead of JSX: the bundle must not embed React's jsx-runtime, which ties it to the
+  // React version it was built with (a React 19 build breaks React 18 apps) and has no UMD global.
+  return createElement(
+    ProviderState,
+    { value: stateValue },
+    createElement(ProviderApi, { value: api }, children),
   )
 }
 

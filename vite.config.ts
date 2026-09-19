@@ -1,21 +1,24 @@
 /// <reference types="vitest/config" />
 import { resolve } from 'node:path'
-import { defineConfig, esmExternalRequirePlugin } from 'vite'
+import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 // Type declarations are emitted separately by `tsc -p tsconfig.build.json` (see the build script).
 export default defineConfig({
   base: '/react-marketing-tools/',
   build: {
-    manifest: true,
     minify: true,
     reportCompressedSize: true,
     lib: {
       entry: resolve(import.meta.dirname, 'lib/index.tsx'),
       name: 'React Marketing Tools',
-      fileName: format => `react-marketing-tools.${format}.js`,
+      // The package is "type": "module", so the UMD/CommonJS build must use .cjs or Node loads it as ESM
+      // and require() returns an empty module (published 0.4.3 bug).
+      fileName: format =>
+        `react-marketing-tools.${format}.${format === 'umd' ? 'cjs' : 'js'}`,
     },
     rollupOptions: {
+      external: ['react', 'react-dom'],
       output: {
         globals: {
           react: 'React',
@@ -23,11 +26,6 @@ export default defineConfig({
       },
     },
   },
-  plugins: [
-    // Rolldown keeps `require('react')` inside bundled CommonJS (react/jsx-runtime) as-is, which throws in ESM output.
-    // This plugin owns the externals and rewrites those requires to imports; it must not also be listed in `external`.
-    esmExternalRequirePlugin({ external: ['react', 'react-dom'] }),
-  ],
   test: {
     // Default to Node; DOM-dependent test files opt in with `// @vitest-environment jsdom`.
     environment: 'node',

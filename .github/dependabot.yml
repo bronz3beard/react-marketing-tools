@@ -10,15 +10,9 @@ updates:
       production-dependencies:
         dependency-type: production
     ignore:
-      # Until batch B3 externalizes react/jsx-runtime, the 0.4.x bundle embeds the dev React's JSX runtime,
-      # so a React 19 dev bump would ship a React 19 runtime that breaks React 18 apps. Remove this block in B3.
-      - dependency-name: react
-        update-types: ['version-update:semver-major']
-      - dependency-name: react-dom
-        update-types: ['version-update:semver-major']
-      - dependency-name: '@types/react'
-        update-types: ['version-update:semver-major']
-      - dependency-name: '@types/react-dom'
+      # Node types track the lowest supported Node (22); newer majors would let code type-check against
+      # APIs that the Node 22 CI leg and consumers don't have. Bump together with the minimum Node version.
+      - dependency-name: '@types/node'
         update-types: ['version-update:semver-major']
 
   - package-ecosystem: github-actions

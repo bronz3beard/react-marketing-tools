@@ -6,8 +6,8 @@ import {
   AnalyticsPlatform,
   AnalyticsEventActionPrefix,
   AnalyticsGlobalEventAction,
-} from '../types'
-import { assertIsTrue } from '../utilities/assertValueCheckers'
+} from '../types/index.js'
+import { assertIsTrue } from '../utilities/assertValueCheckers.js'
 
 const analyticsEventActionPrefixList: AnalyticsEventActionPrefix = {
   JOURNEY: 'J',

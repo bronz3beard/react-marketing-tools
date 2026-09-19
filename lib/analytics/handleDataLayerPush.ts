@@ -50,7 +50,10 @@ const handleDataLayerPush = async (
 
   _showPayloadInConsole({ dataLayerData, ...consoleLogData })
 
-  const dataLayer = (window as Window & { dataLayer?: DataLayer[] }).dataLayer!
+  // Create the dataLayer if the GTM snippet has not run yet, as GTM's own snippet does (F10 fix).
+  const dataLayer = ((
+    window as Window & { dataLayer?: DataLayer[] }
+  ).dataLayer ??= [])
 
   if (dataLayerCheck) {
     const dataLayerValueCheck = defaultDataLayerEventCheck(eventName)

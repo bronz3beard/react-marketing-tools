@@ -138,10 +138,14 @@ export const buildEventDataObject = async (
   const HIT_TIMESTAMP: string = today.toISOString() as string
   const { withServerLocationInfo, TOKENS } = config
 
-  const serverLocationData = await buildServerLocationData(
-    withServerLocationInfo,
-    TOKENS?.IP_INFO_TOKEN,
-  )
+  // Only look up server location when it was asked for; buildServerLocationData throws when it is
+  // enabled without a token, so an explicit misconfiguration still fails loudly (F1 fix).
+  const serverLocationData = withServerLocationInfo
+    ? await buildServerLocationData(
+        withServerLocationInfo,
+        TOKENS?.IP_INFO_TOKEN,
+      )
+    : undefined
 
   // this is data that is always sent in the payload
   const actionDataObject = !serverLocationData
@@ -166,7 +170,7 @@ export const buildEventDataObject = async (
 export const defaultDataLayerEventCheck = (eventName: string) => {
   const dataLayerItem = (
     window as Window & { dataLayer?: DataLayer[] }
-  ).dataLayer!.find((item: DataLayer) => item.event === eventName)
+  ).dataLayer?.find((item: DataLayer) => item.event === eventName)
 
   return !!dataLayerItem
 }
