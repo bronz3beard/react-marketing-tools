@@ -78,6 +78,14 @@ checkout.step('shipping') // journey_start, then journey_step
 checkout.complete({ value: 42, currency: 'USD' }) // journey_complete
 ```
 
+Report Core Web Vitals (LCP, INP, CLS) to GA4 and Tag Manager, after `npm install web-vitals@^6`:
+
+```ts
+import { trackWebVitals } from 'react-marketing-tools/web-vitals'
+
+void trackWebVitals(analytics)
+```
+
 The same instance identifies users, records consent and gives a consenting visitor a stable ID:
 
 ```ts
@@ -133,7 +141,7 @@ export const POST = createTrackHandler({
 - [All docs](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/README.md)
 - [Getting started](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/getting-started.md)
 - [React](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/react.md): provider, hook, Next.js App Router, single-page apps
-- [Tracking events](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/tracking-events.md): naming rules, page views, journeys, click autocapture, users, personal data, errors
+- [Tracking events](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/tracking-events.md): naming rules, page views, journeys, click autocapture, Web Vitals, users, personal data, errors
 - [Configuration](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/configuration.md)
 - [Consent](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/consent.md): Consent Mode v2 and Global Privacy Control
 - [Attribution](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/attribution-utm.md): UTM params and ad click IDs

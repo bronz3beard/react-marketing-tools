@@ -183,7 +183,8 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
 
     // Per-destination override params leave the page too, so they get the same personal-data protection.
     const safe = redactPii(params)
-    const safeMeta = options?.meta?.params && redactPii(options.meta.params)
+    const metaOverride = options?.meta || undefined
+    const safeMeta = metaOverride?.params && redactPii(metaOverride.params)
     const redactedKeys = [
       ...safe.redactedKeys,
       ...(safeMeta?.redactedKeys.map(key => `meta.${key}`) ?? []),
@@ -206,7 +207,7 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
       ...(lastTouch && { attribution: lastTouch }),
       ...(options && {
         options: safeMeta
-          ? { ...options, meta: { ...options.meta, params: safeMeta.params } }
+          ? { ...options, meta: { ...metaOverride, params: safeMeta.params } }
           : options,
       }),
       eventId: randomUuid(),

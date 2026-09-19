@@ -162,6 +162,15 @@ describe('server relay destination', () => {
     })
   })
 
+  it('doesn’t relay events tracked with meta: false', () => {
+    const analytics = withRelay()
+
+    analytics.start()
+    analytics.track('LCP', { value: 1200 }, { meta: false })
+
+    expect(sendBeacon).not.toHaveBeenCalled()
+  })
+
   it('sends nothing without consent to share user data with ad platforms, and starts once it is granted', () => {
     const analytics = withRelay({ consent: 'denied' })
 

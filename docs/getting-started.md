@@ -72,8 +72,8 @@ analytics.track('sign_up', { method: 'google' })
 ## Next steps
 
 - [React](./react.md): the provider and hook, Next.js App Router, page views in single-page apps
-- [Tracking events](./tracking-events.md): naming rules, page views, journeys, click autocapture, users, personal data
-  and errors
+- [Tracking events](./tracking-events.md): naming rules, page views, journeys, click autocapture, Web Vitals, users,
+  personal data and errors
 - [Configuration](./configuration.md): every option
 - [Consent](./consent.md): Consent Mode v2 and Global Privacy Control
 - [Attribution](./attribution-utm.md): UTM params and ad click IDs

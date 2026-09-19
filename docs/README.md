@@ -8,8 +8,8 @@ vendor receives for every event, without sending anything.
 - [Getting started](./getting-started.md): install, create an instance, track your first event
 - [React](./react.md): the provider and hook, Next.js App Router, page views in single-page apps, journeys
 - [Configuration](./configuration.md): every `createAnalytics()` option
-- [Tracking events](./tracking-events.md): naming rules, page views, journeys, click autocapture, users, personal data,
-  errors
+- [Tracking events](./tracking-events.md): naming rules, page views, journeys, click autocapture, Web Vitals, users,
+  personal data, errors
 
 ## Consent and identity
 

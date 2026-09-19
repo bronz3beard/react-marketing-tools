@@ -97,6 +97,7 @@ export const createMetaPixelDestination = ({
       }
     },
     track(event: AnalyticsEvent) {
+      if (event.options?.meta === false) return
       const { command, name, params } = toMetaCall(event)
       fbq()(command, name, params, { eventID: event.eventId })
     },

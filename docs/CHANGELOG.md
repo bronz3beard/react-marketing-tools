@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
+## [1.0.0-beta.3] - 19-09-2026
+__Added__
+- `react-marketing-tools/web-vitals`: `trackWebVitals(analytics)` reports LCP, INP and CLS as events with the params the
+  `web-vitals` library recommends for GA4 (`value`, `metric_id`, `metric_value`, `metric_delta`, `metric_rating`, and
+  `page_location` for metrics reported after a client-side navigation). `web-vitals` 6 is an optional peer dependency,
+  loaded when first called; a second call for the same instance does nothing.
+- `track(name, params, { meta: false })` keeps an event away from the Meta Pixel and the relay
+__Changed__
+- releases are staged on npm and published only once a maintainer approves them with 2FA (`npm stage approve`)
+
 ## [1.0.0-beta.2] - 19-09-2026
 __Added__
 - journeys: `analytics.journey(name)` returns `step()`, `complete()` and `abandon()`, sending `journey_start` (with the

@@ -1,7 +1,7 @@
 {
   "name": "react-marketing-tools",
   "type": "module",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "description": "One track() call for Google Tag Manager, Google Analytics 4 and the Meta Pixel, with Consent Mode v2, UTM attribution and personal-data redaction built in. React bindings included.",
   "license": "MIT",
   "author": "bronz3beard <exempli.gratia.webdesign@gmail.com> (https://www.heyrory.com/)",
@@ -53,6 +53,10 @@
       "types": "./dist/fingerprintjs.d.ts",
       "default": "./dist/fingerprintjs.js"
     },
+    "./web-vitals": {
+      "types": "./dist/webVitals.d.ts",
+      "default": "./dist/webVitals.js"
+    },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -81,10 +85,14 @@
   },
   "peerDependencies": {
     "@fingerprintjs/fingerprintjs": "^5.0.0",
-    "react": ">=18.0.0"
+    "react": ">=18.0.0",
+    "web-vitals": "^6.0.0"
   },
   "peerDependenciesMeta": {
     "@fingerprintjs/fingerprintjs": {
+      "optional": true
+    },
+    "web-vitals": {
       "optional": true
     }
   },
@@ -107,6 +115,7 @@
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "typescript-eslint": "^8.70.0",
     "vite": "^8.3.0",
-    "vitest": "^5.0.1"
+    "vitest": "^5.0.1",
+    "web-vitals": "^6.2.2"
   }
 }

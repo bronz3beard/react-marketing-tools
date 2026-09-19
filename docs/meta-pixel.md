@@ -57,6 +57,13 @@ analytics.track('lead_form', { form: 'demo' }, { meta: { event: 'Lead', params: 
 A name that isn't one of Meta's standard events is sent as a custom event. Override params get the same personal-data
 redaction as event params.
 
+To keep an event away from Meta altogether (the Pixel and the relay), pass `{ meta: false }`. The other destinations
+still receive it:
+
+```ts
+analytics.track('video_progress', { percent: 50 }, { meta: false })
+```
+
 ## Consent
 
 The Pixel follows the `adUserData` consent purpose (which follows `ads` unless you set it separately, see

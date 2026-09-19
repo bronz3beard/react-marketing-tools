@@ -81,7 +81,7 @@ export const toMetaCall = ({
   params,
   options,
 }: AnalyticsEvent): MetaCall => {
-  const override = options?.meta
+  const override = options?.meta || undefined
   const metaName = override?.event ?? GA4_TO_META_EVENT[name] ?? name
 
   return {

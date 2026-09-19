@@ -130,7 +130,7 @@ export const createServerRelayDestination = ({
       identity = context.identity
     },
     track(event) {
-      if (adUserData !== 'granted') return
+      if (adUserData !== 'granted' || event.options?.meta === false) return
       // The same mapping as the Pixel, so the server event's name matches the Pixel's.
       const { name, params } = toMetaCall(event)
       post({ event, eventName: name, customData: params })

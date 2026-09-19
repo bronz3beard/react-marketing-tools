@@ -12,12 +12,19 @@
 //          1.0.0-beta.1 — index 6.50, core 6.33, fingerprintjs 0.17 kB (+ consent-gated visitor ID; FingerprintJS adapter,
 //                         whose library stays external and lazily imported).
 //          1.0.0-beta.2 — index 6.97, core 6.80 kB (+ journeys, declarative click autocapture).
+//          1.0.0-beta.3 — webVitals 0.34 kB (+ Core Web Vitals entry; `web-vitals` stays external and lazily imported).
 import { Buffer } from 'node:buffer'
 import { readFileSync } from 'node:fs'
 import { dirname, join, normalize } from 'node:path'
 import { gzipSync } from 'node:zlib'
 
-const BUDGETS_KB = { index: 7.3, core: 7.15, server: 4.3, fingerprintjs: 0.2 }
+const BUDGETS_KB = {
+  index: 7.3,
+  core: 7.15,
+  server: 4.3,
+  fingerprintjs: 0.2,
+  webVitals: 0.4,
+}
 
 const RELATIVE_IMPORT = /(?:from|import)\s*["'](\.{1,2}\/[^"']+)["']/g
 

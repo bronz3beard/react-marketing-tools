@@ -42,10 +42,12 @@ go only to destinations that match users with them, and never into event params 
 
 ## Per-destination options
 
-`track()` takes an optional third argument for vendor-specific adjustments. Today it supports the Meta Pixel:
+`track()` takes an optional third argument for vendor-specific adjustments. Today it supports the Meta Pixel and the
+relay:
 
 ```ts
 analytics.track('lead_form', { form: 'demo' }, { meta: { event: 'Lead', params: { content_category: 'b2b' } } })
+analytics.track('video_progress', { percent: 50 }, { meta: false }) // GA4 and Tag Manager only
 ```
 
 See [Meta Pixel](./meta-pixel.md#choosing-the-meta-event-yourself).
@@ -111,6 +113,42 @@ A click anywhere inside the button sends `track('cta_click', { location: 'hero',
 - One listener on the document, added by `start()`, handles every click. It listens in the capture phase, so a handler
   that calls `stopPropagation()` doesn't hide the click.
 - The events go through the same checks as `track()`, including personal-data redaction.
+
+## Web Vitals
+
+Report [Core Web Vitals](https://web.dev/articles/vitals) (LCP, INP and CLS) from real visitors, using Google's
+`web-vitals` library:
+
+```sh
+npm install web-vitals@^6
+```
+
+```ts
+import { trackWebVitals } from 'react-marketing-tools/web-vitals'
+
+void trackWebVitals(analytics) // or, in React: useEffect(() => void trackWebVitals(analytics), [analytics])
+```
+
+Each metric is sent as an event named after it (`LCP`, `INP`, `CLS`), with the params the `web-vitals` library
+recommends for GA4:
+
+| Param | Value |
+| --- | --- |
+| `value` | the change since the metric's last report (`delta`), so reports of one metric add up |
+| `metric_id` | the same for every report of one metric on one page load |
+| `metric_value` | the metric's current value (milliseconds; CLS has no unit) |
+| `metric_delta` | the change since the last report |
+| `metric_rating` | `good`, `needs-improvement` or `poor` |
+| `page_location` | the page the metric was measured on, when it was reported after a client-side navigation |
+
+- The events reach GA4 and Tag Manager, but never the Meta Pixel or the relay.
+- `web-vitals` is downloaded when you first call `trackWebVitals()`. Calling it again for the same instance, for example
+  from `<StrictMode>`'s second effect run, does nothing.
+- It does nothing on the server.
+
+GA4's standard reports don't chart metric distributions. Register `metric_rating` as an event-scoped custom dimension
+to break the events down by rating, or use the BigQuery export for percentiles (see
+[Measure and debug performance with Google Analytics 4 and BigQuery](https://web.dev/articles/vitals-ga4)).
 
 ## Users
 

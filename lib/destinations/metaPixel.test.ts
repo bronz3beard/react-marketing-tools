@@ -80,6 +80,23 @@ describe('Meta Pixel destination', () => {
     ])
   })
 
+  it('leaves out events tracked with meta: false, which other destinations still get', () => {
+    const analytics = withPixel(
+      {},
+      { gtm: { containerId: 'GTM-TEST1', loadScript: false } },
+    )
+
+    analytics.start()
+    const before = fbqCalls().length
+    analytics.track('LCP', { value: 1200 }, { meta: false })
+
+    expect(fbqCalls()).toHaveLength(before)
+    const dataLayer = (
+      window as Window & { dataLayer?: Record<string, unknown>[] }
+    ).dataLayer
+    expect(dataLayer?.some(entry => entry.event === 'LCP')).toBe(true)
+  })
+
   it('sends other events as custom events', () => {
     const analytics = withPixel()
 

@@ -20,8 +20,11 @@ export type EventParams = Record<string, unknown>
 
 /** Per-call adjustments for one destination, when the automatic mapping isn't what you want. */
 export type TrackOptions = {
-  /** Meta Pixel: send as this event name (standard or custom), with these params merged over the mapped ones. */
-  meta?: { event?: string; params?: EventParams }
+  /**
+   * Meta Pixel and the relay: send as this event name (standard or custom), with these params merged over the mapped
+   * ones, or `false` to keep the event away from Meta.
+   */
+  meta?: false | { event?: string; params?: EventParams }
 }
 
 export type CampaignParam =

@@ -1,9 +1,11 @@
 name: Release
 
-# Publishing a GitHub Release publishes the package to npm through trusted publishing (OIDC, no npm token), with
-# provenance. A release marked "pre-release" goes to the `next` dist-tag; a full release goes to `latest`.
+# Publishing a GitHub Release stages the package on npm through trusted publishing (OIDC, no npm token), with
+# provenance. Nothing is installable until a maintainer approves the staged version with 2FA (`npm stage approve` or
+# npmjs.com). A release marked "pre-release" goes to the `next` dist-tag; a full release goes to `latest`.
 # One-time setup on npmjs.com: package settings → Trusted Publisher → GitHub Actions, user `bronz3beard`,
-# repository `react-marketing-tools`, workflow `release.yml`. Without it, the publish step fails and nothing is published.
+# repository `react-marketing-tools`, workflow `release.yml`, "Allow npm publish" unticked (staged publishing only).
+# Without it, the stage step fails and nothing is staged.
 on:
   release:
     types: [published]
@@ -26,10 +28,10 @@ jobs:
       PRERELEASE: ${{ github.event.release.prerelease }}
     steps:
       - uses: actions/checkout@v7
-      # Trusted publishing needs Node 22.14+ and npm 11.5.1+; Node 24 bundles a recent enough npm.
+      # Staged publishing needs `npm stage`: npm 11.11 (bundled with Node 24) doesn't have it; npm 11.19 (Node 26) does.
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 26
           registry-url: https://registry.npmjs.org
       - name: Check the release matches package.json
         run: |
@@ -46,13 +48,13 @@ jobs:
               fi
               ;;
           esac
-      - name: Check npm supports trusted publishing
+      - name: Check npm supports staged publishing
         run: |
-          node -e '
-            const [major, minor, patch] = process.argv[1].split(".").map(Number)
-            const ok = major > 11 || (major === 11 && (minor > 5 || (minor === 5 && patch >= 1)))
-            if (!ok) { console.error(`npm ${process.argv[1]} is older than 11.5.1, which trusted publishing needs.`); process.exit(1) }
-          ' "$(npm --version)"
+          if ! npm stage --help > /dev/null 2>&1; then
+            echo "::error::npm $(npm --version) has no 'npm stage' command, which staged publishing needs."
+            exit 1
+          fi
       - run: npm ci
-      # prepublishOnly builds the package and checks its size first.
-      - run: npm publish --tag ${{ github.event.release.prerelease && 'next' || 'latest' }}
+      # `npm stage publish` runs prepublishOnly (build + size check) like `npm publish`, then uploads the package for
+      # approval instead of publishing it.
+      - run: npm stage publish --tag ${{ github.event.release.prerelease && 'next' || 'latest' }}
