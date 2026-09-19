@@ -13,7 +13,8 @@ The library loads Google's `gtag.js` and sends events straight to GA4. No API se
 
 | Call | gtag command |
 | --- | --- |
-| `start()` | `gtag('js', …)` and `gtag('config', 'G-XXXXXXX', { … })` |
+| `start()` | `gtag('consent', 'default', …)`, then `gtag('js', …)` and `gtag('config', 'G-XXXXXXX', { … })` |
+| `consent.update(…)` | `gtag('consent', 'update', …)`; see [Consent](./consent.md) |
 | `track('purchase', { value: 42, currency: 'USD' })` | `gtag('event', 'purchase', { value: 42, currency: 'USD' })` |
 | `identify('user-42')` | `gtag('set', { user_id: 'user-42' })` |
 | `reset()` | `gtag('set', { user_id: null })` |
@@ -45,5 +46,9 @@ counted twice. To keep your own script tag but let the library send everything e
 | `pageViews` | `'auto'` | See [Page views](#page-views). |
 | `loadScript` | `true` | Set to `false` if the page already loads `gtag.js`. |
 | `serverContainerUrl` | none | Send hits to your server-side Tag Manager container. See [Server-side tagging](./server-side-tagging.md). |
+| `waitForUpdate` | `500` | Milliseconds tags wait for a consent update when a signal starts denied. |
 
-GA4 and Google Tag Manager can be used together; they share the page's `dataLayer`.
+GA4 and Google Tag Manager can be used together; they share the page's `dataLayer`. Configure each GA4 stream in one
+place only: if your Tag Manager container already has a Google tag for `G-XXXXXXX`, don't also set `ga4` here, or every
+event is counted twice. When both destinations are configured, each sends the same Consent Mode commands, which is
+harmless.

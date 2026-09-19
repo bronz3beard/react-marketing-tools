@@ -1,12 +1,19 @@
 import type {
   AnalyticsEvent,
+  ConsentState,
   Destination,
   EventParams,
   Ga4Config,
   Identity,
 } from '../core/types.js'
-import { gtag, hasGtag, toHttpsUrl } from './googleTag.js'
-import { injectScript, isScriptOnPage } from './loadScript.js'
+import {
+  gtag,
+  isGtagLibraryOnPage,
+  setDefaultConsent,
+  toHttpsUrl,
+  updateConsent,
+} from './googleTag.js'
+import { injectScript } from './loadScript.js'
 
 type Ga4DestinationOptions = Ga4Config & { nonce?: string }
 
@@ -17,6 +24,7 @@ export const createGa4Destination = ({
   pageViews = 'auto',
   loadScript = true,
   serverContainerUrl,
+  waitForUpdate = 500,
   nonce,
 }: Ga4DestinationOptions): Destination => {
   if (!MEASUREMENT_ID.test(measurementId)) {
@@ -37,11 +45,13 @@ export const createGa4Destination = ({
 
   return {
     name: 'ga4',
-    start() {
-      // A page that already runs the gtag snippet has sent 'js' and loaded gtag.js; only this stream's config is needed.
-      if (!hasGtag()) {
+    start({ consent }) {
+      setDefaultConsent({ consent, waitForUpdate })
+
+      // A page that already loads gtag.js has sent 'js'; only this stream's config is needed.
+      if (!isGtagLibraryOnPage()) {
         gtag()('js', new Date())
-        if (loadScript && !isScriptOnPage(src)) injectScript({ src, nonce })
+        if (loadScript) injectScript({ src, nonce })
       }
       gtag()('config', measurementId, {
         ...(pageViews === 'manual' ? { send_page_view: false } : {}),
@@ -52,6 +62,9 @@ export const createGa4Destination = ({
     },
     track({ name, params, eventId }: AnalyticsEvent) {
       gtag()('event', name, toGa4Params(params, eventId))
+    },
+    consent(state: ConsentState) {
+      updateConsent(state)
     },
     page({ params, eventId }: AnalyticsEvent) {
       // In 'auto' mode GA4 records page views itself (config + Enhanced Measurement history changes).

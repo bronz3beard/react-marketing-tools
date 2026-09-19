@@ -1,10 +1,16 @@
 import type {
   AnalyticsEvent,
+  ConsentState,
   Destination,
   GtmConfig,
   Identity,
 } from '../core/types.js'
-import { dataLayer, toHttpsUrl } from './googleTag.js'
+import {
+  dataLayer,
+  setDefaultConsent,
+  toHttpsUrl,
+  updateConsent,
+} from './googleTag.js'
 import { injectScript, isScriptOnPage } from './loadScript.js'
 
 type GtmDestinationOptions = GtmConfig & { nonce?: string }
@@ -25,6 +31,7 @@ export const createGtmDestination = ({
   containerId,
   loadScript = true,
   scriptUrl,
+  waitForUpdate = 500,
   nonce,
 }: GtmDestinationOptions): Destination => {
   if (!CONTAINER_ID.test(containerId)) {
@@ -37,17 +44,22 @@ export const createGtmDestination = ({
 
   return {
     name: 'gtm',
-    start() {
-      const layer = dataLayer()
+    start({ consent }) {
+      // Google's Consent Mode guide for GTM: set the default before the container loads.
+      setDefaultConsent({ consent, waitForUpdate })
+
       // Mirrors the official GTM snippet. Skipped when the snippet already ran, which would fire "gtm.js" twice.
       if (!loadScript || isScriptOnPage(src)) return
 
-      layer.push({ 'gtm.start': Date.now(), event: 'gtm.js' })
+      dataLayer().push({ 'gtm.start': Date.now(), event: 'gtm.js' })
       injectScript({ src, nonce })
     },
     track({ name, params, eventId }: AnalyticsEvent) {
       // `event` and `event_id` are set last so params can never overwrite them.
       dataLayer().push({ ...params, event: name, event_id: eventId })
+    },
+    consent(state: ConsentState) {
+      updateConsent(state)
     },
     identify({ userId }: Identity) {
       // Traits are personal data and never go to the dataLayer.

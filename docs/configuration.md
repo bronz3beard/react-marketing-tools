@@ -4,9 +4,10 @@
 
 | Option | Type | Default | What it does |
 | --- | --- | --- | --- |
-| `consent` | `'granted' \| 'denied'` | required | The consent state before the visitor makes a choice. It is required so every site decides deliberately. Consent Mode support (mapping it to Google and Meta) arrives in a later alpha. |
-| `gtm` | `{ containerId: string; loadScript?: boolean; scriptUrl?: string }` | none | Sends events to the Google Tag Manager dataLayer. See [Google Tag Manager](./google-tag-manager.md). |
-| `ga4` | `{ measurementId: string; pageViews?: 'auto' \| 'manual'; loadScript?: boolean; serverContainerUrl?: string }` | none | Sends events to Google Analytics 4 through gtag.js. See [Google Analytics 4](./google-analytics-4.md). |
+| `consent` | `'granted' \| 'denied'` | required | The consent state for every purpose before the visitor makes a choice. It is required so every site decides deliberately. See [Consent](./consent.md). |
+| `respectGpc` | `boolean` | `true` | Start advertising consent denied when the browser sends Global Privacy Control. See [Consent](./consent.md#global-privacy-control). |
+| `gtm` | `{ containerId: string; loadScript?: boolean; scriptUrl?: string; waitForUpdate?: number }` | none | Sends events to the Google Tag Manager dataLayer. See [Google Tag Manager](./google-tag-manager.md). |
+| `ga4` | `{ measurementId: string; pageViews?: 'auto' \| 'manual'; loadScript?: boolean; serverContainerUrl?: string; waitForUpdate?: number }` | none | Sends events to Google Analytics 4 through gtag.js. See [Google Analytics 4](./google-analytics-4.md). |
 | `destinations` | `Destination[]` | `[]` | Your own destinations, which receive every event alongside the built-in ones. |
 | `nonce` | `string` | none | Content-Security-Policy nonce added to every script the library injects. |
 | `debug` | `boolean` | `false` | Throw on invalid events and personal data instead of reporting them. Turn on in development. See [Errors](./tracking-events.md#errors). |

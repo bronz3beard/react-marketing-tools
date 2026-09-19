@@ -326,3 +326,68 @@ describe('identify, page and reset', () => {
     )
   })
 })
+
+describe('consent', () => {
+  it('reports the configured consent, and updates it', () => {
+    const analytics = createAnalytics({ consent: 'denied' })
+
+    expect(analytics.consent.get()).toEqual({
+      analytics: 'denied',
+      ads: 'denied',
+      adUserData: 'denied',
+      adPersonalization: 'denied',
+    })
+
+    analytics.consent.update({ analytics: 'granted' })
+    expect(analytics.consent.get().analytics).toBe('granted')
+  })
+
+  it('starts destinations with the initial consent, then replays changes in order with events', () => {
+    const calls: string[] = []
+    const analytics = createAnalytics({
+      consent: 'denied',
+      destinations: [
+        {
+          name: 'log',
+          start: ({ consent }) => calls.push(`start:${consent.ads}`),
+          track: event => calls.push(`track:${event.name}`),
+          consent: state => calls.push(`consent:${state.ads}`),
+        },
+      ],
+    })
+
+    analytics.track('before_choice')
+    analytics.consent.update({ ads: 'granted' })
+    analytics.track('after_choice')
+    analytics.start()
+
+    expect(calls).toEqual([
+      'start:denied',
+      'track:before_choice',
+      'consent:granted',
+      'track:after_choice',
+    ])
+  })
+
+  it('ignores an invalid consent update and reports it', () => {
+    const onError = vi.fn()
+    const analytics = createAnalytics({ consent: 'denied', onError })
+
+    analytics.consent.update({ ads: true } as unknown as { ads: 'granted' })
+    analytics.consent.update({ marketing: 'granted' } as never)
+
+    expect(analytics.consent.get().ads).toBe('denied')
+    expect(onError).toHaveBeenCalledTimes(2)
+    expect(onError).toHaveBeenCalledWith(
+      expect.objectContaining({ code: 'invalid_consent' }),
+    )
+  })
+
+  it('throws on an invalid consent update in debug mode', () => {
+    const analytics = createAnalytics({ consent: 'denied', debug: true })
+
+    expect(() =>
+      analytics.consent.update({ ads: 'yes' } as unknown as { ads: 'granted' }),
+    ).toThrow(/consent.update\(\) ignored: ads="yes"/)
+  })
+})

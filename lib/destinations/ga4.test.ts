@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { createAnalytics } from '../core/createAnalytics.js'
 import type { Ga4Config } from '../core/types.js'
 
@@ -15,6 +15,13 @@ const gtagCalls = () =>
   ((window as Ga4Window).dataLayer ?? [])
     .filter(isArguments)
     .map(entry => Array.from(entry as ArrayLike<unknown>))
+
+const ALL_GRANTED = {
+  analytics_storage: 'granted',
+  ad_storage: 'granted',
+  ad_user_data: 'granted',
+  ad_personalization: 'granted',
+}
 
 const gtagScripts = () =>
   Array.from(document.scripts).filter(script => script.src === GTAG_SRC)
@@ -41,6 +48,7 @@ describe('GA4 destination', () => {
 
     expect(gtagScripts()).toHaveLength(1)
     expect(gtagCalls()).toEqual([
+      ['consent', 'default', ALL_GRANTED],
       ['js', expect.any(Date)],
       ['config', 'G-TEST1', {}],
     ])
@@ -98,18 +106,36 @@ describe('GA4 destination', () => {
     ])
   })
 
-  it('reuses gtag from an existing snippet without loading gtag.js again', () => {
+  it('reuses a gtag snippet already on the page, for any stream, without loading gtag.js again', () => {
     const snippetGtag = function gtag() {
       // eslint-disable-next-line prefer-rest-params -- mirrors Google's snippet, which queues Arguments objects.
       ;((window as Ga4Window).dataLayer ??= []).push(arguments)
     }
     Object.assign(window, { gtag: snippetGtag })
+    const snippetScript = document.createElement('script')
+    snippetScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-OTHER'
+    document.head.append(snippetScript)
 
     startedGa4()
 
-    expect(gtagScripts()).toHaveLength(0)
+    expect(document.scripts).toHaveLength(1)
     expect((window as Ga4Window).gtag).toBe(snippetGtag)
-    expect(gtagCalls()).toEqual([['config', 'G-TEST1', {}]])
+    expect(gtagCalls()).toEqual([
+      ['consent', 'default', ALL_GRANTED],
+      ['config', 'G-TEST1', {}],
+    ])
+  })
+
+  // Regression: GTM's Consent Mode default defines window.gtag first; GA4 must still load its library.
+  it('loads gtag.js when Tag Manager is configured too', () => {
+    createAnalytics({
+      consent: 'granted',
+      gtm: { containerId: 'GTM-TEST1', loadScript: false },
+      ga4: { measurementId: 'G-TEST1' },
+    }).start()
+
+    expect(gtagScripts()).toHaveLength(1)
+    expect(gtagCalls()).toContainEqual(['js', expect.any(Date)])
   })
 
   it('does not load gtag.js when loadScript is false', () => {
@@ -175,4 +201,114 @@ describe('GA4 destination', () => {
       )
     },
   )
+})
+
+describe('GA4 Consent Mode v2', () => {
+  const setGlobalPrivacyControl = (value: boolean) =>
+    Object.defineProperty(navigator, 'globalPrivacyControl', {
+      value,
+      configurable: true,
+    })
+
+  beforeEach(() => {
+    Reflect.deleteProperty(window, 'dataLayer')
+    Reflect.deleteProperty(window, 'gtag')
+    document.head.innerHTML = ''
+  })
+
+  afterEach(() => {
+    Reflect.deleteProperty(navigator, 'globalPrivacyControl')
+  })
+
+  const started = (
+    config: Omit<Parameters<typeof createAnalytics>[0], 'ga4'>,
+  ) => {
+    const analytics = createAnalytics({
+      ...config,
+      ga4: { measurementId: 'G-TEST1', loadScript: false },
+    })
+    analytics.start()
+    return analytics
+  }
+
+  it('denies every signal by default, waiting for the visitor’s choice, before the config', () => {
+    started({ consent: 'denied' })
+
+    expect(gtagCalls().slice(0, 3)).toEqual([
+      [
+        'consent',
+        'default',
+        {
+          analytics_storage: 'denied',
+          ad_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied',
+          wait_for_update: 500,
+        },
+      ],
+      ['js', expect.any(Date)],
+      ['config', 'G-TEST1', {}],
+    ])
+  })
+
+  it('maps analytics and ads to the four Consent Mode signals on update', () => {
+    const analytics = started({ consent: 'denied' })
+
+    analytics.consent.update({ analytics: 'granted', ads: 'granted' })
+
+    expect(gtagCalls().at(-1)).toEqual(['consent', 'update', ALL_GRANTED])
+  })
+
+  it('lets a granular signal override ads', () => {
+    const analytics = started({ consent: 'denied' })
+
+    analytics.consent.update({ ads: 'granted', adUserData: 'denied' })
+
+    expect(gtagCalls().at(-1)).toEqual([
+      'consent',
+      'update',
+      {
+        analytics_storage: 'denied',
+        ad_storage: 'granted',
+        ad_user_data: 'denied',
+        ad_personalization: 'granted',
+      },
+    ])
+  })
+
+  it('starts advertising denied under Global Privacy Control, until the visitor explicitly allows it', () => {
+    setGlobalPrivacyControl(true)
+    const analytics = started({ consent: 'granted' })
+
+    expect(gtagCalls()[0]).toEqual([
+      'consent',
+      'default',
+      {
+        analytics_storage: 'granted',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        wait_for_update: 500,
+      },
+    ])
+
+    analytics.consent.update({ ads: 'granted' })
+    expect(gtagCalls().at(-1)).toEqual(['consent', 'update', ALL_GRANTED])
+  })
+
+  it('ignores Global Privacy Control when respectGpc is false', () => {
+    setGlobalPrivacyControl(true)
+    started({ consent: 'granted', respectGpc: false })
+
+    expect(gtagCalls()[0]).toEqual(['consent', 'default', ALL_GRANTED])
+  })
+
+  it('uses a custom wait for the consent update', () => {
+    createAnalytics({
+      consent: 'denied',
+      ga4: { measurementId: 'G-TEST1', loadScript: false, waitForUpdate: 2000 },
+    }).start()
+
+    expect(gtagCalls()[0][2]).toMatchObject({ wait_for_update: 2000 })
+  })
 })

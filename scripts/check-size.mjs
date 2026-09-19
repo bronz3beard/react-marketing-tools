@@ -3,11 +3,12 @@
 // Raise it only deliberately, with the reason in the commit message — never to silence an unexpected jump.
 // History: 1.0.0-alpha.2 — 2.55 kB (core, GTM, validation, React bindings; the 0.4 bundle was 189 kB).
 //          B7a — 2.98 kB (+ GA4 via gtag.js, server-side GTM routing, shared Google tag plumbing).
+//          1.0.0-alpha.3 — 3.49 kB (+ Consent Mode v2, consent API, Global Privacy Control).
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { gzipSync } from 'node:zlib'
 
-const BUDGET_KB = 3.2
+const BUDGET_KB = 3.7
 
 const files = readdirSync('dist', { recursive: true })
   .filter(file => file.endsWith('.js'))

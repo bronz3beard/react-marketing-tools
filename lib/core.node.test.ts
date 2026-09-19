@@ -15,4 +15,12 @@ describe('react-marketing-tools/core during server rendering', () => {
       analytics.start()
     }).not.toThrow()
   })
+
+  it('never lets one request’s consent choice change a shared server instance', () => {
+    const shared = createAnalytics({ consent: 'denied' })
+
+    shared.consent.update({ analytics: 'granted', ads: 'granted' })
+
+    expect(shared.consent.get().analytics).toBe('denied')
+  })
 })

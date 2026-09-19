@@ -11,13 +11,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
-## [Unreleased]
+## [1.0.0-alpha.3] - 19-09-2026
 __Added__
 - Google Analytics 4 destination (`ga4: { measurementId }`) through gtag.js: events, `user_id` from `identify()` (cleared
   by `reset()`), and automatic or manual (`pageViews: 'manual'`) page views. It reuses a page's existing `gtag`.
 - server-side tagging: `ga4.serverContainerUrl` routes GA4 hits to your server container and adds `event_id` to events
   for server-side deduplication; `gtm.scriptUrl` loads the Tag Manager container from your own domain
-- docs: Google Analytics 4, server-side tagging
+- consent: `analytics.consent.update({ analytics, ads, adUserData, adPersonalization })` and `analytics.consent.get()`.
+  Updates are applied in order with events, and do nothing on the server.
+- Google Consent Mode v2 for GA4 and Tag Manager: the default is set before any tag loads (with `wait_for_update` when a
+  signal starts denied; configurable through `waitForUpdate`), and every change sends an update
+- Global Privacy Control: advertising consent starts denied when the browser sends it (`respectGpc`, default `true`)
+- `invalid_consent` error code
+- docs: Google Analytics 4, server-side tagging, consent
+__Changed__
+- **Breaking (custom destinations):** `Destination.start()` now receives `{ consent }`, and destinations can implement
+  `consent(state)`
 __Removed__
 - the `device-detector-js` dependency; the package now has no runtime dependencies
 - the unused 0.4 source and its type declarations (no longer exported since 1.0.0-alpha.2)

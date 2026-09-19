@@ -1,10 +1,18 @@
 import { createGa4Destination } from '../destinations/ga4.js'
 import { createGtmDestination } from '../destinations/gtm.js'
+import {
+  applyConsentUpdate,
+  CONSENT_KEYS,
+  initialConsentState,
+  isConsentStatus,
+  readGlobalPrivacyControl,
+} from './consent.js'
 import { AnalyticsError } from './errors.js'
 import type {
   Analytics,
   AnalyticsConfig,
   AnalyticsEvent,
+  ConsentUpdate,
   Destination,
   EventParams,
 } from './types.js'
@@ -44,7 +52,13 @@ const assertValidConfig = (config: AnalyticsConfig): void => {
 export const createAnalytics = (config: AnalyticsConfig): Analytics => {
   assertValidConfig(config)
 
-  const { debug = false, onError = console.error } = config
+  const { debug = false, onError = console.error, respectGpc = true } = config
+  // Destinations start from this state; later changes reach them through the queue, in order with events.
+  const initialConsent = initialConsentState({
+    consent: config.consent,
+    gpc: respectGpc && readGlobalPrivacyControl(),
+  })
+  let consent = initialConsent
   const destinations: Destination[] = [
     ...(config.gtm
       ? [createGtmDestination({ ...config.gtm, nonce: config.nonce })]
@@ -125,7 +139,7 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
       if (started || !isBrowser()) return
       started = true
 
-      dispatch(destination => destination.start())
+      dispatch(destination => destination.start({ consent: initialConsent }))
       queue.splice(0).forEach(dispatch)
     },
     track(name, params = {}) {
@@ -166,6 +180,35 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
       if (!isBrowser()) return
 
       send(destination => destination.reset?.())
+    },
+    consent: {
+      update(update: ConsentUpdate) {
+        // On a server one instance serves every request, so one visitor's choice must never change it.
+        if (!isBrowser()) return
+
+        const invalid = Object.entries(update).filter(
+          ([key, value]) =>
+            value !== undefined &&
+            !(
+              CONSENT_KEYS.includes(key as keyof ConsentUpdate) &&
+              isConsentStatus(value)
+            ),
+        )
+        if (invalid.length > 0) {
+          fail(
+            new AnalyticsError(
+              'invalid_consent',
+              `consent.update() ignored: ${invalid.map(([key, value]) => `${key}=${JSON.stringify(value)}`).join(', ')}. Use analytics, ads, adUserData or adPersonalization with 'granted' or 'denied'.`,
+            ),
+          )
+          return
+        }
+
+        const next = applyConsentUpdate(consent, update)
+        consent = next
+        send(destination => destination.consent?.(next))
+      },
+      get: () => consent,
     },
   }
 }

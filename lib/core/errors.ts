@@ -2,6 +2,7 @@ export type AnalyticsErrorCode =
   | 'invalid_event'
   | 'invalid_param'
   | 'invalid_user_id'
+  | 'invalid_consent'
   | 'pii_redacted'
   | 'destination_failed'
 

@@ -9,8 +9,11 @@ createAnalytics({
 
 ## Loading the container
 
-On `start()` the library does what the official GTM snippet does: it creates `window.dataLayer`, pushes the `gtm.js`
-start event and loads `https://www.googletagmanager.com/gtm.js?id=GTM-XXXXXXX` asynchronously.
+On `start()` the library first sets the Consent Mode v2 default (`gtag('consent', 'default', …)`, see
+[Consent](./consent.md)). It then does what the official GTM snippet does: it creates `window.dataLayer`, pushes the
+`gtm.js` start event and loads `https://www.googletagmanager.com/gtm.js?id=GTM-XXXXXXX` asynchronously. Every
+`analytics.consent.update()` sends `gtag('consent', 'update', …)`, so tags with built-in consent checks follow the
+visitor's choice.
 
 If the page already contains the GTM snippet, the library detects it and doesn't load the container or push `gtm.js`
 again (doing so would fire your "All Pages" triggers twice). You can also skip loading explicitly:
