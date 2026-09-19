@@ -11,6 +11,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
+## [1.0.0-alpha.0] - 19-09-2026
+Published on the `next` dist-tag; `latest` stays on 0.4.x. The package root (`react-marketing-tools`) still exports
+the 0.4 API in this alpha.
+
+__Added__
+- `react-marketing-tools/core`: `createAnalytics({ consent, gtm, destinations, nonce })` with `start()` and
+  `track(name, params)`. One call reaches every destination with a shared UUID `event_id`. Events tracked before
+  `start()` are queued, and it's safe to use during server rendering.
+- Google Tag Manager destination: loads the container like the official snippet (once, CSP-nonce aware, and not at all if
+  the page already has the snippet) and pushes `{ ...params, event, event_id }`
+- custom destinations through the `Destination` type
+- docs: getting started, configuration, Google Tag Manager
+__Changed__
+- **Breaking:** the package is ESM-only and requires Node.js 22.12 or later for server rendering and tooling. Files are
+  now `dist/index.js` and `dist/core.js`.
+__Removed__
+- **Breaking:** the UMD bundle, the CommonJS entry and the `.d.cts` declarations (Node 22.12+ can `require()` the ESM
+  build)
+
 ## [0.4.4] - 19-09-2026
 __Fixed__
 - `trackAnalyticsEvent` rejected every event unless server location lookup was configured, so nothing reached the

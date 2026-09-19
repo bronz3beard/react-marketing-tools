@@ -10,20 +10,16 @@ export default defineConfig({
     minify: true,
     reportCompressedSize: true,
     lib: {
-      entry: resolve(import.meta.dirname, 'lib/index.tsx'),
-      name: 'React Marketing Tools',
-      // The package is "type": "module", so the UMD/CommonJS build must use .cjs or Node loads it as ESM
-      // and require() returns an empty module (published 0.4.3 bug).
-      fileName: format =>
-        `react-marketing-tools.${format}.${format === 'umd' ? 'cjs' : 'js'}`,
+      // ESM-only (decision D6). `index` still exports the 0.4 API until the React bindings replace it (batch B6).
+      entry: {
+        index: resolve(import.meta.dirname, 'lib/index.tsx'),
+        core: resolve(import.meta.dirname, 'lib/core.ts'),
+      },
+      formats: ['es'],
+      fileName: (_format, entryName) => `${entryName}.js`,
     },
     rollupOptions: {
       external: ['react', 'react-dom'],
-      output: {
-        globals: {
-          react: 'React',
-        },
-      },
     },
   },
   test: {

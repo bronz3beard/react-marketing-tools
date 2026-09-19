@@ -1,7 +1,7 @@
 {
   "name": "react-marketing-tools",
   "type": "module",
-  "version": "0.4.4",
+  "version": "1.0.0-alpha.0",
   "description": "React Marketing Tools are a set of tools to make it easier for you to implement analytics and track user journeys, interactions throughout your App. using dataLayer/Google Tag Manager, GA4 fetch directly or coming soon facebook pixel.",
   "license": "MIT",
   "author": "bronz3beard <exempli.gratia.webdesign@gmail.com> (https://www.heyrory.com/)",
@@ -29,26 +29,30 @@
     "pixel",
     "dataLayer"
   ],
-  "main": "./dist/react-marketing-tools.umd.cjs",
-  "module": "./dist/react-marketing-tools.es.js",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/react-marketing-tools.es.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/react-marketing-tools.umd.cjs"
-      }
-    }
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./core": {
+      "types": "./dist/core.d.ts",
+      "default": "./dist/core.js"
+    },
+    "./package.json": "./package.json"
   },
   "sideEffects": false,
+  "engines": {
+    "node": ">=22.12"
+  },
+  "publishConfig": {
+    "tag": "next"
+  },
   "scripts": {
-    "build": "vite build && tsc -p tsconfig.build.json && node scripts/emit-cts-types.mjs && node scripts/copy-legacy-umd.mjs",
+    "build": "vite build && tsc -p tsconfig.build.json",
     "build:watch": "vite build --watch",
-    "check:package": "publint --strict && attw --pack .",
+    "check:package": "publint --strict && attw --pack . --profile esm-only",
     "check:size": "node scripts/check-size.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
