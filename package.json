@@ -71,7 +71,7 @@
     "device-detector-js": "^3.0.3"
   },
   "devDependencies": {
-    "@types/node": "^22.20.4",
+    "@types/node": "^26.6.1",
     "@types/react": "^18.0.26",
     "@types/react-dom": "^18.0.10",
     "@typescript/native": "npm:typescript@^7.0.2",
