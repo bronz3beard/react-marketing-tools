@@ -51,6 +51,10 @@ An update with an unknown purpose or a value other than `'granted'`/`'denied'` i
 | `adUserData` | `ad_user_data` | `fbq('consent', 'grant' \| 'revoke')` |
 | `adPersonalization` | `ad_personalization` | — |
 
+The library's own features follow the same purposes: storing [attribution](./attribution-utm.md) and the
+[visitor ID](./visitor-id.md) needs `analytics`, a fingerprint visitor ID needs `analytics` and `ads`, and the
+[relay to the Conversions API](./meta-conversions-api.md#relaying-the-pixels-events) needs `adUserData`.
+
 For the Meta Pixel, a denied starting state queues `fbq('consent', 'revoke')` before `init`; Meta then holds the Pixel
 until consent is granted.
 

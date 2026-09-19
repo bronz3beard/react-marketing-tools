@@ -6,6 +6,7 @@
 | --- | --- | --- | --- |
 | `consent` | `'granted' \| 'denied'` | required | The consent state for every purpose before the visitor makes a choice. It is required so every site decides deliberately. See [Consent](./consent.md). |
 | `attribution` | `boolean \| { ttlDays?: number }` | `true` (90 days) | Capture UTM params and ad click IDs. See [Attribution](./attribution-utm.md). |
+| `visitorId` | `'random' \| false \| { fingerprint: () => Promise<string> }` | `'random'` | A stable ID for a consenting visitor, never sent to Google Analytics. See [Visitor ID](./visitor-id.md). |
 | `respectGpc` | `boolean` | `true` | Start advertising consent denied when the browser sends Global Privacy Control. See [Consent](./consent.md#global-privacy-control). |
 | `gtm` | `{ containerId: string; loadScript?: boolean; scriptUrl?: string; waitForUpdate?: number }` | none | Sends events to the Google Tag Manager dataLayer. See [Google Tag Manager](./google-tag-manager.md). |
 | `ga4` | `{ measurementId: string; pageViews?: 'auto' \| 'manual'; loadScript?: boolean; serverContainerUrl?: string; waitForUpdate?: number }` | none | Sends events to Google Analytics 4 through gtag.js. See [Google Analytics 4](./google-analytics-4.md). |
@@ -18,8 +19,8 @@
 
 `createAnalytics()` throws straight away if `consent` isn't `'granted'` or `'denied'`, if `gtm.containerId` doesn't look
 like `GTM-XXXXXXX`, if `ga4.measurementId` doesn't look like `G-XXXXXXX`, if `metaPixel.pixelId` isn't numeric, if
-`gtm.scriptUrl` or `ga4.serverContainerUrl` isn't an `https://` URL, or if `server.endpoint` is neither a path on your
-site (`/api/track`) nor an `https://` URL. Configuration mistakes show up on the first page load.
+`gtm.scriptUrl` or `ga4.serverContainerUrl` isn't an `https://` URL, if `server.endpoint` is neither a path on your
+site (`/api/track`) nor an `https://` URL, or if `visitorId` isn't one of its three forms. Configuration mistakes show up on the first page load.
 
 ## Events
 

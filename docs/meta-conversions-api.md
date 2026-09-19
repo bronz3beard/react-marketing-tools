@@ -49,6 +49,7 @@ both and counts it once.
 - Nothing is relayed without `adUserData` consent, the signal the Pixel follows. The handler also ignores events whose
   body says it's denied.
 - The user identified with `identify()` is sent with every event, with the Meta click and browser IDs (`fbc`, `fbp`).
+  For a visitor who isn't identified, their [visitor ID](./visitor-id.md) is sent as `external_id` instead.
   Unlike the Pixel, which only takes user data when it initialises, the relay picks up a sign-in straight away.
 - Page views are relayed only when there's no Pixel, or its page views are manual (`metaPixel.pageViews: 'manual'`). The
   Pixel's automatic page views carry no event ID, so a relayed copy would be counted twice.

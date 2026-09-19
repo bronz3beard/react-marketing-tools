@@ -11,17 +11,25 @@ export default defineConfig({
     reportCompressedSize: true,
     lib: {
       // ESM-only (decision D6). `index` = core + React bindings; `core` = framework-agnostic;
-      // `server` = Measurement Protocol + Conversions API for Node and edge runtimes.
+      // `server` = Measurement Protocol + Conversions API for Node and edge runtimes;
+      // `fingerprintjs` = the optional FingerprintJS visitor-ID adapter.
       entry: {
         index: resolve(import.meta.dirname, 'lib/index.ts'),
         core: resolve(import.meta.dirname, 'lib/core.ts'),
         server: resolve(import.meta.dirname, 'lib/server.ts'),
+        fingerprintjs: resolve(import.meta.dirname, 'lib/fingerprintjs.ts'),
       },
       formats: ['es'],
       fileName: (_format, entryName) => `${entryName}.js`,
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime'],
+      // Optional peer: resolved by the app's bundler, only in apps that import `react-marketing-tools/fingerprintjs`.
+      external: [
+        'react',
+        'react-dom',
+        'react/jsx-runtime',
+        '@fingerprintjs/fingerprintjs',
+      ],
       output: {
         // Unhashed shared-chunk names: npm versions the files, and size budgets need stable paths.
         chunkFileNames: 'chunks/[name].js',

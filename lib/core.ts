@@ -20,4 +20,5 @@ export type {
   MetaPixelConfig,
   ServerRelayConfig,
   TrackOptions,
+  VisitorIdConfig,
 } from './core/types.js'

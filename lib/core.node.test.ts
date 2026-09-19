@@ -16,6 +16,12 @@ describe('react-marketing-tools/core during server rendering', () => {
     }).not.toThrow()
   })
 
+  it('has no visitor ID on the server', async () => {
+    const analytics = createAnalytics({ consent: 'granted' })
+
+    await expect(analytics.getVisitorId()).resolves.toBeUndefined()
+  })
+
   it('never lets one request’s consent choice change a shared server instance', () => {
     const shared = createAnalytics({ consent: 'denied' })
 

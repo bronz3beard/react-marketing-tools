@@ -60,11 +60,12 @@ export const SignUpButton = () => {
 }
 ```
 
-The same instance identifies users and records consent:
+The same instance identifies users, records consent and gives a consenting visitor a stable ID:
 
 ```ts
 analytics.identify('user-42', { email: 'ada@example.com' }) // user id for GTM and GA4, advanced matching for Meta
 analytics.consent.update({ analytics: 'granted', ads: 'granted' }) // Google Consent Mode v2 and Meta consent
+const visitorId = await analytics.getVisitorId() // random by default, or a fingerprint; never sent to GA4
 ```
 
 Configure only the destinations you use. Without React, import `createAnalytics` from `react-marketing-tools/core` and
@@ -108,6 +109,7 @@ export const POST = createTrackHandler({
 - [Configuration](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/configuration.md)
 - [Consent](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/consent.md): Consent Mode v2 and Global Privacy Control
 - [Attribution](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/attribution-utm.md): UTM params and ad click IDs
+- [Visitor ID](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/visitor-id.md): a stable ID for consenting visitors, random or fingerprint
 - [Google Tag Manager](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/google-tag-manager.md)
 - [Google Analytics 4](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/google-analytics-4.md)
 - [Meta Pixel](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/meta-pixel.md)

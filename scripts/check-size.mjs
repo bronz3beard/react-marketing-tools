@@ -9,12 +9,14 @@
 //          1.0.0-alpha.5 — 5.66 kB (+ UTM/click-ID attribution, consent-gated storage, cookie parsing, fbc/fbp).
 //          1.0.0-alpha.6 — index 5.47, core 5.31, server 3.00 kB (+ `server` entry: Measurement Protocol, Conversions API).
 //          1.0.0-beta.0 — index 5.93, core 5.76, server 4.08 kB (+ `server` relay destination; `createTrackHandler`).
+//          1.0.0-beta.1 — index 6.50, core 6.33, fingerprintjs 0.17 kB (+ consent-gated visitor ID; FingerprintJS adapter,
+//                         whose library stays external and lazily imported).
 import { Buffer } from 'node:buffer'
 import { readFileSync } from 'node:fs'
 import { dirname, join, normalize } from 'node:path'
 import { gzipSync } from 'node:zlib'
 
-const BUDGETS_KB = { index: 6.25, core: 6.05, server: 4.3 }
+const BUDGETS_KB = { index: 6.85, core: 6.65, server: 4.3, fingerprintjs: 0.2 }
 
 const RELATIVE_IMPORT = /(?:from|import)\s*["'](\.{1,2}\/[^"']+)["']/g
 

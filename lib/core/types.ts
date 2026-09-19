@@ -158,6 +158,14 @@ export type ServerRelayConfig = {
   endpoint: string
 }
 
+/**
+ * How the visitor ID is made. `'random'`: a random ID kept in the browser's storage, with analytics consent.
+ * `{ fingerprint }`: your function's browser fingerprint, with analytics and advertising consent, never stored.
+ * `false`: no visitor ID.
+ */
+export type VisitorIdConfig =
+  'random' | false | { fingerprint: () => Promise<string> }
+
 export type AnalyticsConfig = {
   /** Initial consent for every purpose. Required, so every site makes an explicit choice. */
   consent: ConsentStatus
@@ -171,6 +179,8 @@ export type AnalyticsConfig = {
    * browser only with analytics consent; `ttlDays` (default 90) is how long a first touch is kept.
    */
   attribution?: boolean | { ttlDays?: number }
+  /** A stable ID for this visitor, only with consent and never sent to GA4. Defaults to `'random'`. */
+  visitorId?: VisitorIdConfig
   gtm?: GtmConfig
   ga4?: Ga4Config
   metaPixel?: MetaPixelConfig
@@ -199,6 +209,11 @@ export type Analytics = {
   reset(): void
   /** Campaign attribution for this visitor. Empty outside the browser. */
   getAttribution(): AttributionSnapshot
+  /**
+   * This visitor's ID, once `start()` has run. `undefined` without the consent it needs, with `visitorId: false`, or
+   * outside the browser.
+   */
+  getVisitorId(): Promise<string | undefined>
   consent: {
     /** Records the visitor's choice, e.g. from your consent banner. Omitted purposes keep their current state. */
     update(update: ConsentUpdate): void

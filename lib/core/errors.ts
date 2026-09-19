@@ -5,6 +5,7 @@ export type AnalyticsErrorCode =
   | 'invalid_consent'
   | 'pii_redacted'
   | 'destination_failed'
+  | 'visitor_id_failed'
 
 /** Every problem the library reports to `onError`, or throws when `debug` is on. */
 export class AnalyticsError extends Error {

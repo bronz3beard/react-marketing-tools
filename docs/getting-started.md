@@ -76,6 +76,7 @@ analytics.track('sign_up', { method: 'google' })
 - [Configuration](./configuration.md): every option
 - [Consent](./consent.md): Consent Mode v2 and Global Privacy Control
 - [Attribution](./attribution-utm.md): UTM params and ad click IDs
+- [Visitor ID](./visitor-id.md): a stable ID for consenting visitors, random or fingerprint
 - [Google Tag Manager](./google-tag-manager.md): what reaches the dataLayer and how to use it in GTM
 - [Google Analytics 4](./google-analytics-4.md): events, user ids and page views through gtag.js
 - [Meta Pixel](./meta-pixel.md): standard events, consent and advanced matching

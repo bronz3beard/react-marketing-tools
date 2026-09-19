@@ -4,6 +4,7 @@ import { createGa4Destination } from '../destinations/ga4.js'
 import { createGtmDestination } from '../destinations/gtm.js'
 import { createMetaPixelDestination } from '../destinations/metaPixel.js'
 import { createServerRelayDestination } from '../destinations/serverRelay.js'
+import { createVisitorIdSource } from '../identity/visitorId.js'
 import {
   applyConsentUpdate,
   CONSENT_KEYS,
@@ -30,22 +31,11 @@ import {
   redactPii,
 } from './validate.js'
 import { parseCookie } from '../shared/cookies.js'
+import { randomUuid } from '../shared/uuid.js'
 
 const isBrowser = (): boolean => typeof window !== 'undefined'
 
 const DEFAULT_ATTRIBUTION_DAYS = 90
-
-// crypto.randomUUID only exists in secure contexts (HTTPS, localhost); plain-HTTP pages fall back to getRandomValues.
-const createEventId = (): string =>
-  typeof crypto.randomUUID === 'function'
-    ? crypto.randomUUID()
-    : '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, digit =>
-        (
-          Number(digit) ^
-          (crypto.getRandomValues(new Uint8Array(1))[0] &
-            (15 >> (Number(digit) / 4)))
-        ).toString(16),
-      )
 
 const assertValidConfig = (config: AnalyticsConfig): void => {
   if (config.consent !== 'granted' && config.consent !== 'denied') {
@@ -71,6 +61,15 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
   let consent = initialConsent
   // The current user, handed to destinations at start: the Meta Pixel only accepts user data when it initialises.
   let identity: Identity | undefined
+  const visitorIds = createVisitorIdSource({
+    config: config.visitorId ?? 'random',
+    onError,
+  })
+  // getVisitorId() waits for start(): no storage or fingerprinting before it, and child components ask before it runs.
+  let markStarted = () => {}
+  const whenStarted = new Promise<void>(resolve => {
+    markStarted = resolve
+  })
   const destinations: Destination[] = [
     ...(config.gtm
       ? [createGtmDestination({ ...config.gtm, nonce: config.nonce })]
@@ -92,6 +91,7 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
             ...config.server,
             relayPageViews:
               !config.metaPixel || config.metaPixel.pageViews === 'manual',
+            visitorId: () => visitorIds?.peek(consent),
             onError,
           }),
         ]
@@ -126,6 +126,10 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
     )
   }
   const canStoreAttribution = () => started && consent.analytics === 'granted'
+  // The relay reads the visitor ID synchronously, so a fingerprint is computed as soon as it's allowed.
+  const prepareVisitorId = () => {
+    if (started && config.server) void visitorIds?.get(consent)
+  }
 
   // Mistakes in how the library is called throw in debug so they surface in development; in production they're
   // reported and the app keeps running.
@@ -203,7 +207,7 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
           ? { ...options, meta: { ...options.meta, params: safeMeta.params } }
           : options,
       }),
-      eventId: createEventId(),
+      eventId: randomUuid(),
       timestamp: Date.now(),
     }
   }
@@ -218,11 +222,13 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
         attribution?.restore()
         attribution?.persist()
       }
+      prepareVisitorId()
 
       dispatch(destination =>
         destination.start({ consent: initialConsent, identity }),
       )
       queue.splice(0).forEach(dispatch)
+      markStarted()
     },
     track(name, params = {}, options) {
       if (!isBrowser()) return
@@ -304,12 +310,14 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
         consent = next
 
         if (previous.analytics === 'granted' && next.analytics === 'denied') {
-          // Withdrawal: stored attribution is erased straight away, even before start().
+          // Withdrawal: stored attribution and the visitor ID are erased straight away, even before start().
           attribution?.erase()
+          visitorIds?.erase()
         } else if (canStoreAttribution()) {
           attribution?.restore()
           attribution?.persist()
         }
+        prepareVisitorId()
 
         send(destination => destination.consent?.(next))
       },
@@ -329,6 +337,10 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
         touch: touches.lastTouch,
       })
       return { ...touches, ...(fbc && { fbc }), ...(fbp && { fbp }) }
+    },
+    getVisitorId() {
+      if (!isBrowser() || !visitorIds) return Promise.resolve(undefined)
+      return whenStarted.then(() => visitorIds.get(consent))
     },
   }
 }

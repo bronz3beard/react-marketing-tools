@@ -37,6 +37,8 @@ export type RelayPayload = {
 type ServerRelayOptions = ServerRelayConfig & {
   /** Off when the Pixel sends its own page views: they carry no event ID, so relayed ones would be counted twice. */
   relayPageViews: boolean
+  /** The visitor ID, if it's allowed and available: Meta's `external_id` for a visitor who isn't identified. */
+  visitorId: () => string | undefined
   onError: (error: AnalyticsError) => void
 }
 
@@ -47,6 +49,7 @@ const isValidEndpoint = (endpoint: string): boolean =>
 export const createServerRelayDestination = ({
   endpoint,
   relayPageViews,
+  visitorId,
   onError,
 }: ServerRelayOptions): Destination => {
   if (!isValidEndpoint(endpoint)) {
@@ -65,8 +68,11 @@ export const createServerRelayDestination = ({
       fbcCookie: parseCookie(document.cookie, '_fbc'),
       touch: event.attribution,
     })
+    // The user ID is also what the Pixel's advanced matching knows, so it wins over the visitor ID.
+    const externalId = identity?.userId ?? visitorId()
     return {
-      ...(identity && { externalId: identity.userId, ...identity.traits }),
+      ...(externalId && { externalId }),
+      ...identity?.traits,
       ...(fbc && { fbc }),
       ...(fbp && { fbp }),
     }

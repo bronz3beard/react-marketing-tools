@@ -11,6 +11,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
+## [1.0.0-beta.1] - 19-09-2026
+__Added__
+- visitor ID: `analytics.getVisitorId()` resolves a stable ID for a consenting visitor, once `start()` has run. It's never
+  sent to Google Analytics or the dataLayer.
+  - `visitorId: 'random'` (default): a random UUID in `localStorage` (`rmt:vid`), made on first use, only with
+    `analytics` consent, and erased when that consent is withdrawn
+  - `visitorId: { fingerprint }`: your function's fingerprint, only with `analytics` and `ads` consent, computed once per
+    page and never stored; a failure is reported as the new `visitor_id_failed` error code
+  - `visitorId: false` turns it off
+- `react-marketing-tools/fingerprintjs`: `fingerprintjs()` adapter for FingerprintJS v5 (MIT), an optional peer
+  dependency loaded only when the ID is first needed, with its statistics request turned off
+- the relay sends the visitor ID as Meta's `external_id` for visitors who aren't identified
+- docs: visitor ID, with a legal section
+__Changed__
+- the relay's `destination_failed` errors are listed in the errors table
+
 ## [1.0.0-beta.0] - 19-09-2026
 __Added__
 - relay to the Meta Conversions API, deduplicated with the Pixel:

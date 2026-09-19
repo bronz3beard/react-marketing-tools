@@ -61,7 +61,7 @@ describe('server relay destination', () => {
     clearCookie('_fbc')
   })
 
-  it('posts each event with the name, params and event ID the Pixel received, so Meta counts it once', () => {
+  it('posts each event with the name, params and event ID the Pixel received, so Meta counts it once', async () => {
     const analytics = withPixelAndRelay()
 
     analytics.start()
@@ -87,7 +87,8 @@ describe('server relay destination', () => {
           customData: pixelParams,
           eventSourceUrl: 'http://localhost:3000/checkout',
           consent: { adUserData: 'granted' },
-          userData: {},
+          // An anonymous visitor is matched by their visitor ID.
+          userData: { externalId: await analytics.getVisitorId() },
         },
       },
     ])
@@ -130,7 +131,7 @@ describe('server relay destination', () => {
     })
   })
 
-  it('sends the identified user and Meta’s browser IDs with every event, including a sign-in after start', () => {
+  it('sends the identified user and Meta’s browser IDs with every event, including a sign-in after start', async () => {
     history.replaceState({}, '', '/landing?fbclid=click1')
     document.cookie = '_fbp=fb.1.1700000000000.123'
     const analytics = withRelay()
@@ -152,7 +153,8 @@ describe('server relay destination', () => {
       fbc: expect.stringMatching(/^fb\.1\.\d+\.click1$/),
       fbp: 'fb.1.1700000000000.123',
     })
-    expect(logout).not.toHaveProperty('externalId')
+    // Signed out: the visitor ID takes the user ID's place, and the user's traits are gone.
+    expect(logout.externalId).toBe(await analytics.getVisitorId())
     expect(logout).not.toHaveProperty('email')
     expect(login).toMatchObject({
       externalId: 'user-7',

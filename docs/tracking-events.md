@@ -79,10 +79,11 @@ The library never lets an analytics problem break your app. Problems are passed 
 | `pii_redacted` | personal data was removed | redacted event sent |
 | `invalid_user_id` | `identify()` got an empty or email user id | identify ignored |
 | `invalid_consent` | `consent.update()` got an unknown purpose or value | update ignored |
-| `destination_failed` | a vendor script threw | other destinations still receive the event |
+| `destination_failed` | a vendor script threw, or the relay couldn't reach your endpoint | other destinations still receive the event |
+| `visitor_id_failed` | the `visitorId.fingerprint` function failed | no visitor ID for this page load |
 
-With `debug: true`, every problem except `destination_failed` throws at the call site instead, so it shows up in
-development:
+With `debug: true`, every problem except `destination_failed` and `visitor_id_failed` throws at the call site instead,
+so it shows up in development:
 
 ```ts
 createAnalytics({
