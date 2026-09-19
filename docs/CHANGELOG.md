@@ -11,6 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
+## [Unreleased]
+__Changed__
+- development toolchain: Vite 8, TypeScript 7 (with TypeScript 6 side-by-side for lint tooling), `@types/node` 22
+- type declarations are now emitted by `tsc` (output identical to 0.4.3)
+- `check-types` script renamed to `typecheck`
+__Fixed__
+- `npm ci` failed with a peer dependency conflict (`@vitejs/plugin-react` vs `vite`)
+__Added__
+- Vitest test suite and GitHub Actions CI (Node 22, 24, 26)
+__Removed__
+- unused `prop-types` dependency
+- `vite-plugin-dts` and `@vitejs/plugin-react` dev dependencies
+- broken `dev`/`preview` scripts and `index.html` (they referenced a missing `src/main.tsx`)
+
 ## [0.4.3] - 02-01-2024
 __Fixed__
 - IP_INFO_TOKEN
