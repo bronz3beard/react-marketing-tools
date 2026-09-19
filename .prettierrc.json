@@ -1,8 +1,7 @@
 {
-    "tabWidth": 2,
-    "semi": false,
-    "singleQuote": true,
-    "trailingComma": "all",
-    "arrowParens": "avoid",
-    "tsxBracketSameLine": true
+  "tabWidth": 2,
+  "semi": false,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "arrowParens": "avoid"
 }

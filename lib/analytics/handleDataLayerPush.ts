@@ -50,14 +50,16 @@ const handleDataLayerPush = async (
 
   _showPayloadInConsole({ dataLayerData, ...consoleLogData })
 
+  const dataLayer = (window as Window & { dataLayer?: DataLayer[] }).dataLayer!
+
   if (dataLayerCheck) {
     const dataLayerValueCheck = defaultDataLayerEventCheck(eventName)
 
     if (!dataLayerValueCheck) {
-      ;(window as any).dataLayer.push(dataLayerData)
+      dataLayer.push(dataLayerData)
     }
   } else {
-    ;(window as any).dataLayer.push(dataLayerData)
+    dataLayer.push(dataLayerData)
   }
 }
 

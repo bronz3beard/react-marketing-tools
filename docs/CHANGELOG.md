@@ -16,13 +16,20 @@ __Changed__
 - development toolchain: Vite 8, TypeScript 7 (with TypeScript 6 side-by-side for lint tooling), `@types/node` 22
 - type declarations are now emitted by `tsc` (output identical to 0.4.3)
 - `check-types` script renamed to `typecheck`
+- linting moved to ESLint 10 flat config (`eslint.config.js`) with typescript-eslint and React Hooks rules; formatting to Prettier 3
 __Fixed__
 - `npm ci` failed with a peer dependency conflict (`@vitejs/plugin-react` vs `vite`)
+- lint could not run (legacy CommonJS `.eslintrc.js` in an ES module package, missing parser)
 __Added__
 - Vitest test suite and GitHub Actions CI (Node 22, 24, 26)
+- `lint`, `format` and `format:check` scripts, enforced in CI
+- Dependabot for npm and GitHub Actions (weekly, grouped)
 __Removed__
 - unused `prop-types` dependency
 - `vite-plugin-dts` and `@vitejs/plugin-react` dev dependencies
+- ESLint 8, `eslint-plugin-react` and the duplicate `eslintConfig` block in `package.json`
+__Security__
+- all `npm audit` advisories resolved (the remaining 6 came from ESLint 8's dependency tree)
 - broken `dev`/`preview` scripts and `index.html` (they referenced a missing `src/main.tsx`)
 
 ## [0.4.3] - 02-01-2024

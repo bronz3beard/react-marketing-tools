@@ -75,8 +75,7 @@ export interface AnalyticsTrackerDataOptions {
 }
 
 // HandleDataLayerPushOptions type - Options for handling data layer push
-export interface HandleDataLayerPushOptions
-  extends AnalyticsTrackerDataOptions {
+export interface HandleDataLayerPushOptions extends AnalyticsTrackerDataOptions {
   dataLayerCheck: boolean
 }
 

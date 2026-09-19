@@ -29,7 +29,7 @@ export const hashUserData = async (
     `helpers.js ~ line 25 ~ hashUserData ~ Please check your user data, it looks like it is empty! ${user}`,
   )
 
-  for (let key in user) {
+  for (const key in user) {
     if (userKeyIncludeList.includes(key)) {
       const value: string = user[key] as string
 
@@ -58,7 +58,7 @@ export const buildNewUserData = (
   if (objectHasAttributes(user)) {
     if (includeUserKeys?.length > 0) {
       includeUserKeys.forEach(item => {
-        if (user.hasOwnProperty(item)) {
+        if (Object.prototype.hasOwnProperty.call(user, item)) {
           userObject[item] = `${user[item] ?? ''}`
         } else {
           if (showMissingUserAttributesInConsole) {
@@ -144,7 +144,7 @@ export const buildEventDataObject = async (
   )
 
   // this is data that is always sent in the payload
-  let actionDataObject = !serverLocationData
+  const actionDataObject = !serverLocationData
     ? {
         // TODO:: add default variable from user into this object maybe?
         HIT_TIMESTAMP,
@@ -164,9 +164,9 @@ export const buildEventDataObject = async (
  * @returns a Boolean value, true if the event name is already in the dataLayer.
  */
 export const defaultDataLayerEventCheck = (eventName: string) => {
-  const dataLayerItem = (window as any).dataLayer.find(
-    (item: DataLayer) => item.event === eventName,
-  )
+  const dataLayerItem = (
+    window as Window & { dataLayer?: DataLayer[] }
+  ).dataLayer!.find((item: DataLayer) => item.event === eventName)
 
   return !!dataLayerItem
 }
@@ -189,7 +189,7 @@ const _checkEventSequence = (
   previousGlobalAppEvent = '',
 ) => {
   const { analyticsGlobalEventActionList } = config
-  let previousSequence: string | undefined = ''
+  let previousSequence: string | undefined
 
   assertIsTrue(
     Object.values(analyticsGlobalEventActionList).includes(globalAppEvent),

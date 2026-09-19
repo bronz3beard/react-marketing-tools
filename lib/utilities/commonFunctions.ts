@@ -1,7 +1,9 @@
 export const isClientSide = (): boolean => typeof window !== 'undefined'
 
-export const objectHasAttributes = (obj: Record<any, any>, key = ''): boolean =>
-  !key ? Object.keys(obj).length > 0 : obj.hasOwnProperty(key)
+export const objectHasAttributes = (obj: object, key = ''): boolean =>
+  !key
+    ? Object.keys(obj).length > 0
+    : Object.prototype.hasOwnProperty.call(obj, key)
 
 export const replaceWhiteSpace = (
   stringValue: string,

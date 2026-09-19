@@ -5,3 +5,8 @@ dist-ssr
 *.local
 node_modules/*
 .history
+.loop-out
+package-lock.json
+
+# Docs are rewritten in batch B16 (VS-26) and formatted from then on; reformatting them now is churn.
+*.md
