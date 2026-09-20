@@ -51,7 +51,8 @@ builds run effects once. Events tracked in event handlers are never duplicated.
 
 ## Next.js App Router
 
-The package entry is marked `'use client'`. The analytics instance holds functions, so it can't be passed from a Server
+For the whole setup, including server actions, webhooks and the relay endpoint, see [Next.js](./nextjs.md). In short:
+the package entry is marked `'use client'`. The analytics instance holds functions, so it can't be passed from a Server
 Component; create it inside a client module instead:
 
 ```tsx

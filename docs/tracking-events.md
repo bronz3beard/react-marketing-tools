@@ -161,6 +161,9 @@ Call `reset()` on logout so later events aren't linked to the previous user.
 
 ## Errors
 
+To report your app's own errors to Google Analytics 4, see [Error tracking](./error-tracking.md). This section is about
+problems the library itself reports.
+
 The library never lets an analytics problem break your app. Problems are passed to `onError` (by default
 `console.error`) as an `AnalyticsError` with a `code`:
 

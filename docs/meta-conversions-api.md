@@ -56,7 +56,9 @@ both and counts it once.
 - Nothing is forwarded to GA4, which can't deduplicate events: each one would be counted twice.
 
 The handler is a Web-standard `(request: Request) => Promise<Response>`, so it mounts as it is in Next.js, Remix,
-SvelteKit, Hono, Bun, Deno and Cloudflare Workers. With Express, convert the request:
+SvelteKit, Hono, Bun, Deno and Cloudflare Workers. It checks its settings as soon as it's created, so a missing access
+token is reported at startup rather than on the first event; see [Next.js](./nextjs.md#the-relay-endpoint) if your
+build doesn't have the token yet. With Express, convert the request:
 
 ```ts
 app.post('/api/track', express.text({ limit: '16kb' }), async (req, res) => {

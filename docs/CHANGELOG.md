@@ -20,6 +20,13 @@ __Added__
 - `track(name, params, { meta: false })` keeps an event away from the Meta Pixel and the relay
 __Changed__
 - releases are staged on npm and published only once a maintainer approves them with 2FA (`npm stage approve`)
+- README: a table of contents, a titled section per example, plainer wording, and a "what you need before you start"
+  table (the accounts and IDs the library expects you to have already). Every example was compiled and run as written.
+- the playground and getting started explain what they assume you already have: a Tag Manager container with its own
+  tags and triggers, a GA4 web data stream, a Meta Pixel dataset, and server-side secrets
+- docs: a Next.js App Router guide (layout, providers, page views, client components, server actions, webhooks and the
+  relay endpoint), checked against Next.js 16 with a type-check and a build; and error tracking, which sends your app's
+  errors to GA4 as `exception` events
 
 ## [1.0.0-beta.2] - 19-09-2026
 __Added__

@@ -6,7 +6,8 @@ vendor receives for every event, without sending anything.
 ## Start here
 
 - [Getting started](./getting-started.md): install, create an instance, track your first event
-- [React](./react.md): the provider and hook, Next.js App Router, page views in single-page apps, journeys
+- [React](./react.md): the provider and hook, page views in single-page apps, journeys
+- [Next.js](./nextjs.md): a complete App Router setup, client and server, for Next.js 16
 - [Configuration](./configuration.md): every `createAnalytics()` option
 - [Tracking events](./tracking-events.md): naming rules, page views, journeys, click autocapture, Web Vitals, users,
   personal data, errors
@@ -31,6 +32,7 @@ vendor receives for every event, without sending anything.
 
 ## Help
 
+- [Error tracking](./error-tracking.md): report errors to Google Analytics 4 as `exception` events
 - [Debugging](./debugging.md): see what's sent, and fix common problems
 - [Migrating from 0.4](./migration-v1.md): the 1.0 equivalent of every 0.4 API
 - [Changelog](./CHANGELOG.md)

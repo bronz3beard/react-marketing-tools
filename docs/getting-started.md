@@ -1,7 +1,19 @@
 # Getting started
 
-> **1.0 is in alpha.** `npm install react-marketing-tools` still installs 0.4.x. The 1.0 API is published on the `next`
-> tag and grows release by release. This page documents only what has been released; see the [changelog](./CHANGELOG.md).
+> **1.0 is in beta.** `npm install react-marketing-tools` still installs 0.4.x, which works differently. The 1.0 API is
+> published under the `next` label; see the [changelog](./CHANGELOG.md) and the
+> [migration guide](./migration-v1.md).
+
+## What you need first
+
+The library sends events to accounts you already have; it doesn't create them. Have ready the IDs of the services you
+want to use: a Google Tag Manager container (`GTM-XXXXXXX`), a Google Analytics 4 web data stream (`G-XXXXXXX`), and a
+Meta Pixel dataset ID. For sending events from your server you also need a GA4 API secret and a Meta Conversions API
+access token, both kept on the server.
+
+With Tag Manager, your container decides what happens to each event: the library puts events in the dataLayer, and
+nothing is forwarded until you add a trigger and a tag for that event name. Google Analytics 4 records events as soon
+as they arrive, under the name you tracked.
 
 ## Install
 
@@ -29,13 +41,18 @@ Wrap your app once:
 
 ```tsx
 // main.tsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
 import { AnalyticsProvider } from 'react-marketing-tools'
 import { analytics } from './analytics'
+import { App } from './App'
 
 createRoot(document.getElementById('root')!).render(
-  <AnalyticsProvider analytics={analytics}>
-    <App />
-  </AnalyticsProvider>,
+  <StrictMode>
+    <AnalyticsProvider analytics={analytics}>
+      <App />
+    </AnalyticsProvider>
+  </StrictMode>,
 )
 ```
 
@@ -71,7 +88,8 @@ analytics.track('sign_up', { method: 'google' })
 
 ## Next steps
 
-- [React](./react.md): the provider and hook, Next.js App Router, page views in single-page apps
+- [React](./react.md): the provider and hook, page views in single-page apps
+- [Next.js](./nextjs.md): a complete App Router setup, client and server
 - [Tracking events](./tracking-events.md): naming rules, page views, journeys, click autocapture, Web Vitals, users,
   personal data and errors
 - [Configuration](./configuration.md): every option

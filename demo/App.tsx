@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAnalytics, type ConsentUpdate } from 'react-marketing-tools'
+import { BeforeYouStart } from './components/BeforeYouStart'
 import { CampaignPanel } from './components/CampaignPanel'
 import { ConsentPanel } from './components/ConsentPanel'
 import { EventPanel } from './components/EventPanel'
@@ -53,6 +54,7 @@ export const App = ({
       </header>
       <main className="layout">
         <div className="controls">
+          <BeforeYouStart />
           <EventPanel />
           <JourneyStepper />
           <ConsentPanel state={consentState} onChange={changeConsent} />
