@@ -25,6 +25,69 @@ describe('parseAttribution', () => {
     ).toBeUndefined()
   })
 
+  describe('AI assistants, from the list the site keeps', () => {
+    const aiSources = {
+      chatgpt: ['chatgpt.com', 'chat.openai.com'],
+      perplexity: ['perplexity.ai'],
+    }
+
+    it.each([
+      ['https://chatgpt.com/c/123', 'chatgpt'],
+      ['https://www.perplexity.ai/search/x', 'perplexity'],
+      ['https://CHATGPT.COM/', 'chatgpt'],
+    ])('labels a visit referred by %s as %s', (referrer, label) => {
+      expect(
+        parseAttribution({
+          url: 'https://shop.test/pricing',
+          referrer,
+          capturedAt: 1,
+          aiSources,
+        }),
+      ).toEqual({
+        landing_page: 'https://shop.test/pricing',
+        referrer: new URL(referrer).origin + new URL(referrer).pathname,
+        ai_source: label,
+        captured_at: 1,
+      })
+    })
+
+    it('keeps the campaign too, when the link carried one', () => {
+      expect(
+        parseAttribution({
+          url: 'https://shop.test/?utm_source=chatgpt.com',
+          referrer: 'https://chatgpt.com/',
+          capturedAt: 1,
+          aiSources,
+        }),
+      ).toMatchObject({ utm_source: 'chatgpt.com', ai_source: 'chatgpt' })
+    })
+
+    it.each([
+      ['a referrer that isn’t on the list', 'https://news.test/article'],
+      ['a lookalike domain', 'https://chatgpt.com.evil.test/'],
+      ['no referrer at all', undefined],
+    ])('doesn’t label %s', (_case, referrer) => {
+      expect(
+        parseAttribution({
+          url: 'https://shop.test/pricing',
+          referrer,
+          capturedAt: 1,
+          aiSources,
+        }),
+      ).toBeUndefined()
+    })
+
+    it('labels nothing when the site configured no list', () => {
+      expect(
+        parseAttribution({
+          url: 'https://shop.test/pricing',
+          referrer: 'https://chatgpt.com/',
+          capturedAt: 1,
+        }),
+      ).toBeUndefined()
+    })
+  })
+
   it('redacts email addresses that email tools put in campaign params', () => {
     expect(
       parseAttribution({

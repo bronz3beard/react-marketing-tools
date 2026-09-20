@@ -56,6 +56,20 @@ Anyone can craft a campaign link, and email tools often put the subscriber's add
 Captured values are therefore email-redacted and capped at 100 characters, and landing and referrer URLs keep only their
 origin and path.
 
+## Visits from AI assistants
+
+Give the library your own list of AI hostnames, and matching visits are labelled with `ai_source`:
+
+```ts
+createAnalytics({
+  consent: 'granted',
+  attribution: { aiSources: { chatgpt: ['chatgpt.com'], perplexity: ['perplexity.ai'] } },
+})
+```
+
+A visit from one of them is recorded even when the link carried no campaign parameters. See
+[Measuring AI activity](./ai-traffic.md#visits-from-ai-assistants).
+
 ## Meta click and browser IDs
 
 `fbc` and `fbp` identify the browser to Meta for the [Conversions API](./meta-conversions-api.md). They're only read with

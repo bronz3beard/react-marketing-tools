@@ -270,6 +270,25 @@ export async function POST(request: Request) {
 }
 ```
 
+## Important: your settings are checked while Next.js builds
+
+> **`createTrackHandler()` checks its settings the moment the file is loaded, and Next.js loads route files while it
+> builds your app. If your build doesn't have `META_CAPI_TOKEN`, the build fails — not the first request.**
+
+This catches a missing or misspelled setting before anything is deployed, which is usually what you want. It surprises
+people whose build and runtime have different environment variables, which is common in Docker images and in CI that
+builds before secrets are injected.
+
+You have two choices:
+
+1. **Give the build the token.** On Vercel, environment variables are available during the build, so this works by
+   default. Elsewhere, pass it to the build step as well as the runtime.
+2. **Create the handler inside the request**, as shown above. The check then happens on the first event instead, and
+   the build needs no secrets.
+
+The same applies to anything else you create at the top of a route file, including `createAnalytics()` if you ever call
+it there.
+
 ## Things to watch for
 
 | | |

@@ -359,6 +359,8 @@ analytics.track('sign_up', { method: 'google' })
 - [Google Tag Manager](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/google-tag-manager.md)
 - [Google Analytics 4](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/google-analytics-4.md)
 - [Meta Pixel](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/meta-pixel.md)
+- [Other tools](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/custom-destinations.md): PostHog, Umami, Plausible, your own endpoint
+- [Measuring AI activity](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/ai-traffic.md): AI features, visits from AI assistants, AI crawlers
 - [Server-side tagging](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/server-side-tagging.md)
 - [GA4 Measurement Protocol](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/measurement-protocol.md): GA4 events from your server
 - [Meta Conversions API](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/meta-conversions-api.md): Meta events from your server

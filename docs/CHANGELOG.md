@@ -11,6 +11,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
+## [1.0.0-beta.4] - 20-09-2026
+__Added__
+- AI assistant visits: `attribution: { aiSources }` labels a visit with `ai_source` when its referrer matches one of
+  the hostnames **you** list (the library ships no list, because these change faster than releases). A visit from one
+  is recorded even without campaign params, and lookalike domains don't match.
+- AI crawlers: `matchAiAgent()` and `sendAiCrawlerEvent()` in `react-marketing-tools/server`, against **your** list of
+  user agents. Every crawler event is stamped with `ai_agent` and `traffic_type`, which can't be overridden, and the
+  call is refused unless `keepSeparate` says how the traffic is kept out of your visitor reports (a crawler-only GA4
+  property, or a `traffic_type` value you exclude with a data filter).
+- docs: measuring AI activity, and sending events to other tools (PostHog, Umami, Plausible, your own endpoint, plus
+  what Screaming Frog can and can't do)
+__Changed__
+- the Next.js guide calls out that `createTrackHandler()` checks its settings while Next.js builds, so a build without
+  `META_CAPI_TOKEN` fails, and shows how to defer that to the first request
+
 ## [1.0.0-beta.3] - 19-09-2026
 __Added__
 - `react-marketing-tools/web-vitals`: `trackWebVitals(analytics)` reports LCP, INP and CLS as events with the params the

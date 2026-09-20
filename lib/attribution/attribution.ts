@@ -1,5 +1,5 @@
 import { redactPii } from '../core/validate.js'
-import type { Attribution, CampaignParam } from '../core/types.js'
+import type { AiSources, Attribution, CampaignParam } from '../core/types.js'
 
 // UTM parameters (GA4's campaign dimensions) and the ad-click IDs worth keeping for offline conversion uploads.
 export const CAMPAIGN_PARAMS: readonly CampaignParam[] = [
@@ -33,18 +33,40 @@ const pageWithoutQuery = (url: string): string | undefined => {
   return origin + pathname
 }
 
+/** Your label for the AI assistant a referrer belongs to: an exact hostname match, or a subdomain of one. */
+export const matchAiSource = ({
+  referrer,
+  aiSources,
+}: {
+  referrer?: string
+  aiSources?: AiSources
+}): string | undefined => {
+  if (!referrer || !aiSources || !URL.canParse(referrer)) return undefined
+
+  const host = new URL(referrer).hostname.toLowerCase()
+  return Object.entries(aiSources).find(([, hostnames]) =>
+    hostnames.some(candidate => {
+      const hostname = candidate.toLowerCase()
+      return host === hostname || host.endsWith(`.${hostname}`)
+    }),
+  )?.[0]
+}
+
 /**
- * The campaign behind a visit, from its landing URL. `undefined` when the URL carries no campaign params, so a plain
- * navigation never replaces an earlier touch. Values are email-redacted (email tools put addresses in `utm_term`).
+ * The campaign behind a visit, from its landing URL, or the AI assistant that sent it. `undefined` when the URL carries
+ * no campaign params and the referrer isn't one of `aiSources`, so a plain navigation never replaces an earlier touch.
+ * Values are email-redacted (email tools put addresses in `utm_term`).
  */
 export const parseAttribution = ({
   url,
   referrer,
   capturedAt,
+  aiSources,
 }: {
   url: string
   referrer?: string
   capturedAt: number
+  aiSources?: AiSources
 }): Attribution | undefined => {
   if (!URL.canParse(url)) return undefined
 
@@ -53,7 +75,8 @@ export const parseAttribution = ({
     const value = searchParams.get(param)?.trim()
     return value ? [[param, value] as const] : []
   })
-  if (found.length === 0) return undefined
+  const aiSource = matchAiSource({ referrer, aiSources })
+  if (found.length === 0 && !aiSource) return undefined
 
   const { params: redacted } = redactPii(Object.fromEntries(found))
   const campaign = Object.fromEntries(
@@ -68,6 +91,7 @@ export const parseAttribution = ({
     ...campaign,
     landing_page: pageWithoutQuery(url) ?? url,
     ...(referrerPage ? { referrer: referrerPage } : {}),
+    ...(aiSource ? { ai_source: aiSource } : {}),
     captured_at: capturedAt,
   }
 }
@@ -93,6 +117,9 @@ export const toAttribution = (value: unknown): Attribution | undefined => {
     ...campaign,
     landing_page: value.landing_page,
     ...(typeof value.referrer === 'string' ? { referrer: value.referrer } : {}),
+    ...(typeof value.ai_source === 'string'
+      ? { ai_source: value.ai_source }
+      : {}),
     captured_at: value.captured_at,
   }
 }

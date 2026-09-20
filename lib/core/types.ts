@@ -47,12 +47,21 @@ export type CampaignParam =
   | 'li_fat_id'
   | 'twclid'
 
+/**
+ * Labels for visits that arrive from AI assistants, as `{ label: [hostname, …] }`, for example
+ * `{ chatgpt: ['chatgpt.com', 'chat.openai.com'], perplexity: ['perplexity.ai'] }`. A referrer matches a hostname
+ * exactly or as a subdomain of it. The list is yours to keep up to date: the library ships none.
+ */
+export type AiSources = Record<string, string[]>
+
 /** Where a visit came from: the campaign params and ad click IDs of its landing URL. */
 export type Attribution = Partial<Record<CampaignParam, string>> & {
   /** Origin and path of the landing page, without its query string. */
   landing_page: string
   /** Origin and path of the referring page, when there was one. */
   referrer?: string
+  /** Your label for the AI assistant this visit came from, when the referrer matched `attribution.aiSources`. */
+  ai_source?: string
   /** Milliseconds since the Unix epoch when the visit was captured. */
   captured_at: number
 }
@@ -192,9 +201,10 @@ export type AnalyticsConfig = {
   respectGpc?: boolean
   /**
    * Capture UTM params and ad click IDs from landing URLs. Defaults to `true`. First and last touch are stored in the
-   * browser only with analytics consent; `ttlDays` (default 90) is how long a first touch is kept.
+   * browser only with analytics consent; `ttlDays` (default 90) is how long a first touch is kept. `aiSources` labels
+   * visits that arrive from AI assistants.
    */
-  attribution?: boolean | { ttlDays?: number }
+  attribution?: boolean | { ttlDays?: number; aiSources?: AiSources }
   /** A stable ID for this visitor, only with consent and never sent to GA4. Defaults to `'random'`. */
   visitorId?: VisitorIdConfig
   /** `clicks`: track clicks on elements with a `data-analytics-event` attribute. Off by default. */

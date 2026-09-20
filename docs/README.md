@@ -17,12 +17,15 @@ vendor receives for every event, without sending anything.
 - [Consent](./consent.md): Consent Mode v2, how purposes map to vendors, Global Privacy Control
 - [Attribution](./attribution-utm.md): UTM params and ad click IDs
 - [Visitor ID](./visitor-id.md): a stable ID for a consenting visitor, random or fingerprint
+- [Measuring AI activity](./ai-traffic.md): your AI features, visits from AI assistants, and AI crawlers
 
 ## Destinations
 
 - [Google Tag Manager](./google-tag-manager.md): what reaches the dataLayer and how to use it in GTM
 - [Google Analytics 4](./google-analytics-4.md): events, user IDs and page views through gtag.js
 - [Meta Pixel](./meta-pixel.md): standard events, consent and advanced matching
+- [Other tools](./custom-destinations.md): PostHog, Umami, Plausible, your own endpoint — and what Screaming Frog can
+  and can't do
 
 ## Server
 

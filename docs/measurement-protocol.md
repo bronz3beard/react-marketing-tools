@@ -58,6 +58,12 @@ override it.
 
 Don't send an event from the server that the browser also tracks: GA4 doesn't deduplicate them.
 
+## AI crawlers
+
+`sendAiCrawlerEvent()` sends a crawler's visit through the same API, tagged so it can't be counted as a person, and it
+insists that you keep that traffic out of your visitor reports. See
+[Measuring AI activity](./ai-traffic.md#ai-crawlers).
+
 ## Consent
 
 The Measurement Protocol has no analytics-storage signal, so only send events for visitors who granted analytics

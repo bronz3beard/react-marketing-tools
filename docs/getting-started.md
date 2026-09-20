@@ -96,6 +96,8 @@ analytics.track('sign_up', { method: 'google' })
 - [Consent](./consent.md): Consent Mode v2 and Global Privacy Control
 - [Attribution](./attribution-utm.md): UTM params and ad click IDs
 - [Visitor ID](./visitor-id.md): a stable ID for consenting visitors, random or fingerprint
+- [Other tools](./custom-destinations.md): send the same events to PostHog, Umami, Plausible or your own endpoint
+- [Measuring AI activity](./ai-traffic.md): AI features, visits from AI assistants, AI crawlers
 - [Google Tag Manager](./google-tag-manager.md): what reaches the dataLayer and how to use it in GTM
 - [Google Analytics 4](./google-analytics-4.md): events, user ids and page views through gtag.js
 - [Meta Pixel](./meta-pixel.md): standard events, consent and advanced matching

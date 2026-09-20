@@ -46,6 +46,26 @@ describe('attribution', () => {
     })
   })
 
+  it('labels a visit from an AI assistant on the site’s own list, and attaches it to events', () => {
+    Object.defineProperty(document, 'referrer', {
+      value: 'https://chatgpt.com/c/abc',
+      configurable: true,
+    })
+    const { destination, events } = recorder()
+    const analytics = createAnalytics({
+      consent: 'granted',
+      attribution: { aiSources: { chatgpt: ['chatgpt.com'] } },
+      destinations: [destination],
+    })
+
+    analytics.start()
+    analytics.track('sign_up')
+
+    expect(analytics.getAttribution().lastTouch?.ai_source).toBe('chatgpt')
+    expect(events[0].attribution?.ai_source).toBe('chatgpt')
+    Reflect.deleteProperty(document, 'referrer')
+  })
+
   it('attaches the last touch to events, including ones tracked before start', () => {
     land('/?utm_source=news')
     const { destination, events } = recorder()

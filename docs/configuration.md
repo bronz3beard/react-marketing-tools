@@ -5,7 +5,7 @@
 | Option | Type | Default | What it does |
 | --- | --- | --- | --- |
 | `consent` | `'granted' \| 'denied'` | required | The consent state for every purpose before the visitor makes a choice. It is required so every site decides deliberately. See [Consent](./consent.md). |
-| `attribution` | `boolean \| { ttlDays?: number }` | `true` (90 days) | Capture UTM params and ad click IDs. See [Attribution](./attribution-utm.md). |
+| `attribution` | `boolean \| { ttlDays?: number; aiSources?: Record<string, string[]> }` | `true` (90 days) | Capture UTM params and ad click IDs. `aiSources` is your own list of AI assistant hostnames to label visits with. See [Attribution](./attribution-utm.md) and [Measuring AI activity](./ai-traffic.md#visits-from-ai-assistants). |
 | `visitorId` | `'random' \| false \| { fingerprint: () => Promise<string> }` | `'random'` | A stable ID for a consenting visitor, never sent to Google Analytics. See [Visitor ID](./visitor-id.md). |
 | `autocapture` | `{ clicks?: boolean }` | off | `clicks: true` tracks clicks on elements with a `data-analytics-event` attribute. See [Click autocapture](./tracking-events.md#click-autocapture). |
 | `respectGpc` | `boolean` | `true` | Start advertising consent denied when the browser sends Global Privacy Control. See [Consent](./consent.md#global-privacy-control). |
@@ -13,7 +13,7 @@
 | `ga4` | `{ measurementId: string; pageViews?: 'auto' \| 'manual'; loadScript?: boolean; serverContainerUrl?: string; waitForUpdate?: number }` | none | Sends events to Google Analytics 4 through gtag.js. See [Google Analytics 4](./google-analytics-4.md). |
 | `metaPixel` | `{ pixelId: string; pageViews?: 'auto' \| 'manual'; loadScript?: boolean }` | none | Sends events to the Meta Pixel. See [Meta Pixel](./meta-pixel.md). |
 | `server` | `{ endpoint: string }` | none | Relays events to your `createTrackHandler()` endpoint, which forwards them to the Meta Conversions API with the Pixel's event ID. See [Relaying the Pixel's events](./meta-conversions-api.md#relaying-the-pixels-events). |
-| `destinations` | `Destination[]` | `[]` | Your own destinations, which receive every event alongside the built-in ones. |
+| `destinations` | `Destination[]` | `[]` | Your own destinations, which receive every event alongside the built-in ones. See [Other tools](./custom-destinations.md). |
 | `nonce` | `string` | none | Content-Security-Policy nonce added to every script the library injects. |
 | `debug` | `boolean` | `false` | Throw on invalid events and personal data instead of reporting them. Turn on in development. See [Errors](./tracking-events.md#errors). |
 | `onError` | `(error: AnalyticsError) => void` | `console.error` | Receives every problem the library reports. |

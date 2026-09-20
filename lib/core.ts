@@ -2,6 +2,7 @@ export { createAnalytics } from './core/createAnalytics.js'
 export { AnalyticsError } from './core/errors.js'
 export type { AnalyticsErrorCode } from './core/errors.js'
 export type {
+  AiSources,
   Analytics,
   AnalyticsConfig,
   AnalyticsEvent,

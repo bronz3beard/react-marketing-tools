@@ -7,6 +7,12 @@ export type {
   ConversionsApiOptions,
   ConversionsApiResult,
 } from './server/conversionsApi.js'
+export { matchAiAgent, sendAiCrawlerEvent } from './server/aiCrawlers.js'
+export type {
+  AiAgents,
+  AiCrawlerOptions,
+  AiCrawlerReporting,
+} from './server/aiCrawlers.js'
 export { createTrackHandler } from './server/createTrackHandler.js'
 export type { TrackHandlerOptions } from './server/createTrackHandler.js'
 export { readGa4Cookies } from './server/ga4Cookies.js'

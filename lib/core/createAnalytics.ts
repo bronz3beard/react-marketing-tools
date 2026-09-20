@@ -114,6 +114,11 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
               config.attribution.ttlDays) ||
             DEFAULT_ATTRIBUTION_DAYS,
         })
+  // Your own list of AI assistants to label visits from; the library ships none.
+  const aiSources =
+    typeof config.attribution === 'object'
+      ? config.attribution.aiSources
+      : undefined
   let landingCaptured = false
   // Read once, on first use in the browser, so events tracked before start() carry the landing campaign too.
   const captureLanding = () => {
@@ -124,6 +129,7 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
         url: location.href,
         referrer: document.referrer,
         capturedAt: Date.now(),
+        aiSources,
       }),
     )
   }
@@ -254,7 +260,11 @@ export const createAnalytics = (config: AnalyticsConfig): Analytics => {
       // A client-side navigation can land on a new campaign URL; its referrer is the previous page, so none is kept.
       captureLanding()
       attribution?.observe(
-        parseAttribution({ url: location.href, capturedAt: Date.now() }),
+        parseAttribution({
+          url: location.href,
+          capturedAt: Date.now(),
+          aiSources,
+        }),
       )
       if (canStoreAttribution()) attribution?.persist()
 
