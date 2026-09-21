@@ -6,6 +6,8 @@ vendor receives for every event, without sending anything.
 ## Start here
 
 - [Getting started](./getting-started.md): install, create an instance, track your first event
+- [Integration walkthrough](./integration-walkthrough.md): adding it to an app that already exists, proving events
+  arrive, and retiring the analytics library you're replacing
 - [React](./react.md): the provider and hook, page views in single-page apps, journeys
 - [Next.js](./nextjs.md): a complete App Router setup, client and server, for Next.js 16
 - [Configuration](./configuration.md): every `createAnalytics()` option

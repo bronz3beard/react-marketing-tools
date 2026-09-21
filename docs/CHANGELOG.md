@@ -22,9 +22,13 @@ __Added__
   property, or a `traffic_type` value you exclude with a data filter).
 - docs: measuring AI activity, and sending events to other tools (PostHog, Umami, Plausible, your own endpoint, plus
   what Screaming Frog can and can't do)
+- docs: an integration walkthrough for adding the library to an app that already exists, including how to prove events
+  arrive in Tag Assistant, GA4 DebugView and Meta Test events, and how to retire the analytics library it replaces
 __Changed__
 - the Next.js guide calls out that `createTrackHandler()` checks its settings while Next.js builds, so a build without
   `META_CAPI_TOKEN` fails, and shows how to defer that to the first request
+- package metadata: `homepage` now points at the playground, and the keywords cover the Conversions API, Measurement
+  Protocol, Web Vitals, consent, privacy, Next.js and TypeScript
 
 ## [1.0.0-beta.3] - 19-09-2026
 __Added__

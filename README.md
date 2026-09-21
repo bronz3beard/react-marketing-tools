@@ -73,6 +73,10 @@ every current bundler and in Node.js 22.12 or later; it can't be loaded with `re
 
 ## Quick start
 
+Adding this to an app that already exists, with analytics already in it? Follow the
+[integration walkthrough](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/integration-walkthrough.md)
+instead: same steps, plus how to prove events arrive and how to retire the library you're replacing.
+
 ### 1. Create the analytics instance
 
 ```ts
@@ -349,6 +353,7 @@ analytics.track('sign_up', { method: 'google' })
 
 - [All docs](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/README.md)
 - [Getting started](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/getting-started.md)
+- [Integration walkthrough](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/integration-walkthrough.md): add it to an existing app, step by step, and prove events arrive
 - [React](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/react.md): provider, hook, single-page apps
 - [Next.js](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/nextjs.md): a complete App Router setup, client and server
 - [Tracking events](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/tracking-events.md): naming rules, page views, journeys, click autocapture, Web Vitals, users, personal data, errors

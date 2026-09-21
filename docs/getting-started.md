@@ -88,6 +88,8 @@ analytics.track('sign_up', { method: 'google' })
 
 ## Next steps
 
+- [Integration walkthrough](./integration-walkthrough.md): the same steps for an app that already exists, with the
+  checks that prove events arrive
 - [React](./react.md): the provider and hook, page views in single-page apps
 - [Next.js](./nextjs.md): a complete App Router setup, client and server
 - [Tracking events](./tracking-events.md): naming rules, page views, journeys, click autocapture, Web Vitals, users,

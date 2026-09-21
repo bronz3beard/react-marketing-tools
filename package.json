@@ -5,7 +5,7 @@
   "description": "One track() call for Google Tag Manager, Google Analytics 4 and the Meta Pixel, with Consent Mode v2, UTM attribution and personal-data redaction built in. React bindings included.",
   "license": "MIT",
   "author": "bronz3beard <exempli.gratia.webdesign@gmail.com> (https://www.heyrory.com/)",
-  "homepage": "https://www.heyrory.com/",
+  "homepage": "https://bronz3beard.github.io/react-marketing-tools/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bronz3beard/react-marketing-tools.git"
@@ -32,7 +32,14 @@
     "gdpr",
     "utm",
     "attribution",
-    "server-side-tagging"
+    "server-side-tagging",
+    "conversions-api",
+    "measurement-protocol",
+    "web-vitals",
+    "consent",
+    "privacy",
+    "nextjs",
+    "typescript"
   ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
