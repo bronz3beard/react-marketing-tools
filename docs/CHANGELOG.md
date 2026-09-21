@@ -11,6 +11,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
+## [1.0.0] - 20-09-2026
+First stable release. `npm install react-marketing-tools` now gives you 1.0 instead of 0.4.x.
+
+The code is unchanged from `1.0.0-beta.4`; every pre-release entry below is part of this release. What follows is the
+short version for anyone arriving from 0.4.
+
+__Added__
+- one `track()` call reaches Google Tag Manager, Google Analytics 4 and the Meta Pixel, with a shared `event_id` so
+  the Pixel and the Conversions API deduplicate by construction
+- Google Consent Mode v2 and Global Privacy Control, with consent denied until you say otherwise
+- campaign attribution: UTM params and ad click IDs, first and last touch, stored only with consent
+- journeys, click autocapture from HTML attributes, a stable visitor ID, and Core Web Vitals
+- `react-marketing-tools/server`: GA4 Measurement Protocol, the Meta Conversions API, and a relay that re-sends the
+  browser's events from your server so they arrive when the Pixel is blocked
+- personal-data redaction before anything leaves the page, and GA4's naming and size rules enforced on the way out
+- React bindings, a [playground](https://bronz3beard.github.io/react-marketing-tools/), and 26 documentation pages
+  including a Next.js App Router guide, an integration walkthrough for an app that already has analytics, an API
+  summary, and a setup prompt for AI coding assistants
+__Changed__
+- **Breaking:** the package exports a new API. `buildConfig`, `trackAnalyticsEvent`, `ReactMarketingProvider`,
+  `useMarketingState` and `useMarketingApi` are gone — see the [migration guide](./migration-v1.md)
+- **Breaking:** ESM only, Node.js 22.12 or later for server rendering and tooling
+- **Breaking:** the React peer dependency is now `>=18`
+- no runtime dependencies at all (0.4 bundled `device-detector-js`), and the main entry is 7.13 kB gzipped where
+  0.4.x was 189 kB
+__Removed__
+- **Breaking:** the UMD bundle, the CommonJS entry and the `.d.cts` declarations
+
 ## [1.0.0-beta.4] - 20-09-2026
 __Added__
 - AI assistant visits: `attribution: { aiSources }` labels a visit with `ai_source` when its referrer matches one of
@@ -24,6 +52,12 @@ __Added__
   what Screaming Frog can and can't do)
 - docs: an integration walkthrough for adding the library to an app that already exists, including how to prove events
   arrive in Tag Assistant, GA4 DebugView and Meta Test events, and how to retire the analytics library it replaces
+- docs: an API summary — every entry point, option, method, error code and limit on one page
+- docs: a setup prompt you can paste into any AI coding assistant, which interviews you and writes the wiring, the
+  checklist of what to click in each service, and the checks that prove it works
+- a CI check (`npm run check:api-summary`) fails when a public option, method or export is missing from the API
+  summary or from the prompt's allowed list, so neither page can fall behind the code. It reads the TypeScript AST, and
+  refuses to pass if it finds nothing to check.
 __Changed__
 - the Next.js guide calls out that `createTrackHandler()` checks its settings while Next.js builds, so a build without
   `META_CAPI_TOKEN` fails, and shows how to defer that to the first request

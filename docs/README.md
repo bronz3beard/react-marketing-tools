@@ -42,6 +42,11 @@ vendor receives for every event, without sending anything.
 - [Migrating from 0.4](./migration-v1.md): the 1.0 equivalent of every 0.4 API
 - [Changelog](./CHANGELOG.md)
 
+## Reference
+
+- [API summary](./api-summary.md): every entry point, option, method, error code and limit on one page
+- [Set this up with an AI assistant](./agent-setup.md): a prompt that interviews you and writes the setup
+
 ## Maintainers
 
 - [Releasing](./releasing.md): publishing a new version to npm

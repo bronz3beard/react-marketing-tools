@@ -1,6 +1,6 @@
 # React Marketing Tools
 
-[![npm next](https://img.shields.io/npm/v/react-marketing-tools/next?label=npm%40next)](https://www.npmjs.com/package/react-marketing-tools?activeTab=versions)
+[![npm](https://img.shields.io/npm/v/react-marketing-tools)](https://www.npmjs.com/package/react-marketing-tools)
 [![license](https://img.shields.io/npm/l/react-marketing-tools)](./LICENSE)
 
 Send one event from your React app and it reaches Google Tag Manager, Google Analytics 4 and the Meta Pixel at once.
@@ -10,16 +10,21 @@ events, and can send the same events again from your server so they still arrive
 **[Try it in the playground](https://bronz3beard.github.io/react-marketing-tools/)**: press a button and see exactly
 what each of those services would receive. Nothing is sent anywhere.
 
-> **1.0 is in beta.** Install it with `npm install react-marketing-tools@next`, because plain
-> `npm install react-marketing-tools` still gives you the old 0.4 version, which works differently. See the
-> [migration guide](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/migration-v1.md) if you're
-> coming from 0.4, and the
-> [changelog](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/CHANGELOG.md) for what's new.
+> **Setting this up with an AI assistant?** There's a prompt written for that:
+> [Set this up with an AI assistant](#set-this-up-with-an-ai-assistant). It interviews you, writes the wiring, and
+> tells you what to click in each service.
+
+> **Coming from 0.4?** 1.0 is a rewrite, and the API is different. The
+> [migration guide](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/migration-v1.md) maps the old
+> names to the new ones, and the
+> [changelog](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/CHANGELOG.md) lists everything that
+> changed.
 
 ## Contents
 
 - [What you need before you start](#what-you-need-before-you-start)
 - [Install](#install)
+- [Set this up with an AI assistant](#set-this-up-with-an-ai-assistant)
 - [Quick start](#quick-start)
   - [1. Create the analytics instance](#1-create-the-analytics-instance)
   - [2. Hand it to your app](#2-hand-it-to-your-app)
@@ -65,11 +70,28 @@ You only configure the services you use. Many teams start with Tag Manager alone
 ## Install
 
 ```sh
-npm install react-marketing-tools@next
+npm install react-marketing-tools
 ```
 
 Works with React 18 and 19. The package is published as ES modules, the `import` style of JavaScript, so it works in
 every current bundler and in Node.js 22.12 or later; it can't be loaded with `require()`.
+
+## Set this up with an AI assistant
+
+There's a prompt you can paste into any AI coding assistant. It reads your project, asks what you want to measure and
+which analytics accounts you have, then writes the setup, a checklist of what to click in Google Tag Manager, Google
+Analytics and Meta, and the steps to check it all worked.
+
+**[Get the prompt](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/agent-setup.md)**, paste it into
+your assistant, and answer its questions. That page also lists the six things to check before you trust what it wrote,
+and an `AGENTS.md` block to keep in your repo so later sessions don't re-guess the conventions this one chose.
+
+The prompt is tested: three assistants set up a Next.js app and a Vite app from scratch, and what they got wrong is
+what those rules are there to prevent.
+
+Working by hand is just as quick for a simple setup: the [quick start](#quick-start) below, or the
+[integration walkthrough](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/integration-walkthrough.md)
+for an app that already has analytics in it.
 
 ## Quick start
 
@@ -372,6 +394,8 @@ analytics.track('sign_up', { method: 'google' })
 - [Error tracking](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/error-tracking.md): report errors to Google Analytics 4
 - [Debugging](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/debugging.md): see what's sent, and fix common problems
 - [Migrating from 0.4](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/migration-v1.md)
+- [API summary](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/api-summary.md): every option, method and limit on one page
+- [Set up with an AI assistant](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/agent-setup.md): a prompt that interviews you and writes the setup
 - [Changelog](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/CHANGELOG.md)
 
 ## License

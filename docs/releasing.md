@@ -15,6 +15,11 @@ installable until you approve it with 2FA, so even a compromised build can't pub
 
 2. Add the version to [the changelog](./CHANGELOG.md), check the README is current, then commit and push to `main` and
    wait for CI.
+
+   CI fails if a public option, method or export is missing from [the API summary](./api-summary.md) or from the
+   allowed list in [the AI setup prompt](./agent-setup.md), so those two pages can't fall behind the code. What CI
+   can't judge is whether the prompt still asks the *right questions*: if this release adds, removes or renames a
+   public option, re-run the prompt validation and update its "last validated" line.
 3. On GitHub, open **Releases → Draft a new release**:
    - **Tag**: `v` plus the version, for example `v1.0.0-beta.3`, created on publish from `main`.
    - **Pre-release**: tick it for a version with a `-` (alpha, beta, rc). It then goes to the `next` dist-tag. Leave it

@@ -1,7 +1,7 @@
 {
   "name": "react-marketing-tools",
   "type": "module",
-  "version": "1.0.0-beta.4",
+  "version": "1.0.0",
   "description": "One track() call for Google Tag Manager, Google Analytics 4 and the Meta Pixel, with Consent Mode v2, UTM attribution and personal-data redaction built in. React bindings included.",
   "license": "MIT",
   "author": "bronz3beard <exempli.gratia.webdesign@gmail.com> (https://www.heyrory.com/)",
@@ -76,6 +76,7 @@
   "scripts": {
     "build": "vite build && tsc -p tsconfig.build.json",
     "build:watch": "vite build --watch",
+    "check:api-summary": "node scripts/check-api-summary.mjs",
     "check:links": "node scripts/check-links.mjs",
     "check:package": "publint --strict && attw --pack . --profile esm-only",
     "check:size": "node scripts/check-size.mjs",
