@@ -102,7 +102,7 @@ const main = ({ dryRun }) => {
   run('git', ['tag', '--annotate', tag, '--message', message])
   run('git', ['push', 'origin', `refs/tags/${tag}`])
   console.log(
-    `ok   pushed ${tag}. Watch it with "gh run watch", then approve with "npm stage list react-marketing-tools" and "npm stage approve <id>"`,
+    `ok   pushed ${tag}. Watch it with "gh run watch", then approve with "npx -y npm@11 stage list react-marketing-tools" and "npx -y npm@11 stage approve <id>"`,
   )
 }
 

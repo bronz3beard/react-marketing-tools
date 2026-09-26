@@ -51,12 +51,13 @@ Version tags can't be moved or deleted, and a published GitHub Release can't be 
    you're logged in to npm:
 
    ```sh
-   npm stage list react-marketing-tools   # shows the stage ID
-   npm stage approve <stage-id>           # asks for your 2FA code
+   npx -y npm@11 stage list react-marketing-tools   # the "id:" line is the stage ID
+   npx -y npm@11 stage approve <stage-id>           # asks for your 2FA code
    ```
 
-   Or approve it on npmjs.com. `npm stage reject <stage-id>` discards it instead. The `npm stage` commands need npm
-   11.19 or later (Node.js 26 bundles it; otherwise `npm install -g npm@latest`).
+   Or approve it on npmjs.com. `npx -y npm@11 stage reject <stage-id>` discards it instead. `npm stage` needs npm 11.19
+   or later; `npx -y npm@11` runs it for that one command without changing your installed npm (npm 10, bundled with
+   Node.js 22, says `Unknown command: "stage"`). Avoid `npm@latest`: npm 12 doesn't support Node.js 22 before 22.22.
 
 Check the result:
 
