@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
+## [Unreleased]
+__Added__
+- every GitHub Release has a CycloneDX software bill of materials (SBOM) attached, and its notes are the version's
+  section of this changelog
+- `SUPPORT.md` (what is supported and where to ask) and a code of conduct
+__Changed__
+- `SECURITY.md` commits to a first response to vulnerability reports within 14 days
+
 ## [1.0.0] - 20-09-2026
 First stable release. `npm install react-marketing-tools` now gives you 1.0 instead of 0.4.x.
 
