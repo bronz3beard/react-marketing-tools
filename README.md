@@ -10,6 +10,7 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/bronz3beard/react-marketing-tools/ci.yml?branch=main&label=CI&logo=github)](https://github.com/bronz3beard/react-marketing-tools/actions/workflows/ci.yml)
 [![CodeQL](https://img.shields.io/github/actions/workflow/status/bronz3beard/react-marketing-tools/codeql.yml?branch=main&label=CodeQL&logo=github)](https://github.com/bronz3beard/react-marketing-tools/actions/workflows/codeql.yml)
 [![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/bronz3beard/react-marketing-tools?label=openssf%20scorecard)](https://scorecard.dev/viewer/?uri=github.com/bronz3beard/react-marketing-tools)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/14943/badge)](https://www.bestpractices.dev/projects/14943)
 [![last commit](https://img.shields.io/github/last-commit/bronz3beard/react-marketing-tools)](https://github.com/bronz3beard/react-marketing-tools/commits/main)
 
 [![AI setup prompt](https://img.shields.io/badge/AI%20setup-prompt-blueviolet)](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/agent-setup.md)
