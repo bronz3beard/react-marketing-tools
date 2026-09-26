@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
+## [Unreleased]
+__Added__
+- every GitHub Release also carries the package tarball, signed together with the SBOM by SLSA build provenance
+  (GitHub artifact attestations): check it with `gh attestation verify`, see
+  [Verifying a release](./releasing.md#verifying-a-release). The build is reproducible, so the tarball is
+  byte-identical to the one on npm.
+
 ## [1.0.1] - 26-09-2026
 The package code is unchanged from 1.0.0. This is the first release made by the tag-driven release workflow.
 
