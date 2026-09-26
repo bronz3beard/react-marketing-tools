@@ -1,53 +1,82 @@
 name: Release
 
-# Publishing a GitHub Release stages the package on npm through trusted publishing (OIDC, no npm token), with
-# provenance. Nothing is installable until a maintainer approves the staged version with 2FA (`npm stage approve` or
-# npmjs.com). A release marked "pre-release" goes to the `next` dist-tag; a full release goes to `latest`.
+# Pushing a vX.Y.Z tag releases that version; `npm run release` creates and pushes it from main (docs/releasing.md).
+# This workflow checks the tag again, runs every CI check, stages the package on npm through trusted publishing (OIDC,
+# no npm token) with provenance, then creates the GitHub Release: the version's changelog section as notes and a
+# CycloneDX SBOM attached. Nothing is installable until a maintainer approves the staged version with 2FA
+# (`npm stage approve` or npmjs.com). A version with a `-` (1.1.0-rc.0) goes to the `next` dist-tag as a pre-release;
+# any other goes to `latest`.
 # One-time setup on npmjs.com: package settings → Trusted Publisher → GitHub Actions, user `bronz3beard`,
 # repository `react-marketing-tools`, workflow `release.yml`, "Allow npm publish" unticked (staged publishing only).
 # Without it, the stage step fails and nothing is staged.
 on:
-  release:
-    types: [published]
+  push:
+    tags: ['v*']
 
 permissions:
   contents: read
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.tag.outputs.version }}
+      prerelease: ${{ steps.tag.outputs.prerelease }}
+    steps:
+      # Full history, so the tagged commit can be checked against origin/main.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check the tag matches main, package.json and the changelog
+        id: tag
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          if ! [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Tag $TAG isn't vX.Y.Z or vX.Y.Z-prerelease."
+            exit 1
+          fi
+          version="$(node -p "require('./package.json').version")"
+          if [ "$TAG" != "v$version" ]; then
+            echo "::error::Tag $TAG doesn't match package.json version $version (expected v$version)."
+            exit 1
+          fi
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::$TAG points at a commit that isn't on main. Only merged, reviewed commits are released."
+            exit 1
+          fi
+          if ! node scripts/changelog-section.mjs "$version" > /dev/null; then
+            echo "::error::docs/CHANGELOG.md has no usable \"## [$version]\" section."
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          case "$version" in
+            *-*) echo "prerelease=true" >> "$GITHUB_OUTPUT" ;;
+            *) echo "prerelease=false" >> "$GITHUB_OUTPUT" ;;
+          esac
+
   verify:
+    needs: check
     uses: ./.github/workflows/ci.yml
 
   publish:
-    needs: verify
+    needs: [check, verify]
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
     env:
-      TAG: ${{ github.event.release.tag_name }}
-      PRERELEASE: ${{ github.event.release.prerelease }}
+      DIST_TAG: ${{ needs.check.outputs.prerelease == 'true' && 'next' || 'latest' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       # Staged publishing needs `npm stage`: npm 11.11 (bundled with Node 24) doesn't have it; npm 11.19 (Node 26) does.
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 26
           registry-url: https://registry.npmjs.org
-      - name: Check the release matches package.json
-        run: |
-          version="$(node -p "require('./package.json').version")"
-          if [ "$TAG" != "v$version" ]; then
-            echo "::error::Release tag $TAG doesn't match package.json version $version (expected v$version)."
-            exit 1
-          fi
-          case "$version" in
-            *-*)
-              if [ "$PRERELEASE" != "true" ]; then
-                echo "::error::$version is a prerelease version: mark the GitHub Release as a pre-release so it goes to the next tag."
-                exit 1
-              fi
-              ;;
-          esac
       - name: Check npm supports staged publishing
         run: |
           if ! npm stage --help > /dev/null 2>&1; then
@@ -57,4 +86,42 @@ jobs:
       - run: npm ci
       # `npm stage publish` runs prepublishOnly (build + size check) like `npm publish`, then uploads the package for
       # approval instead of publishing it.
-      - run: npm stage publish --tag ${{ github.event.release.prerelease && 'next' || 'latest' }}
+      - run: npm stage publish --tag "$DIST_TAG"
+
+  # Separate from publish so no job holds both the npm OIDC token and write access to the repository.
+  release:
+    needs: [check, publish]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ github.ref_name }}
+      VERSION: ${{ needs.check.outputs.version }}
+      PRERELEASE: ${{ needs.check.outputs.prerelease }}
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 26
+      # Runtime dependencies only, read from the lockfile: what installing the package brings in. There are none today,
+      # so the SBOM lists no components; peer dependencies (React, web-vitals, FingerprintJS) are the app's own.
+      - name: Write the SBOM and the release notes
+        run: |
+          npm sbom --sbom-format cyclonedx --omit dev --package-lock-only > "react-marketing-tools-$VERSION.cdx.json"
+          {
+            node scripts/changelog-section.mjs "$VERSION"
+            printf '\n---\n\n'
+            printf "Install with \`npm install react-marketing-tools@%s\` once the staged version is approved.\n" "$VERSION"
+            printf 'Built and published by this workflow with [npm provenance](https://www.npmjs.com/package/react-marketing-tools/v/%s#provenance). ' "$VERSION"
+            printf "\`react-marketing-tools-%s.cdx.json\` is the CycloneDX software bill of materials.\n" "$VERSION"
+          } > notes.md
+      - name: Create the GitHub Release
+        run: |
+          flags=()
+          if [ "$PRERELEASE" = "true" ]; then flags+=(--prerelease); fi
+          gh release create "$TAG" --verify-tag --title "$TAG" --notes-file notes.md "${flags[@]}" \
+            "react-marketing-tools-$VERSION.cdx.json"
