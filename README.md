@@ -1,7 +1,20 @@
 # React Marketing Tools
 
 [![npm](https://img.shields.io/npm/v/react-marketing-tools)](https://www.npmjs.com/package/react-marketing-tools)
+[![downloads](https://img.shields.io/npm/dm/react-marketing-tools)](https://www.npmjs.com/package/react-marketing-tools)
+[![bundle size](https://img.shields.io/bundlejs/size/react-marketing-tools?externals=react,react-dom,react/jsx-runtime)](https://bundlejs.com/?q=react-marketing-tools)
+[![types](https://img.shields.io/npm/types/react-marketing-tools)](https://www.npmjs.com/package/react-marketing-tools)
+[![node](https://img.shields.io/node/v/react-marketing-tools?logo=nodedotjs)](https://www.npmjs.com/package/react-marketing-tools)
 [![license](https://img.shields.io/npm/l/react-marketing-tools)](./LICENSE)
+
+[![CI](https://img.shields.io/github/actions/workflow/status/bronz3beard/react-marketing-tools/ci.yml?branch=main&label=CI&logo=github)](https://github.com/bronz3beard/react-marketing-tools/actions/workflows/ci.yml)
+[![CodeQL](https://img.shields.io/github/actions/workflow/status/bronz3beard/react-marketing-tools/codeql.yml?branch=main&label=CodeQL&logo=github)](https://github.com/bronz3beard/react-marketing-tools/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/bronz3beard/react-marketing-tools?label=openssf%20scorecard)](https://scorecard.dev/viewer/?uri=github.com/bronz3beard/react-marketing-tools)
+[![last commit](https://img.shields.io/github/last-commit/bronz3beard/react-marketing-tools)](https://github.com/bronz3beard/react-marketing-tools/commits/main)
+
+[![AI setup prompt](https://img.shields.io/badge/AI%20setup-prompt-blueviolet)](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/agent-setup.md)
+[![discussions](https://img.shields.io/github/discussions/bronz3beard/react-marketing-tools)](https://github.com/bronz3beard/react-marketing-tools/discussions)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/bronz3beard/react-marketing-tools/blob/main/CONTRIBUTING.md)
 
 Send one event from your React app and it reaches Google Tag Manager, Google Analytics 4 and the Meta Pixel at once.
 The library keeps the visitor's privacy choices, remembers which campaign brought them, strips personal data out of
