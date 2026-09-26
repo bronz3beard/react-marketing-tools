@@ -8,8 +8,10 @@ that tag; the [Release workflow](../.github/workflows/release.yml) does the rest
 2. runs every CI check
 3. stages the package with npm trusted publishing: no npm token is stored anywhere, and npm adds a provenance
    attestation that links the package to the commit that built it
-4. creates the GitHub Release, with the version's changelog section as its notes and a CycloneDX software bill of
-   materials (SBOM) attached
+4. builds the tarball once more, writes a CycloneDX software bill of materials (SBOM), and signs both with SLSA build
+   provenance through GitHub artifact attestations
+5. creates the GitHub Release, with the version's changelog section as its notes and the tarball, the SBOM and the
+   provenance attached (see [Verifying a release](#verifying-a-release))
 
 A staged version isn't installable until you approve it with 2FA, so even a compromised build can't publish on its own.
 Version tags can't be moved or deleted, and a published GitHub Release can't be changed.
@@ -66,6 +68,28 @@ npm view react-marketing-tools dist-tags
 gh release view v1.0.1
 ```
 
+## Verifying a release
+
+Each GitHub Release from 1.0.2 on carries four files:
+
+| File | What it is |
+| --- | --- |
+| `react-marketing-tools-<version>.tgz` | The package tarball. The build is reproducible, so it's byte-identical to the one on npm: `npm view react-marketing-tools@<version> dist.shasum` matches `shasum react-marketing-tools-<version>.tgz`. |
+| `react-marketing-tools-<version>.cdx.json` | The CycloneDX SBOM: runtime dependencies (none today). |
+| `react-marketing-tools-<version>.sigstore.json` | The Sigstore bundle signing the tarball and SBOM with SLSA build provenance. |
+| `react-marketing-tools-<version>.intoto.jsonl` | The same signed provenance as an in-toto envelope, for tools that read `*.intoto.jsonl`. |
+
+Check the tarball was built by this repository's release workflow from the tagged commit:
+
+```sh
+gh release download v<version> -R bronz3beard/react-marketing-tools
+gh attestation verify react-marketing-tools-<version>.tgz -R bronz3beard/react-marketing-tools
+```
+
+To check against the attached bundle instead of looking the attestation up on GitHub, add
+`--bundle react-marketing-tools-<version>.sigstore.json`. The npm package has its own provenance too:
+`npm audit signatures` in a project that installs it checks it.
+
 ## When the workflow fails
 
 - **Before staging** (the tag check, CI or `npm stage publish`): nothing reached npm and there is no GitHub Release.
@@ -98,4 +122,4 @@ updates or deletions), and **Settings → General → Releases → release immut
 
 `npm publish` from a logged-in machine still works, with your 2FA code. `publishConfig.tag` in `package.json` sends it
 to `next`, so a manual publish can't replace `latest` by accident; pass `--tag latest` to do that on purpose. A manual
-publish has no provenance, no GitHub Release and no SBOM, so use it only when the workflow can't run.
+publish has no provenance, no GitHub Release, no SBOM and no signature, so use it only when the workflow can't run.

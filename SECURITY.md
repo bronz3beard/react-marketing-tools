@@ -11,6 +11,9 @@
 Fixes are released as a new 1.x version on npm, so upgrade to the latest release to get them. See
 [SUPPORT.md](SUPPORT.md#what-is-supported).
 
+Releases are signed: to check one was built by this repository's release workflow, see
+[Verifying a release](docs/releasing.md#verifying-a-release).
+
 ## Reporting a vulnerability
 
 Report it privately through GitHub:
