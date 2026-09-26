@@ -11,7 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
-## [Unreleased]
+## [1.0.1] - 26-09-2026
+The package code is unchanged from 1.0.0. This is the first release made by the tag-driven release workflow.
+
 __Added__
 - every GitHub Release has a CycloneDX software bill of materials (SBOM) attached, and its notes are the version's
   section of this changelog
