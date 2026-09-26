@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/bronz3beard/react-marketing-tools/security/advisories/new
+    about: Report it privately, not as an issue. See SECURITY.md.
+  - name: Ask a question
+    url: https://github.com/bronz3beard/react-marketing-tools/discussions
+    about: Questions and ideas go to Discussions. See SUPPORT.md.

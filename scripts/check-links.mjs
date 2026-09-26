@@ -1,5 +1,6 @@
-// Fails when a link in the README or docs points to a file or heading that doesn't exist. Covers relative links and
-// links to this repository's files on GitHub (the README uses those, because npm shows it outside the repo).
+// Fails when a link in the README, the root community files or docs points to a file or heading that doesn't exist.
+// Covers relative links and links to this repository's files on GitHub (the README uses those, because npm shows it
+// outside the repo).
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { dirname, join, normalize } from 'node:path'
 
@@ -25,6 +26,10 @@ const anchorsIn = file =>
 
 const files = [
   'README.md',
+  'CONTRIBUTING.md',
+  'SECURITY.md',
+  'SUPPORT.md',
+  'CODE_OF_CONDUCT.md',
   ...readdirSync('docs')
     .filter(name => name.endsWith('.md'))
     .map(name => join('docs', name)),

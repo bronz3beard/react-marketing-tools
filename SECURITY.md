@@ -2,12 +2,14 @@
 
 ## Supported versions
 
-| Version | Supported |
-| ------- | --------- |
-| 1.x     | Yes       |
-| 0.x     | No        |
+| Version                     | Supported |
+| --------------------------- | --------- |
+| Latest 1.x release on npm   | Yes       |
+| Older 1.x releases          | No        |
+| 0.x                         | No        |
 
-Fixes are released as a new 1.x version on npm.
+Fixes are released as a new 1.x version on npm, so upgrade to the latest release to get them. See
+[SUPPORT.md](SUPPORT.md#what-is-supported).
 
 ## Reporting a vulnerability
 
@@ -21,8 +23,11 @@ Include what you can of:
 - the steps or a minimal example that reproduces it
 - what an attacker could do with it
 
-The report stays private until a fix is released. The advisory is then published, crediting you unless you'd rather
-not be named.
+You'll get a first response within 14 days. The report stays private until a fix is released. The advisory is then
+published, crediting you unless you'd rather not be named.
+
+Every fixed vulnerability is listed under **Security** in [the changelog](docs/CHANGELOG.md) and in the notes of the
+GitHub Release that fixes it.
 
 ## Scope
 
