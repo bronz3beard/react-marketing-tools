@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto'
+import fc from 'fast-check'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { RelayPayload } from '../destinations/serverRelay.js'
 import {
@@ -183,6 +184,52 @@ describe('createTrackHandler', () => {
 
       expect(response.status).toBe(status)
       expect(fetchMock).not.toHaveBeenCalled()
+    })
+  })
+
+  // Property-based (fast-check): the body is untrusted, so check the handler against generated input, not just examples.
+  describe('with generated bodies', () => {
+    it('answers 400 without forwarding for any body that isn’t a relay event', async () => {
+      const handler = createTrackHandler(options)
+
+      await fc.assert(
+        fc.asyncProperty(
+          fc.oneof(
+            fc.string(),
+            fc.jsonValue().map(value => JSON.stringify(value)),
+          ),
+          async body => {
+            const response = await handler(post({ body }))
+
+            expect(response.status).toBe(400)
+            expect(fetchMock).not.toHaveBeenCalled()
+          },
+        ),
+      )
+    })
+
+    it('forwards or answers 400, never failing, whatever value any field of the event holds', async () => {
+      const handler = createTrackHandler(options)
+
+      await fc.assert(
+        fc.asyncProperty(
+          fc.constantFrom(...Object.keys(payload)),
+          fc.jsonValue(),
+          async (field, value) => {
+            fetchMock.mockClear()
+
+            const response = await handler(
+              post({ body: JSON.stringify({ ...payload, [field]: value }) }),
+            )
+
+            expect([204, 400]).toContain(response.status)
+            if (response.status === 400) {
+              expect(fetchMock).not.toHaveBeenCalled()
+            }
+            expect(onError).not.toHaveBeenCalled()
+          },
+        ),
+      )
     })
   })
 
