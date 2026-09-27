@@ -32,3 +32,8 @@ dist-ssr
 # -- Ai --
 .loop-out
 .ai/output
+.dev-team
+
+
+/coverage
+
