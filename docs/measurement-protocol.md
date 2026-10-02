@@ -13,7 +13,8 @@ It runs anywhere with `fetch` and Web Crypto: Node.js 22.12 or later, and edge r
 
 ## Setup
 
-1. In GA4, open **Admin → Data streams**, choose your web stream, then **Measurement Protocol API secrets → Create**.
+1. In GA4, open **Admin → Data streams**, choose your web stream (or app stream, see
+   [Events from a mobile app](#events-from-a-mobile-app)), then **Measurement Protocol API secrets → Create**.
 2. Keep the secret on your server, for example in `GA4_API_SECRET`. Google says it must not be exposed in client code.
 
 ## Sending an event
@@ -58,6 +59,28 @@ override it.
 
 Don't send an event from the server that the browser also tracks: GA4 doesn't deduplicate them.
 
+## Events from a mobile app
+
+GA4 app streams (iOS and Android, through Firebase) take the same events. Name the stream with `firebaseAppId` and the
+installation with `appInstanceId` instead of `measurementId` and `clientId`. This suits an API that relays events
+from your app:
+
+```ts
+await sendMeasurementProtocolEvent({
+  firebaseAppId: '1:1234567890:android:321abc456def7890',
+  apiSecret: process.env.GA4_ANDROID_API_SECRET!,
+  appInstanceId: body.appInstanceId,
+  events: [{ name: 'level_up', params: { level: 2 } }],
+})
+```
+
+- The Firebase App ID is on the app stream's details in **Admin → Data streams**. Create the API secret on that same
+  stream: a web stream's secret doesn't work for it.
+- The app reads its instance ID from the Firebase SDK (`getAppInstanceId()` on Android, `appInstanceID()` on iOS) and
+  sends it with the event. It is 32 hexadecimal characters; anything else rejects with a `TypeError`.
+- Everything else (consent, `userId`, `sessionId`, `validate`, `region`, the checks and redaction) works as for a web
+  stream. Don't send an event the Firebase SDK already logs on the device: GA4 doesn't deduplicate them.
+
 ## AI crawlers
 
 `sendAiCrawlerEvent()` sends a crawler's visit through the same API, tagged so it can't be counted as a person, and it
@@ -90,8 +113,9 @@ const { ok, validationMessages } = await sendMeasurementProtocolEvent({
 
 The library also checks events against the same rules as `track()` (see [Tracking events](./tracking-events.md)):
 
-- An invalid event name, measurement ID, missing API secret or client ID, an email address as `userId`, or more than 25
-  events reject with a `TypeError` before anything is sent.
+- An invalid event name, measurement ID, Firebase App ID or app instance ID, a missing API secret or client ID, web
+  and app stream options mixed together, an email address as `userId`, or more than 25 events reject with a
+  `TypeError` before anything is sent.
 - Param values over GA4's limits are reported in `warnings`, and personal data in params (such as email addresses) is
   replaced with `[redacted]` and reported there too. The event is still sent.
 
@@ -99,9 +123,11 @@ The library also checks events against the same rules as `track()` (see [Trackin
 
 | Option | Default | What it does |
 | --- | --- | --- |
-| `measurementId` | required | Your web stream's measurement ID, `G-XXXXXXX`. |
-| `apiSecret` | required | The Measurement Protocol API secret. |
-| `clientId` | required | The visitor's GA4 client ID, from `readGa4Cookies()`. |
+| `measurementId` | required for a web stream | Your web stream's measurement ID, `G-XXXXXXX`. |
+| `clientId` | required for a web stream | The visitor's GA4 client ID, from `readGa4Cookies()`. |
+| `firebaseAppId` | required for an app stream | Your app stream's Firebase App ID. See [Events from a mobile app](#events-from-a-mobile-app). |
+| `appInstanceId` | required for an app stream | The installation's ID from the Firebase SDK. |
+| `apiSecret` | required | The Measurement Protocol API secret, created on the same stream. |
 | `sessionId` | none | The visitor's GA4 session ID, from `readGa4Cookies()`. |
 | `userId` | none | Your own user ID, the same one you pass to `identify()`. |
 | `events` | required | 1 to 25 `{ name, params? }` events. |

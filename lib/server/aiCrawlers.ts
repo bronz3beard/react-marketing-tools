@@ -21,7 +21,11 @@ export type AiAgents = Record<string, string[]>
  */
 export type AiCrawlerReporting = 'separate-property' | { trafficType: string }
 
-export type AiCrawlerOptions = Omit<MeasurementProtocolOptions, 'consent'> & {
+// Crawlers only visit websites, so this takes the web-stream options.
+export type AiCrawlerOptions = Omit<
+  Extract<MeasurementProtocolOptions, { measurementId: string }>,
+  'consent'
+> & {
   /** Your label for the crawler, from `matchAiAgent()`. */
   agent: string
   keepSeparate: AiCrawlerReporting

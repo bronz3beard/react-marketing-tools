@@ -60,6 +60,27 @@ describe('sendMeasurementProtocolEvent', () => {
     expect(result).toEqual({ ok: true, status: 204, warnings: [] })
   })
 
+  it('posts to an app stream by Firebase App ID, with the app instance ID in place of a client ID', async () => {
+    await sendMeasurementProtocolEvent({
+      firebaseAppId: '1:1234567890:android:321abc456def7890',
+      appInstanceId: 'cbd7e5fa3b2a4c1e9d8f7a6b5c4d3e2f',
+      apiSecret: 'secret',
+      events: [{ name: 'level_up', params: { level: 2 } }],
+    })
+
+    const { url, body } = lastRequest()
+    expect(Object.fromEntries(url.searchParams)).toEqual({
+      firebase_app_id: '1:1234567890:android:321abc456def7890',
+      api_secret: 'secret',
+    })
+    expect(body).toEqual({
+      app_instance_id: 'cbd7e5fa3b2a4c1e9d8f7a6b5c4d3e2f',
+      events: [
+        { name: 'level_up', params: { engagement_time_msec: 1, level: 2 } },
+      ],
+    })
+  })
+
   it('sends consent in GA4’s uppercase format, with the user ID, to the EU endpoint', async () => {
     await sendMeasurementProtocolEvent({
       ...base,
@@ -132,6 +153,31 @@ describe('sendMeasurementProtocolEvent', () => {
     async (change, message) => {
       await expect(
         sendMeasurementProtocolEvent({ ...base, ...change }),
+      ).rejects.toThrow(message)
+      expect(fetchMock).not.toHaveBeenCalled()
+    },
+  )
+
+  const app = {
+    firebaseAppId: '1:1234567890:ios:321abc456def7890',
+    appInstanceId: 'CBD7E5FA3B2A4C1E9D8F7A6B5C4D3E2F',
+    apiSecret: 'secret',
+    events: [{ name: 'level_up' }],
+  }
+
+  it.each([
+    [{ firebaseAppId: 'G-TEST1' }, /firebaseAppId must look like/],
+    [{ appInstanceId: '123.456' }, /32-character ID from the Firebase SDK/],
+    [{ measurementId: 'G-TEST1' }, /not both/],
+    [{ clientId: '123.456' }, /not both/],
+  ])(
+    'rejects invalid app-stream arguments without sending: %j',
+    async (change, message) => {
+      await expect(
+        sendMeasurementProtocolEvent({
+          ...app,
+          ...change,
+        } as MeasurementProtocolOptions),
       ).rejects.toThrow(message)
       expect(fetchMock).not.toHaveBeenCalled()
     },
