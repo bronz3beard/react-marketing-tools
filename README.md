@@ -1,19 +1,26 @@
 # React Marketing Tools
 
-[![npm](https://img.shields.io/npm/v/react-marketing-tools)](https://www.npmjs.com/package/react-marketing-tools)
-[![downloads](https://img.shields.io/npm/dm/react-marketing-tools)](https://www.npmjs.com/package/react-marketing-tools)
-[![bundle size](https://img.shields.io/bundlejs/size/react-marketing-tools?externals=react,react-dom,react/jsx-runtime)](https://bundlejs.com/?q=react-marketing-tools)
-[![types](https://img.shields.io/npm/types/react-marketing-tools)](https://www.npmjs.com/package/react-marketing-tools)
-[![node](https://img.shields.io/node/v/react-marketing-tools?logo=nodedotjs)](https://www.npmjs.com/package/react-marketing-tools)
-[![license](https://img.shields.io/npm/l/react-marketing-tools)](./LICENSE)
-
 [![CI](https://img.shields.io/github/actions/workflow/status/bronz3beard/react-marketing-tools/ci.yml?branch=main&label=CI&logo=github)](https://github.com/bronz3beard/react-marketing-tools/actions/workflows/ci.yml)
 [![CodeQL](https://img.shields.io/github/actions/workflow/status/bronz3beard/react-marketing-tools/codeql.yml?branch=main&label=CodeQL&logo=github)](https://github.com/bronz3beard/react-marketing-tools/actions/workflows/codeql.yml)
 [![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/bronz3beard/react-marketing-tools?label=openssf%20scorecard)](https://scorecard.dev/viewer/?uri=github.com/bronz3beard/react-marketing-tools)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/14943/badge)](https://www.bestpractices.dev/projects/14943)
-[![last commit](https://img.shields.io/github/last-commit/bronz3beard/react-marketing-tools)](https://github.com/bronz3beard/react-marketing-tools/commits/main)
+[![OpenSSF Baseline](https://www.bestpractices.dev/projects/14943/baseline)](https://www.bestpractices.dev/projects/14943)
+[![provenance](https://img.shields.io/badge/provenance-signed-brightgreen)](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/releasing.md#verifying-a-release)
 
+[![license](https://img.shields.io/npm/l/react-marketing-tools)](./LICENSE)
+[![node](https://img.shields.io/node/v/react-marketing-tools?logo=nodedotjs)](https://www.npmjs.com/package/react-marketing-tools)
+[![npm](https://img.shields.io/npm/v/react-marketing-tools)](https://www.npmjs.com/package/react-marketing-tools)
+[![downloads](https://img.shields.io/npm/dm/react-marketing-tools)](https://www.npmjs.com/package/react-marketing-tools)
+[![bundle size](https://img.shields.io/bundlejs/size/react-marketing-tools?externals=react,react-dom,react/jsx-runtime)](https://bundlejs.com/?q=react-marketing-tools)
+[![types](https://img.shields.io/npm/types/react-marketing-tools)](https://www.npmjs.com/package/react-marketing-tools)
+[![react](https://img.shields.io/npm/dependency-version/react-marketing-tools/peer/react?logo=react)](https://www.npmjs.com/package/react-marketing-tools)
+[![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://www.npmjs.com/package/react-marketing-tools?activeTab=dependencies)
+
+[![destinations](https://img.shields.io/badge/destinations-GTM%20%7C%20GA4%20%7C%20Meta%20Pixel%20%7C%20Conversions%20API-blue)](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/README.md)
+[![Consent Mode](https://img.shields.io/badge/Consent%20Mode-v2-blue)](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/consent.md)
+[![playground](https://img.shields.io/badge/playground-try%20it-blueviolet)](https://bronz3beard.github.io/react-marketing-tools/)
 [![AI setup prompt](https://img.shields.io/badge/AI%20setup-prompt-blueviolet)](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/agent-setup.md)
+[![last commit](https://img.shields.io/github/last-commit/bronz3beard/react-marketing-tools)](https://github.com/bronz3beard/react-marketing-tools/commits/main)
 [![discussions](https://img.shields.io/github/discussions/bronz3beard/react-marketing-tools)](https://github.com/bronz3beard/react-marketing-tools/discussions)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/bronz3beard/react-marketing-tools/blob/main/CONTRIBUTING.md)
 
@@ -87,7 +94,8 @@ You only configure the services you use. Many teams start with Tag Manager alone
 npm install react-marketing-tools
 ```
 
-Works with React 18 and 19. The package is published as ES modules, the `import` style of JavaScript, so it works in
+Works with React 18 and 19. React is an optional peer: only the main `react-marketing-tools` entry uses it, so a
+backend that imports just `react-marketing-tools/server` or `react-marketing-tools/core` doesn't install it. The package is published as ES modules, the `import` style of JavaScript, so it works in
 every current bundler and in Node.js 22.12 or later; it can't be loaded with `require()`.
 
 ## Set this up with an AI assistant
@@ -328,6 +336,10 @@ await sendMeasurementProtocolEvent({
   ],
 })
 ```
+
+Events from an iOS or Android app go to its GA4 app stream the same way, with `firebaseAppId` and `appInstanceId` in
+place of `measurementId` and `clientId`; see
+[Events from a mobile app](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/measurement-protocol.md#events-from-a-mobile-app).
 
 The same import has `sendConversionsApiEvent` for Meta, which scrambles customer details into hashes the way Meta
 requires before sending them.

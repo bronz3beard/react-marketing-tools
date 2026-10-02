@@ -12,17 +12,35 @@ const ORIGINS = {
   eu: 'https://region1.google-analytics.com',
 } as const
 const MEASUREMENT_ID = /^G-[A-Z0-9]+$/
+const FIREBASE_APP_ID = /^\d+:\d+:(android|ios):[0-9a-f]+$/
+const APP_INSTANCE_ID = /^[0-9a-f]{32}$/i
 const MAX_EVENTS = 25
 
 export type MeasurementProtocolEvent = { name: string; params?: EventParams }
 
-export type MeasurementProtocolOptions = {
+/** A GA4 web stream: events join the visitor's browser client. */
+type WebStream = {
   measurementId: string
-  /** Keep it on your server: Google says the API secret must not be exposed in client-side code. */
-  apiSecret: string
   /** The visitor's GA4 client ID, from the `_ga` cookie (see `readGa4Cookies`). */
   clientId: string
-  /** The visitor's GA4 session ID, from the `_ga_<stream>` cookie, so events join their session. */
+  firebaseAppId?: never
+  appInstanceId?: never
+}
+
+/** A GA4 app stream (iOS or Android, through Firebase): events join the app installation. */
+type AppStream = {
+  /** The Firebase App ID, e.g. `1:1234567890:android:321abc456def7890`, shown on the app stream's details. */
+  firebaseAppId: string
+  /** The installation's ID from the Firebase SDK: `getAppInstanceId()` on Android, `appInstanceID()` on iOS. */
+  appInstanceId: string
+  measurementId?: never
+  clientId?: never
+}
+
+export type MeasurementProtocolOptions = (WebStream | AppStream) & {
+  /** Created on the same stream. Keep it on your server: Google says it must not be exposed in client-side code. */
+  apiSecret: string
+  /** The GA4 session ID, from the `_ga_<stream>` cookie or the Firebase SDK, so events join that session. */
   sessionId?: string
   userId?: string
   /** Up to 25 events. Each gets `session_id` and `engagement_time_msec` (1 ms unless the params set it). */
@@ -47,24 +65,58 @@ const invalidArgument = (message: string) =>
     `[react-marketing-tools] sendMeasurementProtocolEvent: ${message}`,
   )
 
-const assertValid = ({
+const assertValidAppStream = ({
+  firebaseAppId,
+  appInstanceId,
+}: {
+  firebaseAppId?: string
+  appInstanceId?: string
+}) => {
+  if (!FIREBASE_APP_ID.test(firebaseAppId ?? '')) {
+    throw invalidArgument(
+      `firebaseAppId must look like "1:1234567890:android:321abc456def7890" (received ${JSON.stringify(firebaseAppId)})`,
+    )
+  }
+  if (!APP_INSTANCE_ID.test(appInstanceId ?? '')) {
+    throw invalidArgument(
+      'appInstanceId must be the 32-character ID from the Firebase SDK (getAppInstanceId() on Android, appInstanceID() on iOS)',
+    )
+  }
+}
+
+const assertValidWebStream = ({
   measurementId,
-  apiSecret,
   clientId,
-  userId,
-  events,
-}: MeasurementProtocolOptions) => {
-  if (!MEASUREMENT_ID.test(measurementId)) {
+}: {
+  measurementId?: string
+  clientId?: string
+}) => {
+  if (!MEASUREMENT_ID.test(measurementId ?? '')) {
     throw invalidArgument(
       `measurementId must look like "G-XXXXXXX" (received ${JSON.stringify(measurementId)})`,
     )
   }
-  if (!apiSecret) throw invalidArgument('apiSecret is required')
   if (!clientId) {
     throw invalidArgument(
       'clientId is required; read it from the _ga cookie with readGa4Cookies()',
     )
   }
+}
+
+const assertValid = (options: MeasurementProtocolOptions) => {
+  const { apiSecret, userId, events } = options
+  const isApp =
+    options.firebaseAppId !== undefined || options.appInstanceId !== undefined
+  const isWeb =
+    options.measurementId !== undefined || options.clientId !== undefined
+  if (isApp && isWeb) {
+    throw invalidArgument(
+      'pass measurementId and clientId for a web stream, or firebaseAppId and appInstanceId for an app stream, not both',
+    )
+  }
+  if (isApp) assertValidAppStream(options)
+  else assertValidWebStream(options)
+  if (!apiSecret) throw invalidArgument('apiSecret is required')
   if (userId !== undefined && (!userId || containsEmail(userId))) {
     throw invalidArgument(
       'userId must be your own identifier, not personal data such as an email address',
@@ -119,15 +171,27 @@ const toPayloadConsent = ({
   }),
 })
 
-/** Sends events to GA4 from your server, e.g. a purchase confirmed by a payment webhook. */
+// A web stream is addressed by measurement ID and client ID; an app stream by Firebase App ID and app instance ID.
+const toStreamIds = (options: MeasurementProtocolOptions) =>
+  options.firebaseAppId === undefined
+    ? {
+        param: 'measurement_id',
+        id: options.measurementId,
+        body: { client_id: options.clientId },
+      }
+    : {
+        param: 'firebase_app_id',
+        id: options.firebaseAppId,
+        body: { app_instance_id: options.appInstanceId },
+      }
+
+/** Sends events to GA4 from your server, e.g. a purchase confirmed by a payment webhook or an event relayed from an app. */
 export const sendMeasurementProtocolEvent = async (
   options: MeasurementProtocolOptions,
 ): Promise<MeasurementProtocolResult> => {
   assertValid(options)
   const {
-    measurementId,
     apiSecret,
-    clientId,
     sessionId,
     userId,
     events,
@@ -135,10 +199,11 @@ export const sendMeasurementProtocolEvent = async (
     validate = false,
     region = 'global',
   } = options
+  const streamIds = toStreamIds(options)
 
   const warnings: string[] = []
   const body = {
-    client_id: clientId,
+    ...streamIds.body,
     ...(userId && { user_id: userId }),
     ...(consent && { consent: toPayloadConsent(consent) }),
     events: events.map(event => toPayloadEvent({ event, sessionId, warnings })),
@@ -148,7 +213,7 @@ export const sendMeasurementProtocolEvent = async (
     validate ? '/debug/mp/collect' : '/mp/collect',
     ORIGINS[region],
   )
-  url.searchParams.set('measurement_id', measurementId)
+  url.searchParams.set(streamIds.param, streamIds.id)
   url.searchParams.set('api_secret', apiSecret)
 
   const response = await fetch(url, {

@@ -64,7 +64,7 @@ Creating an instance has no side effects: nothing loads or is stored until `star
 
 | Export | Kind | Purpose |
 | --- | --- | --- |
-| `sendMeasurementProtocolEvent` | function | GA4 events from your server. [Measurement Protocol](./measurement-protocol.md) |
+| `sendMeasurementProtocolEvent` | function | GA4 events from your server, to a web stream (`measurementId` + `clientId`) or an app stream (`firebaseAppId` + `appInstanceId`). [Measurement Protocol](./measurement-protocol.md) |
 | `readGa4Cookies` | function | The visitor's GA4 client and session IDs from a `Cookie` header |
 | `sendConversionsApiEvent` | function | Meta events from your server, hashing customer data |
 | `createTrackHandler` | function | The relay endpoint: `(Request) => Promise<Response>` |
@@ -106,4 +106,4 @@ Passed to `onError`; all but the last two also throw when `debug` is on.
 ## Requirements
 
 React 18 or 19 (only for the React entry points), ES modules only, Node.js 22.12+ for server use. No runtime
-dependencies; `@fingerprintjs/fingerprintjs` and `web-vitals` are optional peers used by their own entry points.
+dependencies; `react`, `@fingerprintjs/fingerprintjs` and `web-vitals` are optional peers used by their own entry points.

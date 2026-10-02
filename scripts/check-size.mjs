@@ -15,6 +15,7 @@
 //          1.0.0-beta.3 — webVitals 0.34 kB (+ Core Web Vitals entry; `web-vitals` stays external and lazily imported);
 //                         index 7.13, core 6.95, server 4.44 kB (+ AI-assistant labels from the site's own list,
 //                         AI crawler helpers with enforced separate reporting).
+//          1.1.0 — server 4.75 kB (+ Measurement Protocol to GA4 app streams: Firebase App ID, app instance ID).
 import { Buffer } from 'node:buffer'
 import { readFileSync } from 'node:fs'
 import { dirname, join, normalize } from 'node:path'
@@ -23,7 +24,7 @@ import { gzipSync } from 'node:zlib'
 const BUDGETS_KB = {
   index: 7.5,
   core: 7.3,
-  server: 4.7,
+  server: 5.0,
   fingerprintjs: 0.2,
   webVitals: 0.4,
 }

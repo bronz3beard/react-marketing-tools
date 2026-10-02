@@ -11,6 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - __Fixed__ for any bug fixes.
 - __Security__ in case of vulnerabilities.
 
+## [1.1.0] - 02-10-2026
+
+__Added__
+- `sendMeasurementProtocolEvent` sends to GA4 app streams (iOS and Android, through Firebase): pass `firebaseAppId`
+  and `appInstanceId` instead of `measurementId` and `clientId`. See
+  [Events from a mobile app](https://github.com/bronz3beard/react-marketing-tools/blob/main/docs/measurement-protocol.md#events-from-a-mobile-app).
+
+__Changed__
+- `react` is now an optional peer dependency. Only the main `react-marketing-tools` entry uses it, so a server or
+  non-React app that imports `react-marketing-tools/server` or `react-marketing-tools/core` no longer gets React
+  installed. React apps are unaffected.
+
 ## [1.0.2] - 26-09-2026
 The package code is unchanged from 1.0.1. This is the first signed release.
 
